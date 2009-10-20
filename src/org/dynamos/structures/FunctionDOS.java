@@ -31,18 +31,29 @@ public class FunctionDOS extends ObjectDOS {
             this.function = function;
             this.context = context;
         }
+
+        public void execute(List<Object> arguments) {
+
+        }
+
+        public void execute(ObjectDOS theObject, List<Object> arguments) {
+
+        }
     }
 
     /* is this needed? */
     public static class MethodDOS extends ObjectDOS {
-        private ContextualFunctionDOS context;
+        private ContextualFunctionDOS contextualFunction;
         private ObjectDOS object;
 
-        public MethodDOS(ContextualFunctionDOS context, ObjectDOS object) {
-            this.context = context;
+        public MethodDOS(ContextualFunctionDOS contextualFunction, ObjectDOS object) {
+            this.contextualFunction = contextualFunction;
             this.object = object;
         }
         
+        public void execute(List<Object> arguments) {
+
+        }
     }
 
 }

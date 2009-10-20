@@ -45,12 +45,6 @@ public class ObjectDOS {
         return parent;
     }
 
-    public FunctionDOS getFunction(Symbol symbol) {
-        Object slot = getSlot(symbol);
-        if(! (slot instanceof FunctionDOS)) System.out.println("no function for '" + symbol + "' got " + slot );
-        return (FunctionDOS) slot;
-    }
-
     public String toString() {
         return super.toString() + "[" + slots +
                 "]";

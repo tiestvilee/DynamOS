@@ -20,7 +20,7 @@ public class ObjectDOSTest {
     ObjectDOS theObject;
     Symbol symbol = Symbol.get("Symbol");
     String value = "doesnt matter";
-    FunctionDOS function = new FunctionDOS();
+    FunctionDOS function = new FunctionDOS(null);
 
     @Before
     public void setUp() {
@@ -61,6 +61,6 @@ public class ObjectDOSTest {
     @Test
     public void shouldReturnFunction() {
         theObject.setSlot(symbol, function);
-        assertSame(function, theObject.getFunction(symbol));
+        assertSame(function, theObject.getSlot(symbol));
     }
 }

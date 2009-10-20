@@ -5,6 +5,8 @@
 
 package org.dynamos;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import org.dynamos.structures.Context;
 import org.dynamos.structures.FunctionDOS;
@@ -19,6 +21,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mozilla.classfile.ByteCode;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -34,8 +37,8 @@ public class OpCodeInterpreterTest {
     ObjectDOS theObject;
     Symbol functionName = Symbol.get("functionName");
 
-    Symbol localArgument = Symbol.get("argument");
-    Symbol localObject = Symbol.get("object");
+    Symbol localArgumentName = Symbol.get("argument");
+    Symbol localObjectName = Symbol.get("object");
 
     @Before
     public void setUp() {
@@ -46,7 +49,7 @@ public class OpCodeInterpreterTest {
 
     @Test
     public void shouldCallAMethodInContext() {
-        FunctionDOS function = mock(FunctionDOS.class);
+        FunctionDOS.ContextualFunctionDOS function = mock(FunctionDOS.ContextualFunctionDOS.class);
         context.setSlot(functionName, function);
 
         OpCode[] opCodes = new OpCode[] {
@@ -54,28 +57,27 @@ public class OpCodeInterpreterTest {
         };
 
         interpreter.interpret(context, opCodes);
-        verify(function).execute(any(Context.class));
+        verify(function).execute(eq(Collections.emptyList()));
     }
 
     @Test
     public void shouldCallAMethodInContextWithParameter() {
-        FunctionDOS function = mock(FunctionDOS.class);
+        FunctionDOS.ContextualFunctionDOS function = mock(FunctionDOS.ContextualFunctionDOS.class);
         context.setSlot(functionName, function);
-        context.setSlot(localArgument, theObject);
+        context.setSlot(localArgumentName, theObject);
 
         OpCode[] opCodes = new OpCode[] {
-            new OpCode.Push(localArgument),
+            new OpCode.Push(localArgumentName),
             new OpCode.ContextCall(functionName)
         };
 
         interpreter.interpret(context, opCodes);
 
-        verify(function).execute(argThat(new BaseMatcher<Context>() {
+        verify(function).execute(argThat(new BaseMatcher<List>() {
 
             public boolean matches(Object item) {
-                Context context = (Context) item;
-                List slot = (List) context.getSlot(Symbol.ARGUMENTS);
-                return slot.contains(theObject);
+                List arguments = (List) item;
+                return arguments.contains(theObject);
             }
 
             public void describeTo(Description description) {
@@ -86,45 +88,47 @@ public class OpCodeInterpreterTest {
 
     @Test
     public void shouldCallAMethodOnAnObject() {
-        FunctionDOS function = mock(FunctionDOS.class);
+        FunctionDOS.ContextualFunctionDOS function = mock(FunctionDOS.ContextualFunctionDOS.class);
         theObject.setSlot(functionName, function);
-        context.setSlot(localObject, theObject);
+        context.setSlot(localObjectName, theObject);
 
         OpCode[] opCodes = new OpCode[] {
-            new OpCode.SetObject(localObject),
+            new OpCode.SetObject(localObjectName),
             new OpCode.MethodCall(functionName)
         };
 
         interpreter.interpret(context, opCodes);
-        verify(function).execute(any(Context.class));
+        verify(function).execute(theObject, Collections.emptyList());
     }
 
     @Test
     public void shouldCallAMethodOnObjectWithParameter() {
-        final FunctionDOS function = mock(FunctionDOS.class);
+        final FunctionDOS.ContextualFunctionDOS function = mock(FunctionDOS.ContextualFunctionDOS.class);
         final ObjectDOS expectedArgument = new ObjectDOS();
         theObject.setSlot(functionName, function);
-        context.setSlot(localObject, theObject);
-        context.setSlot(localArgument, expectedArgument);
+        context.setSlot(localObjectName, theObject);
+        context.setSlot(localArgumentName, expectedArgument);
 
         OpCode[] opCodes = new OpCode[] {
-            new OpCode.Push(localArgument),
-            new OpCode.SetObject(localObject),
+            new OpCode.Push(localArgumentName),
+            new OpCode.SetObject(localObjectName),
             new OpCode.MethodCall(functionName)
         };
 
         interpreter.interpret(context, opCodes);
 
-        verify(function).execute(argThat(new BaseMatcher<Context>() {
+        verify(function).execute(eq(theObject), argThat(new BaseMatcher<List>() {
+
+            List foundList;
 
             public boolean matches(Object item) {
-                Context context = (Context) item;
-                List slot = (List) context.getSlot(Symbol.ARGUMENTS);
-                return slot.contains(expectedArgument);
+                List arguments = (List) item;
+                foundList = arguments;
+                return arguments.contains(expectedArgument);
             }
 
             public void describeTo(Description description) {
-                description.appendText("theObject was not found as an argument");
+                description.appendText("Expected argument was not found as an argument..." + foundList);
             }
         }));
     }
@@ -134,10 +138,10 @@ public class OpCodeInterpreterTest {
     public void shouldCallThroughToVM() {
         Symbol vm = Symbol.get("VM");
         context.setSlot(vm, VMObjectDOS.VM);
-        context.setSlot(localArgument, theObject);
+        context.setSlot(localArgumentName, theObject);
 
         OpCode[] opCodes = new OpCode[] {
-            new OpCode.Push(localArgument),
+            new OpCode.Push(localArgumentName),
             new OpCode.SetObject(vm),
             new OpCode.MethodCall(Symbol.get("print"))
         };
@@ -147,7 +151,7 @@ public class OpCodeInterpreterTest {
 
     @Test
     public void shouldCallAMethodOnThis() {
-        FunctionDOS function = mock(FunctionDOS.class);
+        FunctionDOS.ContextualFunctionDOS function = mock(FunctionDOS.ContextualFunctionDOS.class);
         theObject.setSlot(functionName, function);
         context.setObject(theObject);
 
@@ -157,7 +161,7 @@ public class OpCodeInterpreterTest {
         };
 
         interpreter.interpret(context, opCodes);
-        verify(function).execute(any(Context.class));
+        verify(function).execute(theObject, Collections.emptyList());
     }
 //    @Test
 //    public void shouldThrowExceptionIfMethodDoesntExist() {

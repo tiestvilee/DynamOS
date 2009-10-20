@@ -13,11 +13,10 @@ import java.util.List;
  */
 public class VMObjectDOS {
 
-    private static final FunctionDOS PRINT_FUNCTION = new FunctionDOS(null) {
+    private static final FunctionDOS.ContextualFunctionDOS PRINT_FUNCTION = new FunctionDOS.ContextualFunctionDOS(null, null) {
 
         @Override
-        public void execute(Context context) {
-            final List arguments = (List) context.getSlot(Symbol.ARGUMENTS);
+        public void execute(List arguments) {
             System.out.println(arguments.get(0));
         }
 

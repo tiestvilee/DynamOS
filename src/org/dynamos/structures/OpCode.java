@@ -5,6 +5,9 @@
 
 package org.dynamos.structures;
 
+import java.util.List;
+import org.dynamos.structures.FunctionDOS.ContextualFunctionDOS;
+
 /**
  *
  * @author tiestvilee
@@ -27,8 +30,8 @@ public class OpCode {
         public boolean execute(Context context) {
             ObjectDOS object = context.getObject();
             System.out.println("trying to find function " + symbol + " on " + object);
-            FunctionDOS function = object.getFunction(symbol);
-            function.execute(context);
+            FunctionDOS.ContextualFunctionDOS function = (ContextualFunctionDOS) object.getSlot(symbol);
+            function.execute(object, (List<Object>) context.getSlot(Symbol.ARGUMENTS));
             return true;
         }
     }
@@ -40,8 +43,8 @@ public class OpCode {
         }
 
         public boolean execute(Context context) {
-            FunctionDOS function = context.getParent().getFunction(symbol);
-            function.execute(context);
+            FunctionDOS.ContextualFunctionDOS function = (ContextualFunctionDOS) context.getParent().getSlot(symbol);
+            function.execute((List<Object>) context.getSlot(Symbol.ARGUMENTS));
             return true;
         }
     }
