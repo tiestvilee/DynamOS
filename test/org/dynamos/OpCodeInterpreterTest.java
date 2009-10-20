@@ -57,6 +57,7 @@ public class OpCodeInterpreterTest {
         };
 
         interpreter.interpret(context, opCodes);
+
         verify(function).execute(eq(Collections.emptyList()));
     }
 
@@ -73,17 +74,7 @@ public class OpCodeInterpreterTest {
 
         interpreter.interpret(context, opCodes);
 
-        verify(function).execute(argThat(new BaseMatcher<List>() {
-
-            public boolean matches(Object item) {
-                List arguments = (List) item;
-                return arguments.contains(theObject);
-            }
-
-            public void describeTo(Description description) {
-                description.appendText("theObject was not found as an argument");
-            }
-        }));
+        verify(function).execute(java.util.Arrays.asList( (Object) theObject));
     }
 
     @Test
@@ -98,6 +89,7 @@ public class OpCodeInterpreterTest {
         };
 
         interpreter.interpret(context, opCodes);
+
         verify(function).execute(theObject, Collections.emptyList());
     }
 
@@ -117,20 +109,7 @@ public class OpCodeInterpreterTest {
 
         interpreter.interpret(context, opCodes);
 
-        verify(function).execute(eq(theObject), argThat(new BaseMatcher<List>() {
-
-            List foundList;
-
-            public boolean matches(Object item) {
-                List arguments = (List) item;
-                foundList = arguments;
-                return arguments.contains(expectedArgument);
-            }
-
-            public void describeTo(Description description) {
-                description.appendText("Expected argument was not found as an argument..." + foundList);
-            }
-        }));
+        verify(function).execute(theObject, java.util.Arrays.asList( (Object) expectedArgument));
     }
 
 
@@ -161,6 +140,7 @@ public class OpCodeInterpreterTest {
         };
 
         interpreter.interpret(context, opCodes);
+        
         verify(function).execute(theObject, Collections.emptyList());
     }
 //    @Test
