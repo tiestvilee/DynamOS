@@ -8,6 +8,7 @@ package org.dynamos;
 import org.dynamos.structures.Context;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
+import org.dynamos.structures.StackFrame;
 
 /**
  *
@@ -16,18 +17,12 @@ import org.dynamos.structures.OpCode;
 public class OpCodeInterpreter {
 
     void interpret(Context context, OpCode[] opCodes) {
-        Context newContext = createNewContext(context);
+        StackFrame stackFrame = new StackFrame();
         for(int i=0; i<opCodes.length; i++) {
-            if(opCodes[i].execute(newContext)) {
-                newContext = createNewContext(context);
+            if(opCodes[i].execute(context, stackFrame)) {
+                stackFrame = new StackFrame();
             }
         }
-    }
-
-    private Context createNewContext(Context context) {
-        Context newContext = new Context();
-        newContext.setParent(context);
-        return newContext;
     }
 
 }

@@ -6,22 +6,18 @@
 package org.dynamos.structures;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  *
  * @author tiestvilee
  */
-public class Context extends ObjectDOS {
+public class StackFrame {
 
-    List<Object> arguments = new ArrayList<Object>();
     ObjectDOS object;
-    
-    public Context() {
-        super();
-        setSlot(Symbol.ARGUMENTS, arguments);
-    }
-    
+    List<Object> arguments = new ArrayList<Object>();
+
     public void setObject(ObjectDOS object) {
         this.object = object;
     }
@@ -29,14 +25,14 @@ public class Context extends ObjectDOS {
     public ObjectDOS getObject() {
         return object;
     }
-    
-    public void pushArgument(ObjectDOS object) {
+
+    public void pushArgument(Object object) {
         arguments.add(object);
     }
 
-    public void setArguments(List arguments) {
-        setSlot(Symbol.ARGUMENTS, arguments);
-        this.arguments = arguments;
+    public List getArguments() {
+        return Collections.unmodifiableList(arguments);
+
     }
 
 }

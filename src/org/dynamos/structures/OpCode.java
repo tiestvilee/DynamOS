@@ -14,7 +14,7 @@ import org.dynamos.structures.FunctionDOS.ContextualFunctionDOS;
  */
 public class OpCode {
 
-    public boolean execute(Context context) {
+    public boolean execute(Context context, StackFrame stackFrame) {
         // NOOP
         return false;
     }
@@ -27,11 +27,11 @@ public class OpCode {
             this.symbol = symbol;
         }
 
-        public boolean execute(Context context) {
-            ObjectDOS object = context.getObject();
+        public boolean execute(Context context, StackFrame stackFrame) {
+            ObjectDOS object = stackFrame.getObject();
             System.out.println("trying to find function " + symbol + " on " + object);
             FunctionDOS.ContextualFunctionDOS function = (ContextualFunctionDOS) object.getSlot(symbol);
-            function.execute(object, (List<Object>) context.getSlot(Symbol.ARGUMENTS));
+            function.execute(object, stackFrame.getArguments());
             return true;
         }
     }
@@ -42,9 +42,9 @@ public class OpCode {
             this.symbol = symbol;
         }
 
-        public boolean execute(Context context) {
-            FunctionDOS.ContextualFunctionDOS function = (ContextualFunctionDOS) context.getParent().getSlot(symbol);
-            function.execute((List<Object>) context.getSlot(Symbol.ARGUMENTS));
+        public boolean execute(Context context, StackFrame stackFrame) {
+            FunctionDOS.ContextualFunctionDOS function = (ContextualFunctionDOS) context.getSlot(symbol);
+            function.execute(stackFrame.getArguments());
             return true;
         }
     }
@@ -55,9 +55,9 @@ public class OpCode {
             this.symbol = symbol;
         }
 
-        public boolean execute(Context context) {
-            ObjectDOS object = (ObjectDOS) context.getParent().getSlot(symbol);
-            context.setObject(object);
+        public boolean execute(Context context, StackFrame stackFrame) {
+            ObjectDOS object = (ObjectDOS) context.getSlot(symbol);
+            stackFrame.setObject(object);
             return false;
         }
     }
@@ -66,9 +66,9 @@ public class OpCode {
         public SetObjectToThis() {
         }
 
-        public boolean execute(Context context) {
-            ObjectDOS object = (ObjectDOS) ((Context) context.getParent()).getObject();
-            context.setObject(object);
+        public boolean execute(Context context, StackFrame stackFrame) {
+            ObjectDOS object = (ObjectDOS) context.getObject();
+            stackFrame.setObject(object);
             return false;
         }
     }
@@ -79,9 +79,9 @@ public class OpCode {
             this.symbol = symbol;
         }
 
-        public boolean execute(Context context) {
-            ObjectDOS argument = (ObjectDOS) context.getParent().getSlot(symbol);
-            context.pushArgument(argument);
+        public boolean execute(Context context, StackFrame stackFrame) {
+            ObjectDOS argument = (ObjectDOS) context.getSlot(symbol);
+            stackFrame.pushArgument(argument);
             return false;
         }
     }

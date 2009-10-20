@@ -33,11 +33,14 @@ public class FunctionDOS extends ObjectDOS {
         }
 
         public void execute(List<Object> arguments) {
-
+            execute(null, arguments);
         }
 
         public void execute(ObjectDOS theObject, List<Object> arguments) {
-
+            Context newContext = new Context();
+            newContext.setParent(context);
+            newContext.setArguments(arguments);
+            function.execute(newContext);
         }
     }
 
