@@ -44,7 +44,7 @@ public class FunctionDOS extends ObjectDOS {
         }
     }
 
-    /* is this needed? */
+    /* is this needed? It's just a wrapper for 'binding' a function to an object */
     public static class MethodDOS extends ObjectDOS {
         private ContextualFunctionDOS contextualFunction;
         private ObjectDOS object;
@@ -55,7 +55,7 @@ public class FunctionDOS extends ObjectDOS {
         }
         
         public void execute(List<Object> arguments) {
-
+            contextualFunction.execute(object, arguments);
         }
     }
 

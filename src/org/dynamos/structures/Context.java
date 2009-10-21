@@ -39,4 +39,8 @@ public class Context extends ObjectDOS {
         this.arguments = arguments;
     }
 
+    public List getArguments() {
+        return arguments;
+    }
+
 }

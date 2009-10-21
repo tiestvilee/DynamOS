@@ -5,25 +5,15 @@
 
 package org.dynamos;
 
-import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import org.dynamos.structures.Context;
 import org.dynamos.structures.FunctionDOS;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.Symbol;
 import org.dynamos.structures.VMObjectDOS;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Matchers;
-import org.mozilla.classfile.ByteCode;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
