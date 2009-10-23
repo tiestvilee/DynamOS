@@ -6,7 +6,6 @@
 package org.dynamos;
 
 import org.dynamos.structures.Context;
-import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.StackFrame;
 
@@ -16,7 +15,7 @@ import org.dynamos.structures.StackFrame;
  */
 public class OpCodeInterpreter {
 
-    void interpret(Context context, OpCode[] opCodes) {
+    public void interpret(Context context, OpCode[] opCodes) {
         StackFrame stackFrame = new StackFrame();
         for(int i=0; i<opCodes.length; i++) {
             if(opCodes[i].execute(context, stackFrame)) {
