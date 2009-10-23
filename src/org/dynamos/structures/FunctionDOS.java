@@ -35,16 +35,17 @@ public class FunctionDOS extends ObjectDOS {
             this.context = context;
         }
 
-        public void execute(List<Object> arguments) {
-            execute(null, arguments);
+        public ObjectDOS execute(List<Object> arguments) {
+            return execute(null, arguments);
         }
 
-        public void execute(ObjectDOS theObject, List<Object> arguments) {
+        public ObjectDOS execute(ObjectDOS theObject, List<Object> arguments) {
             Context newContext = new Context();
             newContext.setParent(context);
             newContext.setArguments(arguments);
             newContext.setObject(theObject);
             function.execute(newContext);
+            return newContext.getResult();
         }
     }
 
@@ -59,8 +60,8 @@ public class FunctionDOS extends ObjectDOS {
             this.object = object;
         }
         
-        public void execute(List<Object> arguments) {
-            contextualFunction.execute(object, arguments);
+        public ObjectDOS execute(List<Object> arguments) {
+            return contextualFunction.execute(object, arguments);
         }
     }
 

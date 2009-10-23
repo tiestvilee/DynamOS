@@ -20,7 +20,7 @@ public class ObjectDOSTest {
     ObjectDOS theObject;
     Symbol symbol = Symbol.get("Symbol");
     String value = "doesnt matter";
-    FunctionDOS function = new FunctionDOS(null);
+    FunctionDOS function = new FunctionDOS(null, null);
 
     @Before
     public void setUp() {

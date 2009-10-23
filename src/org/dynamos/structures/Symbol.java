@@ -33,4 +33,5 @@ public class Symbol {
     }
 
     public static final Symbol ARGUMENTS = Symbol.get("arguments");
+    public static final Symbol RESULT = Symbol.get("result");
 }

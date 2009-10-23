@@ -20,11 +20,13 @@ import static org.mockito.Mockito.*;
  *
  * @author tiestvilee
  */
-public class OpCodeInterpreterTest {
+public class OpCodeInterpreterCallTest {
 
     OpCodeInterpreter interpreter;
     Context context;
     ObjectDOS theObject;
+    FunctionDOS.ContextualFunctionDOS function;
+
     Symbol functionName = Symbol.get("functionName");
 
     Symbol localArgumentName = Symbol.get("argument");
@@ -35,11 +37,11 @@ public class OpCodeInterpreterTest {
         interpreter = new OpCodeInterpreter();
         context = new Context();
         theObject = new ObjectDOS();
+        function = mock(FunctionDOS.ContextualFunctionDOS.class);
     }
 
     @Test
     public void shouldCallAMethodInContext() {
-        FunctionDOS.ContextualFunctionDOS function = mock(FunctionDOS.ContextualFunctionDOS.class);
         context.setSlot(functionName, function);
 
         OpCode[] opCodes = new OpCode[] {
@@ -53,7 +55,6 @@ public class OpCodeInterpreterTest {
 
     @Test
     public void shouldCallAMethodInContextWithParameter() {
-        FunctionDOS.ContextualFunctionDOS function = mock(FunctionDOS.ContextualFunctionDOS.class);
         context.setSlot(functionName, function);
         context.setSlot(localArgumentName, theObject);
 
@@ -69,7 +70,6 @@ public class OpCodeInterpreterTest {
 
     @Test
     public void shouldCallAMethodOnAnObject() {
-        FunctionDOS.ContextualFunctionDOS function = mock(FunctionDOS.ContextualFunctionDOS.class);
         theObject.setSlot(functionName, function);
         context.setSlot(localObjectName, theObject);
 
@@ -85,7 +85,6 @@ public class OpCodeInterpreterTest {
 
     @Test
     public void shouldCallAMethodOnObjectWithParameter() {
-        final FunctionDOS.ContextualFunctionDOS function = mock(FunctionDOS.ContextualFunctionDOS.class);
         final ObjectDOS expectedArgument = new ObjectDOS();
         theObject.setSlot(functionName, function);
         context.setSlot(localObjectName, theObject);
@@ -102,6 +101,31 @@ public class OpCodeInterpreterTest {
         verify(function).execute(theObject, java.util.Arrays.asList( (Object) expectedArgument));
     }
 
+    @Test
+    public void shouldCallAMethodOnThis() {
+        theObject.setSlot(functionName, function);
+        context.setObject(theObject);
+
+        OpCode[] opCodes = new OpCode[] {
+            new OpCode.SetObjectToThis(),
+            new OpCode.MethodCall(functionName)
+        };
+
+        interpreter.interpret(context, opCodes);
+        
+        verify(function).execute(theObject, Collections.emptyList());
+    }
+
+
+//    @Test
+//    public void shouldThrowExceptionIfMethodDoesntExist() {
+//        ObjectDOS context = new ObjectDOS();
+//        ObjectDOS theObject = new ObjectDOS();
+//        OpCode[] opCodes = new OpCode[] {};
+//
+//        interpreter.interpret(context, theObject, opCodes);
+//    }
+
 
     @Test
     public void shouldCallThroughToVM() {
@@ -117,29 +141,5 @@ public class OpCodeInterpreterTest {
 
         interpreter.interpret(context, opCodes);
     }
-
-    @Test
-    public void shouldCallAMethodOnThis() {
-        FunctionDOS.ContextualFunctionDOS function = mock(FunctionDOS.ContextualFunctionDOS.class);
-        theObject.setSlot(functionName, function);
-        context.setObject(theObject);
-
-        OpCode[] opCodes = new OpCode[] {
-            new OpCode.SetObjectToThis(),
-            new OpCode.MethodCall(functionName)
-        };
-
-        interpreter.interpret(context, opCodes);
-        
-        verify(function).execute(theObject, Collections.emptyList());
-    }
-//    @Test
-//    public void shouldThrowExceptionIfMethodDoesntExist() {
-//        ObjectDOS context = new ObjectDOS();
-//        ObjectDOS theObject = new ObjectDOS();
-//        OpCode[] opCodes = new OpCode[] {};
-//
-//        interpreter.interpret(context, theObject, opCodes);
-//    }
 
 }
