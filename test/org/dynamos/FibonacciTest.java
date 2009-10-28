@@ -10,6 +10,7 @@ import org.dynamos.structures.Context;
 import org.dynamos.structures.FunctionDOS;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
+import org.dynamos.structures.StandardObjects;
 import org.dynamos.structures.Symbol;
 import org.dynamos.structures.VMObjectDOS;
 import org.junit.Before;
@@ -56,39 +57,48 @@ public class FibonacciTest {
 
         FunctionDOS anon2Function = new FunctionDOS(interpreter, new OpCode[] {
 
-            new OpCode.Push(one),  // temp1 = index - 1
+            new OpCode.Push(one),  // result = index - 1
             new OpCode.SetObject(index),
-            new OpCode.MethodCall(minus$), // return into temp1
+            new OpCode.MethodCall(minus$),
 
-            new OpCode.Push(temp1), // temp1 = fibonacci( temp1 )
-            new OpCode.ContextCall(fibonacci$), // return into temp1...
+            new OpCode.Push(Symbol.RESULT), // temp1 = fibonacci( result )
+            new OpCode.SetResultTarget(temp1),
+            new OpCode.ContextCall(fibonacci$),
+            // TODO need to more result into temp1, should this be SetResultTarget or a separate call, maybe a 'set context value' call.
 
-            new OpCode.Push(two),  // temp2 = index - 2
+            new OpCode.Push(two),  // result = index - 2
             new OpCode.SetObject(index),
-            new OpCode.MethodCall(minus$), // return into temp2
+            new OpCode.MethodCall(minus$),
 
-            new OpCode.Push(temp2), // temp2 = fibonacci( temp2 )
-            new OpCode.ContextCall(fibonacci$), // return into temp2...
+            new OpCode.Push(Symbol.RESULT), // result = fibonacci( result )
+            new OpCode.ContextCall(fibonacci$),
 
-            new OpCode.Push(temp2), // temp1 = temp1 + temp2
+            new OpCode.Push(Symbol.RESULT), // temp1 = temp1 + result
             new OpCode.SetObject(temp1),
-            new OpCode.MethodCall(plus$), // return into temp1...
+            new OpCode.MethodCall(plus$),
 
-            new OpCode.Return(temp1)
+            new OpCode.Return(Symbol.RESULT)
         });
 
         FunctionDOS fibonacciFunction = new FunctionDOS(interpreter, new OpCode[] {
-            new OpCode.Push(two), // temp1 = index isLessThan: two
+            new OpCode.Push(two), // result = index isLessThan: two
             new OpCode.SetObject(index),
-            new OpCode.ContextCall(isLessThan$), // return into temp1...
+            new OpCode.ContextCall(isLessThan$),
 
-            new OpCode.Push(anon1), // temp1 = temp1 ifTrue: anon1 ifFalse: anon2
+            new OpCode.Push(anon1), // result = result ifTrue: [anon1] ifFalse: [anon2]
             new OpCode.Push(anon2),
-            new OpCode.SetObject(temp1),
-            new OpCode.MethodCall(ifTrue$IfFalse$), // return into temp1...
+            new OpCode.SetObject(Symbol.RESULT),
+            new OpCode.MethodCall(ifTrue$IfFalse$),
 
-            new OpCode.Return(temp1)
+            new OpCode.Return(Symbol.RESULT)
         });
+
+        Context context = new Context();
+        context.setSlot(one, StandardObjects.numberDOS(interpreter, 1));
+        context.setSlot(two, StandardObjects.numberDOS(interpreter, 2));
+        context.setSlot(anon1, anon1Function);
+        context.setSlot(anon2, anon2Function);
+        context.setSlot(fibonacci$, fibonacciFunction);
     }
 
 }
