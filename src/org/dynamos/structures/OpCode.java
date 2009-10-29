@@ -5,8 +5,6 @@
 
 package org.dynamos.structures;
 
-import java.util.List;
-
 import org.dynamos.structures.FunctionDOS.ContextualFunctionDOS;
 
 /**

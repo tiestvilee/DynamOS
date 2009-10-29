@@ -12,19 +12,19 @@ import java.util.HashMap;
  * @author tiestvilee
  */
 public class ObjectDOS {
-    HashMap<Symbol, Object> slots;
+    HashMap<Symbol, ObjectDOS> slots;
     ObjectDOS parent;
 
     public ObjectDOS() {
-        slots = new HashMap<Symbol, Object>();
+        slots = new HashMap<Symbol, ObjectDOS>();
     }
 
-    public void setSlot(Symbol symbol, Object value) {
+    public void setSlot(Symbol symbol, ObjectDOS value) {
         slots.put(symbol, value);
     }
 
-    public Object getSlot(Symbol symbol) {
-        final Object slot = slots.get(symbol);
+    public ObjectDOS getSlot(Symbol symbol) {
+        final ObjectDOS slot = slots.get(symbol);
         if(slot == null) {
             if(parent == null) {
                 return StandardObjects.NULL;

@@ -26,14 +26,14 @@ public class FunctionDOSTest {
 
     FunctionDOS function;
     Context functionContext;
-    List<Object> arguments;
+    List<ObjectDOS> arguments;
     ObjectDOS object;
 
     @Before
     public void setup() {
         function = mock(FunctionDOS.class);
         functionContext = new Context();
-        arguments = new ArrayList<Object>();
+        arguments = new ArrayList<ObjectDOS>();
         object = new ObjectDOS();
     }
 
@@ -59,17 +59,17 @@ public class FunctionDOSTest {
         verify(interpreter).interpret(context, opCodes);
     }
 
-    private MatchesContextWithValues matchesContextWithValues(final List<Object> arguments, ObjectDOS object, final Context functionContext) {
+    private MatchesContextWithValues matchesContextWithValues(final List<ObjectDOS> arguments, ObjectDOS object, final Context functionContext) {
         return new MatchesContextWithValues(arguments, object, functionContext);
     }
 
     private class MatchesContextWithValues extends BaseMatcher<Context> {
 
-        private final List<Object> arguments;
+        private final List<ObjectDOS> arguments;
         private final ObjectDOS object;
         private final Context functionContext;
 
-        public MatchesContextWithValues(List<Object> arguments, ObjectDOS object, Context functionContext) {
+        public MatchesContextWithValues(List<ObjectDOS> arguments, ObjectDOS object, Context functionContext) {
             this.arguments = arguments;
             this.object = object;
             this.functionContext = functionContext;

@@ -5,7 +5,6 @@
 
 package org.dynamos;
 
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -55,7 +54,7 @@ public class OpCodeInterpreterCallTest {
 
         interpreter.interpret(context, opCodes);
 
-        verify(function).execute(context, Collections.emptyList());
+        verify(function).execute(context, Collections.<ObjectDOS>emptyList());
     }
 
     @Test
@@ -70,7 +69,7 @@ public class OpCodeInterpreterCallTest {
 
         interpreter.interpret(context, opCodes);
 
-        verify(function).execute(context, java.util.Arrays.asList( (Object) theObject));
+        verify(function).execute(context, java.util.Arrays.asList(theObject));
     }
 
     @Test
@@ -85,7 +84,7 @@ public class OpCodeInterpreterCallTest {
 
         interpreter.interpret(context, opCodes);
 
-        verify(function).execute(theObject, Collections.emptyList());
+        verify(function).execute(theObject, Collections.<ObjectDOS>emptyList());
     }
 
     @Test
@@ -103,7 +102,7 @@ public class OpCodeInterpreterCallTest {
 
         interpreter.interpret(context, opCodes);
 
-        verify(function).execute(theObject, java.util.Arrays.asList( (Object) expectedArgument));
+        verify(function).execute(theObject, java.util.Arrays.asList(expectedArgument));
     }
 
     @Test
@@ -118,7 +117,7 @@ public class OpCodeInterpreterCallTest {
 
         interpreter.interpret(context, opCodes);
         
-        verify(function).execute(theObject, Collections.emptyList());
+        verify(function).execute(theObject, Collections.<ObjectDOS>emptyList());
     }
 
 

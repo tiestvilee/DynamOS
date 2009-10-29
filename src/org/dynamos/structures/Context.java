@@ -14,14 +14,14 @@ import java.util.List;
  */
 public class Context extends ObjectDOS {
 
-    List<Object> arguments = new ArrayList<Object>();
+    List<ObjectDOS> arguments = new ArrayList<ObjectDOS>();
     ObjectDOS object;
     ObjectDOS result;
     private Symbol resultTarget = Symbol.RESULT;
     
     public Context() {
         super();
-        setSlot(Symbol.ARGUMENTS, arguments);
+        //setSlot(Symbol.ARGUMENTS, arguments);
     }
     
     public void setObject(ObjectDOS object) {
@@ -37,8 +37,8 @@ public class Context extends ObjectDOS {
         arguments.add(object);
     }
 
-    public void setArguments(List arguments) {
-        setSlot(Symbol.ARGUMENTS, arguments);
+    public void setArguments(List<ObjectDOS> arguments) {
+        //setSlot(Symbol.ARGUMENTS, arguments);
         this.arguments = arguments;
     }
 

@@ -12,7 +12,7 @@ public class StandardFunctions {
 		}
 		
 		@Override
-		public ObjectDOS execute(ObjectDOS theObject, List<Object> arguments) {
+		public ObjectDOS execute(ObjectDOS theObject, List<ObjectDOS> arguments) {
 			return (ObjectDOS) theObject.getSlot(symbol);
 		}
 
@@ -29,7 +29,7 @@ public class StandardFunctions {
 		}
 		
 		@Override
-		public ObjectDOS execute(ObjectDOS theObject, List<Object> arguments) {
+		public ObjectDOS execute(ObjectDOS theObject, List<ObjectDOS> arguments) {
 			theObject.setSlot(symbol, arguments.get(0));
 			return (ObjectDOS) arguments.get(0);
 		}

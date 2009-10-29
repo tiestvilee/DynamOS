@@ -16,7 +16,7 @@ import java.util.List;
 public class StackFrame {
 
     ObjectDOS object;
-    List arguments = new ArrayList();
+    List<ObjectDOS> arguments = new ArrayList<ObjectDOS>();
 
     public void setObject(ObjectDOS object) {
         this.object = object;
@@ -26,11 +26,11 @@ public class StackFrame {
         return object;
     }
 
-    public void pushArgument(Object object) {
+    public void pushArgument(ObjectDOS object) {
         arguments.add(object);
     }
 
-    public List getArguments() {
+    public List<ObjectDOS> getArguments() {
         return Collections.unmodifiableList(arguments);
 
     }

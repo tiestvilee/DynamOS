@@ -47,7 +47,7 @@ public class ObjectDOSTest {
     @Test
     public void shouldOverideParentSlotWithChildSlot() {
         ObjectDOS parent = new ObjectDOS();
-        String oldValue = "shouldnt appear";
+        ObjectDOS oldValue = new ObjectDOS();
         parent.setSlot(symbol, oldValue);
         theObject.setParent(parent);
         parent.setSlot(symbol, value);

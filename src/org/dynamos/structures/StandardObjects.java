@@ -43,7 +43,7 @@ public class StandardObjects {
                             ObjectDOS falseBranch = (ObjectDOS) context.getArguments().get(1);
                             ObjectDOS result;
                             if(falseBranch instanceof FunctionDOS.ContextualFunctionDOS) {
-                                result = ((FunctionDOS.ContextualFunctionDOS) falseBranch).execute(context, new ArrayList());
+                                result = ((FunctionDOS.ContextualFunctionDOS) falseBranch).execute(context, new ArrayList<ObjectDOS>());
                             } else {
                                 // TODO what if executing a normal object simply returned that object... cool
                                 result = falseBranch;

@@ -40,7 +40,7 @@ public class FunctionDOS extends ObjectDOS {
             this.context = context;
         }
 
-        public ObjectDOS execute(ObjectDOS theObject, List<Object> arguments) {
+        public ObjectDOS execute(ObjectDOS theObject, List<ObjectDOS> arguments) {
             Context newContext = new Context();
             newContext.setParent(context);
             newContext.setArguments(arguments);
