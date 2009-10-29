@@ -5,7 +5,12 @@
 
 package org.dynamos;
 
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
 import java.util.Collections;
+
 import org.dynamos.structures.Context;
 import org.dynamos.structures.FunctionDOS;
 import org.dynamos.structures.ObjectDOS;
@@ -14,7 +19,6 @@ import org.dynamos.structures.Symbol;
 import org.dynamos.structures.VMObjectDOS;
 import org.junit.Before;
 import org.junit.Test;
-import static org.mockito.Mockito.*;
 
 /**
  *
@@ -40,6 +44,7 @@ public class OpCodeInterpreterCallTest {
         function = mock(FunctionDOS.ContextualFunctionDOS.class);
     }
 
+    /* When a context call is made, it is essentially a method call but with the context object */
     @Test
     public void shouldCallAMethodInContext() {
         context.setSlot(functionName, function);
@@ -50,7 +55,7 @@ public class OpCodeInterpreterCallTest {
 
         interpreter.interpret(context, opCodes);
 
-        verify(function).execute(eq(Collections.emptyList()));
+        verify(function).execute(context, Collections.emptyList());
     }
 
     @Test
@@ -65,7 +70,7 @@ public class OpCodeInterpreterCallTest {
 
         interpreter.interpret(context, opCodes);
 
-        verify(function).execute(java.util.Arrays.asList( (Object) theObject));
+        verify(function).execute(context, java.util.Arrays.asList( (Object) theObject));
     }
 
     @Test
@@ -107,7 +112,7 @@ public class OpCodeInterpreterCallTest {
         context.setObject(theObject);
 
         OpCode[] opCodes = new OpCode[] {
-            new OpCode.SetObjectToThis(),
+            new OpCode.SetObject(Symbol.THIS),
             new OpCode.MethodCall(functionName)
         };
 

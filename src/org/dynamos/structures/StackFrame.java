@@ -16,7 +16,7 @@ import java.util.List;
 public class StackFrame {
 
     ObjectDOS object;
-    List<Object> arguments = new ArrayList<Object>();
+    List arguments = new ArrayList();
 
     public void setObject(ObjectDOS object) {
         this.object = object;

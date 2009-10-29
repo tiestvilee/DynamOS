@@ -34,4 +34,22 @@ public class Symbol {
 
     public static final Symbol ARGUMENTS = Symbol.get("arguments");
     public static final Symbol RESULT = Symbol.get("result");
+    public static final Symbol THIS = Symbol.get("this");
+	public static final Symbol RESULT_SET = Symbol.get("result:");
+
+	public boolean isPotentialGetter() {
+		return !symbol.contains(":");
+	}
+
+	public boolean isPotentialSetter() {
+		return symbol.indexOf(":") == symbol.lastIndexOf(":");
+	}
+
+	public Symbol toSetterSymbol() {
+		return Symbol.get(symbol + ":");
+	}
+
+	public Symbol fromSetterSymbol() {
+		return Symbol.get(symbol.substring(0, symbol.length() - 1));
+	}
 }

@@ -46,9 +46,24 @@ public class ObjectDOS {
     }
 
     public String toString() {
-        return super.toString() + "[" + slots +
-                "]";
+        return super.toString()
+        // + "[" + slots + "]"
+        ;
     }
 
     public static final ObjectDOS OBJECT = new ObjectDOS();
+
+	public FunctionDOS.ContextualFunctionDOS getFunction(Symbol symbol) {
+		Object function = getSlot(symbol);
+		if(function instanceof FunctionDOS.ContextualFunctionDOS) {
+			return (FunctionDOS.ContextualFunctionDOS) function;
+		}
+		if(symbol.isPotentialGetter()) {
+			return new StandardFunctions.Getter(symbol);
+		}
+		if(symbol.isPotentialSetter()) {
+			return new StandardFunctions.Setter(symbol);
+		}
+		throw new RuntimeException("message not understood " + symbol);
+	}
 }

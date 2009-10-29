@@ -5,17 +5,12 @@
 
 package org.dynamos;
 
-import java.util.Collections;
 import org.dynamos.structures.Context;
 import org.dynamos.structures.FunctionDOS;
-import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.StandardObjects;
 import org.dynamos.structures.Symbol;
-import org.dynamos.structures.VMObjectDOS;
-import org.junit.Before;
 import org.junit.Test;
-import static org.mockito.Mockito.*;
 
 /**
  *
@@ -52,7 +47,7 @@ public class FibonacciTest {
         OpCodeInterpreter interpreter = new OpCodeInterpreter();
 
         FunctionDOS anon1Function = new FunctionDOS(interpreter, new OpCode[] {
-            new OpCode.Return(index)
+            //new OpCode.Return(index)
         });
 
         FunctionDOS anon2Function = new FunctionDOS(interpreter, new OpCode[] {
@@ -62,7 +57,7 @@ public class FibonacciTest {
             new OpCode.MethodCall(minus$),
 
             new OpCode.Push(Symbol.RESULT), // temp1 = fibonacci( result )
-            new OpCode.SetResultTarget(temp1),
+            //new OpCode.SetResultTarget(temp1),
             new OpCode.ContextCall(fibonacci$),
             // TODO need to more result into temp1, should this be SetResultTarget or a separate call, maybe a 'set context value' call.
 
@@ -77,7 +72,7 @@ public class FibonacciTest {
             new OpCode.SetObject(temp1),
             new OpCode.MethodCall(plus$),
 
-            new OpCode.Return(Symbol.RESULT)
+            //new OpCode.Return(Symbol.RESULT)
         });
 
         FunctionDOS fibonacciFunction = new FunctionDOS(interpreter, new OpCode[] {
@@ -90,7 +85,7 @@ public class FibonacciTest {
             new OpCode.SetObject(Symbol.RESULT),
             new OpCode.MethodCall(ifTrue$IfFalse$),
 
-            new OpCode.Return(Symbol.RESULT)
+            //new OpCode.Return(Symbol.RESULT)
         });
 
         Context context = new Context();

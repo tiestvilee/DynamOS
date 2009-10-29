@@ -5,11 +5,13 @@
 
 package org.dynamos.structures;
 
-import org.junit.AfterClass;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
+
+import org.hamcrest.CoreMatchers;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -19,8 +21,8 @@ public class ObjectDOSTest {
 
     ObjectDOS theObject;
     Symbol symbol = Symbol.get("Symbol");
-    String value = "doesnt matter";
-    FunctionDOS function = new FunctionDOS(null, null);
+    ObjectDOS value = new ObjectDOS();
+    FunctionDOS.ContextualFunctionDOS function = new FunctionDOS.ContextualFunctionDOS(null, null);
 
     @Before
     public void setUp() {
@@ -61,6 +63,22 @@ public class ObjectDOSTest {
     @Test
     public void shouldReturnFunction() {
         theObject.setSlot(symbol, function);
-        assertSame(function, theObject.getSlot(symbol));
+        assertThat(theObject.getFunction(symbol), is(function));
+    }
+    
+    @Test
+    public void shouldReturnGetterFunctionByDefault() {
+    	theObject.setSlot(symbol, value);
+    	FunctionDOS.ContextualFunctionDOS function = theObject.getFunction(symbol);
+    	assertThat(function, CoreMatchers.instanceOf(StandardFunctions.Getter.class));
+    	assertThat(((StandardFunctions.Getter) function).forSlot(), is(symbol));
+    }
+    
+    @Test
+    public void shouldReturnSetterFunctionByDefault() {
+    	theObject.setSlot(symbol, value);
+    	FunctionDOS.ContextualFunctionDOS function = theObject.getFunction(Symbol.get("Symbol:"));
+    	assertThat(function, CoreMatchers.instanceOf(StandardFunctions.Setter.class));
+    	assertThat(((StandardFunctions.Setter) function).forSlot(), is(symbol));
     }
 }

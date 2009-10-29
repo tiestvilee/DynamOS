@@ -6,7 +6,9 @@
 package org.dynamos;
 
 
-import java.util.Collections;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import org.dynamos.structures.Context;
 import org.dynamos.structures.FunctionDOS;
 import org.dynamos.structures.ObjectDOS;
@@ -14,9 +16,6 @@ import org.dynamos.structures.OpCode;
 import org.dynamos.structures.Symbol;
 import org.junit.Before;
 import org.junit.Test;
-import static org.mockito.Mockito.*;
-import static org.junit.Assert.assertThat;
-import static org.hamcrest.CoreMatchers.*;
 
 /**
  *
@@ -48,12 +47,13 @@ public class OpCodeInterpreterReturnTest {
         context.setSlot(resultSymbol, result);
 
         OpCode[] opCodes = new OpCode[] {
-            new OpCode.Return(resultSymbol)
+        	new OpCode.Push(resultSymbol),
+        	new OpCode.ContextCall(Symbol.RESULT_SET)
         };
 
         interpreter.interpret(context, opCodes);
 
-        assertThat(context.getResult(), is(result));
+        assertThat( (ObjectDOS) context.getSlot(Symbol.RESULT), is(result));
     }
 
     @Test
@@ -76,29 +76,6 @@ public class OpCodeInterpreterReturnTest {
         interpreter.interpret(context, opCodes);
 
         assertThat((ObjectDOS) context.getSlot(Symbol.RESULT), is(result));
-    }
-
-    @Test
-    public void shouldReturnAValueIntoASlot() {
-        final ObjectDOS result = new ObjectDOS();
-        FunctionDOS function = new FunctionDOS(null, null) {
-
-            @Override
-            public void execute(Context context) {
-                context.setResult(result);
-            }
-
-        };
-        context.setSlot(functionName, new FunctionDOS.ContextualFunctionDOS(function, context));
-
-        OpCode[] opCodes = new OpCode[] {
-            new OpCode.SetResultTarget(returnTarget),
-            new OpCode.ContextCall(functionName)
-        };
-
-        interpreter.interpret(context, opCodes);
-
-        assertThat((ObjectDOS) context.getSlot(returnTarget), is(result));
     }
 
 

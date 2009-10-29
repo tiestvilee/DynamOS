@@ -6,6 +6,7 @@
 package org.dynamos.structures;
 
 import java.util.List;
+
 import org.dynamos.structures.FunctionDOS.ContextualFunctionDOS;
 
 /**
@@ -19,7 +20,16 @@ public class OpCode {
         return false;
     }
    
-    public static final OpCode NOOP = new OpCode();
+    protected void findFunctionInObjectAndExecute(ObjectDOS object, Symbol symbol, StackFrame stackFrame) {
+		FunctionDOS.ContextualFunctionDOS function = (ContextualFunctionDOS) object.getFunction(symbol);
+	    System.out.println(function);
+	    
+	    ObjectDOS result = function.execute(object, stackFrame.getArguments());
+	    
+	    object.setSlot(Symbol.RESULT, result);
+	}
+
+	public static final OpCode NOOP = new OpCode();
 
     public static class MethodCall extends OpCode {
         private Symbol symbol;
@@ -30,9 +40,7 @@ public class OpCode {
         @Override
         public boolean execute(Context context, StackFrame stackFrame) {
             ObjectDOS object = stackFrame.getObject();
-            System.out.println("trying to find function " + symbol + " on " + object);
-            FunctionDOS.ContextualFunctionDOS function = (ContextualFunctionDOS) object.getSlot(symbol);
-            function.execute(object, stackFrame.getArguments());
+            findFunctionInObjectAndExecute(object, symbol, stackFrame);
             return true;
         }
     }
@@ -45,9 +53,7 @@ public class OpCode {
 
         @Override
         public boolean execute(Context context, StackFrame stackFrame) {
-            FunctionDOS.ContextualFunctionDOS function = (ContextualFunctionDOS) context.getSlot(symbol);
-            ObjectDOS result = function.execute(stackFrame.getArguments());
-            context.setSlot(context.getResultTarget(), result);
+            findFunctionInObjectAndExecute(context, symbol, stackFrame);
             return true;
         }
     }
@@ -66,18 +72,6 @@ public class OpCode {
         }
     }
 
-    public static class SetObjectToThis extends OpCode {
-        public SetObjectToThis() {
-        }
-
-        @Override
-        public boolean execute(Context context, StackFrame stackFrame) {
-            ObjectDOS object = (ObjectDOS) context.getObject();
-            stackFrame.setObject(object);
-            return false;
-        }
-    }
-
     public static class Push extends OpCode {
         private Symbol symbol;
         public Push(Symbol symbol) {
@@ -88,33 +82,6 @@ public class OpCode {
         public boolean execute(Context context, StackFrame stackFrame) {
             ObjectDOS argument = (ObjectDOS) context.getSlot(symbol);
             stackFrame.pushArgument(argument);
-            return false;
-        }
-    }
-
-    public static class Return extends OpCode {
-        private Symbol symbol;
-        public Return(Symbol symbol) {
-            this.symbol = symbol;
-        }
-
-        @Override
-        public boolean execute(Context context, StackFrame stackFrame) {
-            context.setResult( (ObjectDOS) context.getSlot(symbol));
-            return false;
-        }
-    }
-
-    public static class SetResultTarget extends OpCode {
-        private Symbol resultTarget;
-
-        public SetResultTarget(Symbol returnTarget) {
-            this.resultTarget = returnTarget;
-        }
-
-        @Override
-        public boolean execute(Context context, StackFrame stackFrame) {
-            context.setResultTarget(resultTarget);
             return false;
         }
     }

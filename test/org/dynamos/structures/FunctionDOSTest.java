@@ -5,14 +5,18 @@
 
 package org.dynamos.structures;
 
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import org.dynamos.OpCodeInterpreter;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Test;
-import static org.mockito.Mockito.*;
 
 /**
  *
@@ -34,29 +38,10 @@ public class FunctionDOSTest {
     }
 
     @Test
-    public void shouldCallFunctionWithArguments() {
-        FunctionDOS.ContextualFunctionDOS contextualFunction = new FunctionDOS.ContextualFunctionDOS(function, functionContext);
-
-        contextualFunction.execute(arguments);
-
-        verify(function).execute(argThat(matchesContextWithValues(arguments, null, functionContext)));
-    }
-
-    @Test
     public void shouldCallFunctionWithArgumentsAndObject() {
         FunctionDOS.ContextualFunctionDOS contextualFunction = new FunctionDOS.ContextualFunctionDOS(function, functionContext);
 
         contextualFunction.execute(object, arguments);
-
-        verify(function).execute(argThat(matchesContextWithValues(arguments, object, functionContext)));
-    }
-
-    @Test
-    public void shouldCallMethodWithArgumentsOnObject() {
-        FunctionDOS.ContextualFunctionDOS contextualFunction = new FunctionDOS.ContextualFunctionDOS(function, functionContext);
-        FunctionDOS.MethodDOS method = new FunctionDOS.MethodDOS(contextualFunction, object);
-
-        method.execute(arguments);
 
         verify(function).execute(argThat(matchesContextWithValues(arguments, object, functionContext)));
     }

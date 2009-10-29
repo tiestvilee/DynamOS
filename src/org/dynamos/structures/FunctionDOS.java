@@ -6,6 +6,7 @@
 package org.dynamos.structures;
 
 import java.util.List;
+
 import org.dynamos.OpCodeInterpreter;
 
 /**
@@ -27,16 +28,16 @@ public class FunctionDOS extends ObjectDOS {
     }
 
     public static class ContextualFunctionDOS extends ObjectDOS {
-        private FunctionDOS function;
-        private Context context;
+        protected FunctionDOS function;
+        protected Context context;
+        
+        public ContextualFunctionDOS() {
+        	
+        }
 
         public ContextualFunctionDOS(FunctionDOS function, Context context) {
             this.function = function;
             this.context = context;
-        }
-
-        public ObjectDOS execute(List<Object> arguments) {
-            return execute(null, arguments);
         }
 
         public ObjectDOS execute(ObjectDOS theObject, List<Object> arguments) {
@@ -46,22 +47,6 @@ public class FunctionDOS extends ObjectDOS {
             newContext.setObject(theObject);
             function.execute(newContext);
             return newContext.getResult();
-        }
-    }
-
-    /* is this needed? It's just a wrapper for 'binding' a function to an object
-     Implementable in native code, so should probably get rid of it */
-    public static class MethodDOS extends ObjectDOS {
-        private ContextualFunctionDOS contextualFunction;
-        private ObjectDOS object;
-
-        public MethodDOS(ContextualFunctionDOS contextualFunction, ObjectDOS object) {
-            this.contextualFunction = contextualFunction;
-            this.object = object;
-        }
-        
-        public ObjectDOS execute(List<Object> arguments) {
-            return contextualFunction.execute(object, arguments);
         }
     }
 

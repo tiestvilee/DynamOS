@@ -26,6 +26,7 @@ public class Context extends ObjectDOS {
     
     public void setObject(ObjectDOS object) {
         this.object = object;
+        setSlot(Symbol.THIS, object);
     }
 
     public ObjectDOS getObject() {
