@@ -46,7 +46,7 @@ public class FunctionDOS extends ObjectDOS {
             newContext.setArguments(arguments);
             newContext.setObject(theObject);
             function.execute(newContext);
-            return newContext.getResult();
+            return newContext.getSlot(Symbol.RESULT);
         }
     }
 

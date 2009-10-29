@@ -16,8 +16,6 @@ public class Context extends ObjectDOS {
 
     List<ObjectDOS> arguments = new ArrayList<ObjectDOS>();
     ObjectDOS object;
-    ObjectDOS result;
-    private Symbol resultTarget = Symbol.RESULT;
     
     public Context() {
         super();
@@ -42,24 +40,8 @@ public class Context extends ObjectDOS {
         this.arguments = arguments;
     }
 
-    public List getArguments() {
+    public List<ObjectDOS> getArguments() {
         return arguments;
-    }
-
-    public void setResult(ObjectDOS result) {
-        this.result = result;
-    }
-
-    public ObjectDOS getResult() {
-        return result;
-    }
-
-    public void setResultTarget(Symbol resultTarget) {
-        this.resultTarget = resultTarget;
-    }
-
-    public Symbol getResultTarget() {
-        return resultTarget;
     }
 
 }

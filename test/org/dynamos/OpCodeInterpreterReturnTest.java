@@ -63,7 +63,7 @@ public class OpCodeInterpreterReturnTest {
 
             @Override
             public void execute(Context context) {
-                context.setResult(result);
+                context.setSlot(Symbol.RESULT, result);
             }
 
         };

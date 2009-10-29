@@ -48,7 +48,7 @@ public class StandardObjects {
                                 // TODO what if executing a normal object simply returned that object... cool
                                 result = falseBranch;
                             }
-                            context.setResult(result);
+                            context.setSlot(Symbol.RESULT, result);
                         }
 
                     },
@@ -86,7 +86,7 @@ public class StandardObjects {
                             int left = ((ValueObject) context.getObject()).getValue();
                             int right = ((ValueObject) context.getArguments().get(0)).getValue();
                             ObjectDOS result = makeValueANumber(interpreter, new ValueObject(left + right));
-                            context.setResult(result);
+                            context.setSlot(Symbol.RESULT, result);
                         }
 
                     },
@@ -100,7 +100,7 @@ public class StandardObjects {
                             int left = ((ValueObject) context.getObject()).getValue();
                             int right = ((ValueObject) context.getArguments().get(0)).getValue();
                             ObjectDOS result = makeValueANumber(interpreter, new ValueObject(left - right));
-                            context.setResult(result);
+                            context.setSlot(Symbol.RESULT, result);
                         }
 
                     },
@@ -114,7 +114,7 @@ public class StandardObjects {
                             int left = ((ValueObject) context.getObject()).getValue();
                             int right = ((ValueObject) context.getArguments().get(0)).getValue();
                             ObjectDOS result = left < right ? TRUE : FALSE;
-                            context.setResult(result);
+                            context.setSlot(Symbol.RESULT, result);
                         }
 
                     },
