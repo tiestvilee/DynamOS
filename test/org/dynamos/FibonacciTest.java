@@ -46,11 +46,11 @@ public class FibonacciTest {
     public void shouldCallAMethodInContext() {
         OpCodeInterpreter interpreter = new OpCodeInterpreter();
 
-        FunctionDOS anon1Function = new FunctionDOS(interpreter, new OpCode[] {
+        FunctionDOS anon1Function = new FunctionDOS(interpreter, null, new OpCode[] {
             //new OpCode.Return(index)
         });
 
-        FunctionDOS anon2Function = new FunctionDOS(interpreter, new OpCode[] {
+        FunctionDOS anon2Function = new FunctionDOS(interpreter, null, new OpCode[] {
 
             new OpCode.Push(one),  // result = index - 1
             new OpCode.SetObject(index),
@@ -75,7 +75,7 @@ public class FibonacciTest {
             //new OpCode.Return(Symbol.RESULT)
         });
 
-        FunctionDOS fibonacciFunction = new FunctionDOS(interpreter, new OpCode[] {
+        FunctionDOS fibonacciFunction = new FunctionDOS(interpreter, null, new OpCode[] {
             new OpCode.Push(two), // result = index isLessThan: two
             new OpCode.SetObject(index),
             new OpCode.ContextCall(isLessThan$),

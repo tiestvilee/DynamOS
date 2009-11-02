@@ -59,7 +59,7 @@ public class OpCodeInterpreterReturnTest {
     @Test
     public void shouldReturnAValueIntoDefaultSlot() {
         final ObjectDOS result = new ObjectDOS();
-        FunctionDOS function = new FunctionDOS(null, null) {
+        FunctionDOS function = new FunctionDOS(null, null, null) {
 
             @Override
             public void execute(Context context) {

@@ -16,7 +16,6 @@ import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.Symbol;
 import org.dynamos.structures.VMObjectDOS;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -119,16 +118,6 @@ public class OpCodeInterpreterCallTest {
         interpreter.interpret(context, opCodes);
         
         verify(function).execute(theObject, Collections.<ObjectDOS>emptyList());
-    }
-    
-    @Test
-    public void shouldHaveArgumentListAvailable() {
-    	Assert.fail();
-    }
-
-    @Test
-    public void shouldHaveNamedArgumentsPopulated() {
-    	Assert.fail();
     }
 
 //    @Test

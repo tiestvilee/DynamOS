@@ -15,19 +15,23 @@ import org.dynamos.OpCodeInterpreter;
  */
 public class StandardObjects {
 
-    public static final ObjectDOS NULL = new ObjectDOS();
+	public static class NullDOS extends ObjectDOS {}
+    public static final ObjectDOS NULL = new NullDOS();
 
 
     public static final ObjectDOS TRUE = new ObjectDOS();
 
     public static final ObjectDOS FALSE = new ObjectDOS();
 
+    public static class UndefinedDOS extends ObjectDOS {}
+	public static final UndefinedDOS UNDEFINED = new UndefinedDOS();
+
     public static void initialiseStandardObjects(OpCodeInterpreter interpreter) {
         Context context = new Context();
 
         /* TODO this should definitely be opcodes... */
         TRUE.setSlot(Symbol.get("ifTrue:ifFalse:"), new FunctionDOS.ContextualFunctionDOS(
-                    new FunctionDOS(interpreter, new OpCode[] {
+                    new FunctionDOS(interpreter, null, new OpCode[] {
                         //OpCode.Return() // TODO how to get at args - by index, by name
                                 // TODO how to contextualise functions - how are non-contextual functions scoped
                                 // TODO how to set context values
@@ -36,7 +40,7 @@ public class StandardObjects {
                     context));
 
         FALSE.setSlot(Symbol.get("ifTrue:ifFalse:"), new FunctionDOS.ContextualFunctionDOS(
-                    new FunctionDOS(interpreter, null) {
+                    new FunctionDOS(interpreter, null, null) {
 
                         @Override
                         public void execute(Context context) {
@@ -79,7 +83,7 @@ public class StandardObjects {
         // TODO change these functions to be oopcodes that call VM...
         object.setSlot(Symbol.get("plus:"),
                 new FunctionDOS.ContextualFunctionDOS(
-                    new FunctionDOS(interpreter, null) {
+                    new FunctionDOS(interpreter, null, null) {
 
                         @Override
                         public void execute(Context context) {
@@ -93,7 +97,7 @@ public class StandardObjects {
                     context));
         object.setSlot(Symbol.get("minus:"),
                 new FunctionDOS.ContextualFunctionDOS(
-                    new FunctionDOS(interpreter, null) {
+                    new FunctionDOS(interpreter, null, null) {
 
                         @Override
                         public void execute(Context context) {
@@ -107,7 +111,7 @@ public class StandardObjects {
                     context));
         object.setSlot(Symbol.get("isLessThan:"),
                 new FunctionDOS.ContextualFunctionDOS(
-                    new FunctionDOS(interpreter, null) {
+                    new FunctionDOS(interpreter, null, null) {
 
                         @Override
                         public void execute(Context context) {

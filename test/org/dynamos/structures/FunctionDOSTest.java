@@ -52,7 +52,7 @@ public class FunctionDOSTest {
         OpCodeInterpreter interpreter = mock(OpCodeInterpreter.class);
         OpCode[] opCodes = new OpCode[] {};
         
-        FunctionDOS actualFunction = new FunctionDOS(interpreter, opCodes);
+        FunctionDOS actualFunction = new FunctionDOS(interpreter, new Symbol[] {}, opCodes);
 
         actualFunction.execute(context);
 

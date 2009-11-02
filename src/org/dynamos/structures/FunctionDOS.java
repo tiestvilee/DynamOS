@@ -16,14 +16,24 @@ import org.dynamos.OpCodeInterpreter;
 public class FunctionDOS extends ObjectDOS {
     private OpCodeInterpreter interpreter;
     private OpCode[] opCodes;
+	private final Symbol[] symbols;
 
-    public FunctionDOS(OpCodeInterpreter interpreter, OpCode[] opCodes) {
+    public FunctionDOS(OpCodeInterpreter interpreter, Symbol[] symbols, OpCode[] opCodes) {
         super();
         this.interpreter = interpreter;
+		this.symbols = symbols;
         this.opCodes = opCodes;
     }
 
     public void execute(Context context) {
+    	int index = 0;
+    	int finalIndex = Math.min(context.arguments.size(), symbols.length);
+    	for(;index < finalIndex; index++) {
+    		context.setSlot(symbols[index], context.arguments.get(index));
+    	}
+    	for(;index < symbols.length; index++) {
+    		context.setSlot(symbols[index], StandardObjects.UNDEFINED);
+    	}
         interpreter.interpret(context, opCodes);
     }
 
