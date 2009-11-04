@@ -5,17 +5,21 @@
 
 package org.dynamos;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import java.util.Collections;
-
 import org.dynamos.structures.Context;
 import org.dynamos.structures.FunctionDOS;
+import org.dynamos.structures.ListDOS;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.Symbol;
 import org.dynamos.structures.VMObjectDOS;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,6 +38,8 @@ public class OpCodeInterpreterCallTest {
 
     Symbol localArgumentName = Symbol.get("argument");
     Symbol localObjectName = Symbol.get("object");
+    
+    ListDOS expectedArgumentList;
 
     @Before
     public void setUp() {
@@ -41,6 +47,7 @@ public class OpCodeInterpreterCallTest {
         context = new Context();
         theObject = new ObjectDOS();
         function = mock(FunctionDOS.ContextualFunctionDOS.class);
+        expectedArgumentList = new ListDOS();
     }
 
     /* When a context call is made, it is essentially a method call but with the context object */
@@ -54,7 +61,7 @@ public class OpCodeInterpreterCallTest {
 
         interpreter.interpret(context, opCodes);
 
-        verify(function).execute(context, Collections.<ObjectDOS>emptyList());
+        verify(function).execute(argThat(is(context)), argThat(matchArgumentListTo(expectedArgumentList)));
     }
 
     @Test
@@ -69,7 +76,8 @@ public class OpCodeInterpreterCallTest {
 
         interpreter.interpret(context, opCodes);
 
-        verify(function).execute(context, java.util.Arrays.asList(theObject));
+        expectedArgumentList.add(theObject);
+        verify(function).execute(argThat(is(context)), argThat(matchArgumentListTo(expectedArgumentList)));
     }
 
     @Test
@@ -84,7 +92,7 @@ public class OpCodeInterpreterCallTest {
 
         interpreter.interpret(context, opCodes);
 
-        verify(function).execute(theObject, Collections.<ObjectDOS>emptyList());
+        verify(function).execute(argThat(is(theObject)), argThat(matchArgumentListTo(expectedArgumentList)));
     }
 
     @Test
@@ -102,7 +110,8 @@ public class OpCodeInterpreterCallTest {
 
         interpreter.interpret(context, opCodes);
 
-        verify(function).execute(theObject, java.util.Arrays.asList(expectedArgument));
+        expectedArgumentList.add(expectedArgument);
+        verify(function).execute(argThat(is(theObject)), argThat(matchArgumentListTo(expectedArgumentList)));
     }
 
     @Test
@@ -117,8 +126,24 @@ public class OpCodeInterpreterCallTest {
 
         interpreter.interpret(context, opCodes);
         
-        verify(function).execute(theObject, Collections.<ObjectDOS>emptyList());
+        verify(function).execute(argThat(is(theObject)), argThat(matchArgumentListTo(expectedArgumentList)));
     }
+
+    private Matcher<ListDOS> matchArgumentListTo(final ListDOS expected) {
+		return new BaseMatcher<ListDOS>() {
+
+			public boolean matches(Object object) {
+				ListDOS actual = (ListDOS) object;
+				return actual.getRawList().equals(expected.getRawList());
+			}
+
+			public void describeTo(Description description) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		};
+	}
 
 //    @Test
 //    public void shouldThrowExceptionIfMethodDoesntExist() {

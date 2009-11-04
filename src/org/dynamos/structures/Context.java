@@ -5,8 +5,6 @@
 
 package org.dynamos.structures;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -14,12 +12,12 @@ import java.util.List;
  */
 public class Context extends ObjectDOS {
 
-    List<ObjectDOS> arguments = new ArrayList<ObjectDOS>();
+    ListDOS arguments = new ListDOS();
     ObjectDOS object;
     
     public Context() {
         super();
-        //setSlot(Symbol.ARGUMENTS, arguments);
+        setSlot(Symbol.ARGUMENTS, arguments);
     }
     
     public void setObject(ObjectDOS object) {
@@ -35,12 +33,12 @@ public class Context extends ObjectDOS {
         arguments.add(object);
     }
 
-    public void setArguments(List<ObjectDOS> arguments) {
-        //setSlot(Symbol.ARGUMENTS, arguments);
+    public void setArguments(ListDOS arguments) {
+        setSlot(Symbol.ARGUMENTS, arguments);
         this.arguments = arguments;
     }
 
-    public List<ObjectDOS> getArguments() {
+    public ListDOS getArguments() {
         return arguments;
     }
 

@@ -18,13 +18,11 @@ public class OpCode {
         return false;
     }
    
-    protected void findFunctionInObjectAndExecute(ObjectDOS object, Symbol symbol, StackFrame stackFrame) {
+    protected ObjectDOS findFunctionInObjectAndExecute(ObjectDOS object, Symbol symbol, StackFrame stackFrame) {
 		FunctionDOS.ContextualFunctionDOS function = (ContextualFunctionDOS) object.getFunction(symbol);
 	    System.out.println(function);
 	    
-	    ObjectDOS result = function.execute(object, stackFrame.getArguments());
-	    
-	    object.setSlot(Symbol.RESULT, result);
+	    return function.execute(object, stackFrame.getArguments());
 	}
 
 	public static final OpCode NOOP = new OpCode();
@@ -38,7 +36,9 @@ public class OpCode {
         @Override
         public boolean execute(Context context, StackFrame stackFrame) {
             ObjectDOS object = stackFrame.getObject();
-            findFunctionInObjectAndExecute(object, symbol, stackFrame);
+            ObjectDOS result = findFunctionInObjectAndExecute(object, symbol, stackFrame);
+
+            context.setSlot(Symbol.RESULT, result);
             return true;
         }
     }
@@ -51,7 +51,9 @@ public class OpCode {
 
         @Override
         public boolean execute(Context context, StackFrame stackFrame) {
-            findFunctionInObjectAndExecute(context, symbol, stackFrame);
+        	ObjectDOS result = findFunctionInObjectAndExecute(context, symbol, stackFrame);
+
+        	context.setSlot(Symbol.RESULT, result);
             return true;
         }
     }

@@ -48,7 +48,7 @@ public class OpCodeInterpreterReturnTest {
 
         OpCode[] opCodes = new OpCode[] {
         	new OpCode.Push(resultSymbol),
-        	new OpCode.ContextCall(Symbol.RESULT_SET)
+        	new OpCode.ContextCall(Symbol.SET_RESULT)
         };
 
         interpreter.interpret(context, opCodes);

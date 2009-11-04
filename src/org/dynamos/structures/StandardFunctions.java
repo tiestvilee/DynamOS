@@ -1,6 +1,5 @@
 package org.dynamos.structures;
 
-import java.util.List;
 
 public class StandardFunctions {
 
@@ -12,7 +11,7 @@ public class StandardFunctions {
 		}
 		
 		@Override
-		public ObjectDOS execute(ObjectDOS theObject, List<ObjectDOS> arguments) {
+		public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
 			return (ObjectDOS) theObject.getSlot(symbol);
 		}
 
@@ -29,13 +28,18 @@ public class StandardFunctions {
 		}
 		
 		@Override
-		public ObjectDOS execute(ObjectDOS theObject, List<ObjectDOS> arguments) {
-			theObject.setSlot(symbol, arguments.get(0));
-			return (ObjectDOS) arguments.get(0);
+		public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+			theObject.setSlot(symbol, arguments.at(0));
+			System.out.println("get first from " + arguments.getRawList());
+			return (ObjectDOS) arguments.at(0);
 		}
 
 		public Symbol forSlot() {
 			return symbol;
+		}
+		
+		public String toString() {
+			return "setter:" + symbol;
 		}
 	}
 }

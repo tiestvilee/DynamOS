@@ -9,9 +9,6 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.dynamos.OpCodeInterpreter;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -26,14 +23,14 @@ public class FunctionDOSTest {
 
     FunctionDOS function;
     Context functionContext;
-    List<ObjectDOS> arguments;
+    ListDOS arguments;
     ObjectDOS object;
 
     @Before
     public void setup() {
         function = mock(FunctionDOS.class);
         functionContext = new Context();
-        arguments = new ArrayList<ObjectDOS>();
+        arguments = new ListDOS();
         object = new ObjectDOS();
     }
 
@@ -59,17 +56,17 @@ public class FunctionDOSTest {
         verify(interpreter).interpret(context, opCodes);
     }
 
-    private MatchesContextWithValues matchesContextWithValues(final List<ObjectDOS> arguments, ObjectDOS object, final Context functionContext) {
+    private MatchesContextWithValues matchesContextWithValues(final ListDOS arguments, ObjectDOS object, final Context functionContext) {
         return new MatchesContextWithValues(arguments, object, functionContext);
     }
 
     private class MatchesContextWithValues extends BaseMatcher<Context> {
 
-        private final List<ObjectDOS> arguments;
+        private final ListDOS arguments;
         private final ObjectDOS object;
         private final Context functionContext;
 
-        public MatchesContextWithValues(List<ObjectDOS> arguments, ObjectDOS object, Context functionContext) {
+        public MatchesContextWithValues(ListDOS arguments, ObjectDOS object, Context functionContext) {
             this.arguments = arguments;
             this.object = object;
             this.functionContext = functionContext;

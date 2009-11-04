@@ -5,8 +5,6 @@
 
 package org.dynamos.structures;
 
-import java.util.List;
-
 import org.dynamos.OpCodeInterpreter;
 
 /**
@@ -29,7 +27,7 @@ public class FunctionDOS extends ObjectDOS {
     	int index = 0;
     	int finalIndex = Math.min(context.arguments.size(), symbols.length);
     	for(;index < finalIndex; index++) {
-    		context.setSlot(symbols[index], context.arguments.get(index));
+    		context.setSlot(symbols[index], context.arguments.at(index));
     	}
     	for(;index < symbols.length; index++) {
     		context.setSlot(symbols[index], StandardObjects.UNDEFINED);
@@ -50,7 +48,7 @@ public class FunctionDOS extends ObjectDOS {
             this.context = context;
         }
 
-        public ObjectDOS execute(ObjectDOS theObject, List<ObjectDOS> arguments) {
+        public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
             Context newContext = new Context();
             newContext.setParent(context);
             newContext.setArguments(arguments);

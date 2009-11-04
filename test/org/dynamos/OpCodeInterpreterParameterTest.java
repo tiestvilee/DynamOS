@@ -15,7 +15,6 @@ import org.dynamos.structures.OpCode;
 import org.dynamos.structures.StandardObjects;
 import org.dynamos.structures.Symbol;
 import org.dynamos.structures.FunctionDOS.ContextualFunctionDOS;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,6 +36,8 @@ public class OpCodeInterpreterParameterTest {
 	private ObjectDOS argument3 = new ObjectDOS();
 	private Symbol argument1Symbol = Symbol.get("argument1");
 	private Symbol argument2Symbol = Symbol.get("argument2");
+	private Symbol zeroSymbol = Symbol.get("zero");
+	private Symbol oneSymbol = Symbol.get("one");
 	private Symbol local1Symbol = Symbol.get("local1");
 	private Symbol local2Symbol = Symbol.get("local2");
 	private Symbol local3Symbol = Symbol.get("local3");
@@ -68,7 +69,7 @@ public class OpCodeInterpreterParameterTest {
 		OpCode[] receiverOpCodes = new OpCode[] {
         	new OpCode.ContextCall(argumentSymbol),
          	new OpCode.Push(Symbol.RESULT),
-        	new OpCode.ContextCall(Symbol.RESULT_SET)
+        	new OpCode.ContextCall(Symbol.SET_RESULT)
         };
 		Symbol[] argumentSymbols = new Symbol[] {argumentSymbol, argument2Symbol};
 		
@@ -91,7 +92,7 @@ public class OpCodeInterpreterParameterTest {
 		OpCode[] receiverOpCodes = new OpCode[] {
         	new OpCode.ContextCall(argument2Symbol),
          	new OpCode.Push(Symbol.RESULT),
-        	new OpCode.ContextCall(Symbol.RESULT_SET)
+        	new OpCode.ContextCall(Symbol.SET_RESULT)
         };
 		Symbol[] argumentSymbols = new Symbol[] {argument1Symbol, argument2Symbol};
 		
@@ -113,7 +114,7 @@ public class OpCodeInterpreterParameterTest {
 		OpCode[] receiverOpCodes = new OpCode[] {
         	new OpCode.ContextCall(argument2Symbol),
          	new OpCode.Push(Symbol.RESULT),
-        	new OpCode.ContextCall(Symbol.RESULT_SET)
+        	new OpCode.ContextCall(Symbol.SET_RESULT)
         };
 		Symbol[] argumentSymbols = new Symbol[] {argument1Symbol, argument2Symbol};
 		
@@ -135,13 +136,37 @@ public class OpCodeInterpreterParameterTest {
 	private void setUpReceiverFunctionWith(Symbol[] argumentSymbols, OpCode[] receiverOpCodes) {
 		FunctionDOS receiverFunction = new FunctionDOS(interpreter, argumentSymbols, receiverOpCodes);
 		Context emptyContext = new Context();
+		emptyContext.setSlot(zeroSymbol, StandardObjects.makeValueANumber(interpreter, new StandardObjects.ValueObject(0)));
+		emptyContext.setSlot(oneSymbol, StandardObjects.makeValueANumber(interpreter, new StandardObjects.ValueObject(1)));
 		ContextualFunctionDOS contextualReceiverFunction = new FunctionDOS.ContextualFunctionDOS(receiverFunction, emptyContext);
 		context.setSlot(functionName2, contextualReceiverFunction);
 	}
 
     @Test
     public void shouldHaveArgumentsListAvailable() {
-    	Assert.fail();
-    }
+		OpCode[] receiverOpCodes = new OpCode[] {
+        	new OpCode.ContextCall(Symbol.ARGUMENTS),
+         	new OpCode.Push(zeroSymbol),
+         	new OpCode.SetObject(Symbol.RESULT),
+        	new OpCode.MethodCall(Symbol.get("at:")),
+         	new OpCode.Push(Symbol.RESULT),
+        	new OpCode.ContextCall(Symbol.SET_RESULT)
+        };
+		Symbol[] argumentSymbols = new Symbol[] {argument1Symbol, argument2Symbol};
+		
+		setUpReceiverFunctionWith(argumentSymbols, receiverOpCodes);
+
+
+		OpCode[] callerOpCodes = new OpCode[] {
+        	new OpCode.Push(local1Symbol),
+        	new OpCode.Push(local2Symbol),
+        	new OpCode.Push(local3Symbol),
+        	new OpCode.ContextCall(functionName2)
+        };
+
+        interpreter.interpret(context, callerOpCodes);
+
+		assertThat( (ObjectDOS) context.getSlot(Symbol.RESULT), is(argument1));
+	}
 
 }

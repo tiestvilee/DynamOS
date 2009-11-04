@@ -5,8 +5,6 @@
 
 package org.dynamos.structures;
 
-import java.util.ArrayList;
-
 import org.dynamos.OpCodeInterpreter;
 
 /**
@@ -44,10 +42,10 @@ public class StandardObjects {
 
                         @Override
                         public void execute(Context context) {
-                            ObjectDOS falseBranch = (ObjectDOS) context.getArguments().get(1);
+                            ObjectDOS falseBranch = (ObjectDOS) context.getArguments().at(1);
                             ObjectDOS result;
                             if(falseBranch instanceof FunctionDOS.ContextualFunctionDOS) {
-                                result = ((FunctionDOS.ContextualFunctionDOS) falseBranch).execute(context, new ArrayList<ObjectDOS>());
+                                result = ((FunctionDOS.ContextualFunctionDOS) falseBranch).execute(context, new ListDOS());
                             } else {
                                 // TODO what if executing a normal object simply returned that object... cool
                                 result = falseBranch;
@@ -88,7 +86,7 @@ public class StandardObjects {
                         @Override
                         public void execute(Context context) {
                             int left = ((ValueObject) context.getObject()).getValue();
-                            int right = ((ValueObject) context.getArguments().get(0)).getValue();
+                            int right = ((ValueObject) context.getArguments().at(0)).getValue();
                             ObjectDOS result = makeValueANumber(interpreter, new ValueObject(left + right));
                             context.setSlot(Symbol.RESULT, result);
                         }
@@ -102,7 +100,7 @@ public class StandardObjects {
                         @Override
                         public void execute(Context context) {
                             int left = ((ValueObject) context.getObject()).getValue();
-                            int right = ((ValueObject) context.getArguments().get(0)).getValue();
+                            int right = ((ValueObject) context.getArguments().at(0)).getValue();
                             ObjectDOS result = makeValueANumber(interpreter, new ValueObject(left - right));
                             context.setSlot(Symbol.RESULT, result);
                         }
@@ -116,7 +114,7 @@ public class StandardObjects {
                         @Override
                         public void execute(Context context) {
                             int left = ((ValueObject) context.getObject()).getValue();
-                            int right = ((ValueObject) context.getArguments().get(0)).getValue();
+                            int right = ((ValueObject) context.getArguments().at(0)).getValue();
                             ObjectDOS result = left < right ? TRUE : FALSE;
                             context.setSlot(Symbol.RESULT, result);
                         }

@@ -5,7 +5,6 @@
 
 package org.dynamos.structures;
 
-import java.util.List;
 
 /**
  *
@@ -16,8 +15,8 @@ public class VMObjectDOS {
     private static final FunctionDOS.ContextualFunctionDOS PRINT_FUNCTION = new FunctionDOS.ContextualFunctionDOS(null, null) {
 
         @Override
-        public ObjectDOS execute(ObjectDOS object, List arguments) {
-            System.out.println(arguments.get(0));
+        public ObjectDOS execute(ObjectDOS object, ListDOS arguments) {
+            System.out.println(arguments.at(0));
             return StandardObjects.NULL;
         }
 

@@ -35,7 +35,7 @@ public class Symbol {
     public static final Symbol ARGUMENTS = Symbol.get("arguments");
     public static final Symbol RESULT = Symbol.get("result");
     public static final Symbol THIS = Symbol.get("this");
-	public static final Symbol RESULT_SET = Symbol.get("result:");
+	public static final Symbol SET_RESULT = Symbol.get("result:");
 
 	public boolean isPotentialGetter() {
 		return !symbol.contains(":");
