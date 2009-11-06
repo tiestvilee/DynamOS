@@ -3,7 +3,7 @@ package org.dynamos.structures;
 
 public class StandardFunctions {
 
-	public static class Getter extends FunctionDOS.ContextualFunctionDOS {
+	public static class Getter extends ExecutableDOS {
 		private Symbol symbol;
 		
 		public Getter(Symbol symbol) {
@@ -20,7 +20,7 @@ public class StandardFunctions {
 		}
 	}
 
-	public static class Setter extends FunctionDOS.ContextualFunctionDOS {
+	public static class Setter extends ExecutableDOS {
 		private Symbol symbol;
 		
 		public Setter(Symbol symbol) {

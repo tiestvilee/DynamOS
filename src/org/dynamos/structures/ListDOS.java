@@ -29,7 +29,7 @@ public class ListDOS extends ObjectDOS {
 		return list;
 	}
 	
-	class AtFunction extends FunctionDOS.ContextualFunctionDOS {
+	class AtFunction extends ExecutableDOS {
 		@Override
 		public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
 			StandardObjects.ValueObject index = (ValueObject) arguments.getRawList().get(0);

@@ -22,7 +22,7 @@ public class ObjectDOSTest {
     ObjectDOS theObject;
     Symbol symbol = Symbol.get("Symbol");
     ObjectDOS value = new ObjectDOS();
-    FunctionDOS.ContextualFunctionDOS function = new FunctionDOS.ContextualFunctionDOS(null, null);
+    FunctionDOS function = new FunctionDOS(null, null);
 
     @Before
     public void setUp() {
@@ -63,13 +63,13 @@ public class ObjectDOSTest {
     @Test
     public void shouldReturnFunction() {
         theObject.setFunction(symbol, function);
-        assertThat(theObject.getFunction(symbol), is(function));
+        assertThat(theObject.getFunction(symbol), is((ExecutableDOS)function));
     }
     
     @Test
     public void shouldReturnGetterFunctionByDefault() {
     	theObject.setSlot(symbol, value);
-    	FunctionDOS.ContextualFunctionDOS function = theObject.getFunction(symbol);
+    	ExecutableDOS function = theObject.getFunction(symbol);
     	assertThat(function, CoreMatchers.instanceOf(StandardFunctions.Getter.class));
     	assertThat(((StandardFunctions.Getter) function).forSlot(), is(symbol));
     }
@@ -77,7 +77,7 @@ public class ObjectDOSTest {
     @Test
     public void shouldReturnSetterFunctionByDefault() {
     	theObject.setSlot(symbol, value);
-    	FunctionDOS.ContextualFunctionDOS function = theObject.getFunction(symbol.toSetterSymbol());
+    	ExecutableDOS function = theObject.getFunction(symbol.toSetterSymbol());
     	assertThat(function, CoreMatchers.instanceOf(StandardFunctions.Setter.class));
     	assertThat(((StandardFunctions.Setter) function).forSlot(), is(symbol));
     }

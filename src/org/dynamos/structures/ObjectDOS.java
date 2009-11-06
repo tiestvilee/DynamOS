@@ -16,12 +16,12 @@ public class ObjectDOS {
 	/* Compile time definition of Object */
 	
     HashMap<Symbol, ObjectDOS> slots;
-    HashMap<Symbol, FunctionDOS.ContextualFunctionDOS> functions;
+    HashMap<Symbol, ExecutableDOS> functions;
     ObjectDOS parent;
 
     public ObjectDOS() {
         slots = new HashMap<Symbol, ObjectDOS>();
-        functions = new HashMap<Symbol, FunctionDOS.ContextualFunctionDOS>();
+        functions = new HashMap<Symbol, ExecutableDOS>();
     }
 
     public void setSlot(Symbol symbol, ObjectDOS value) {
@@ -59,12 +59,12 @@ public class ObjectDOS {
     }
 
 
-    public void setFunction(Symbol symbol, FunctionDOS.ContextualFunctionDOS function) {
+    public void setFunction(Symbol symbol, ExecutableDOS function) {
         functions.put(symbol, function);
     }
 
-    public FunctionDOS.ContextualFunctionDOS getFunction(Symbol symbol) {
-        final FunctionDOS.ContextualFunctionDOS function = functions.get(symbol);
+    public ExecutableDOS getFunction(Symbol symbol) {
+        final ExecutableDOS function = functions.get(symbol);
         if(function == null) {
             if(parent == null) {
                 // return StandardObjects.NULL;

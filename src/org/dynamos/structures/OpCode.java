@@ -5,7 +5,6 @@
 
 package org.dynamos.structures;
 
-import org.dynamos.structures.FunctionDOS.ContextualFunctionDOS;
 import org.dynamos.structures.StandardObjects.ValueObject;
 
 /**
@@ -20,7 +19,7 @@ public class OpCode {
     }
    
     protected ObjectDOS findFunctionInObjectAndExecute(ObjectDOS object, Symbol symbol, StackFrame stackFrame) {
-		FunctionDOS.ContextualFunctionDOS function = (ContextualFunctionDOS) object.getFunction(symbol);
+    	ExecutableDOS function = (ExecutableDOS) object.getFunction(symbol);
 	    
 	    return function.execute(object, stackFrame.getArguments());
 	}
@@ -72,17 +71,17 @@ public class OpCode {
         }
     }
     
-    public static class ContextCallFunctionIn extends OpCode {
+    public static class CallFunctionInSlot extends OpCode {
         private final Symbol symbol;
 
-		public ContextCallFunctionIn(Symbol symbol) {
+		public CallFunctionInSlot(Symbol symbol) {
 			this.symbol = symbol;
         }
 
         @Override
         public boolean execute(Context context, StackFrame stackFrame) {
-    		FunctionDOS.ContextualFunctionDOS getterFunction = (ContextualFunctionDOS) context.getFunction(symbol);
-    		FunctionDOS.ContextualFunctionDOS actualFunction = (ContextualFunctionDOS) getterFunction.execute(context, new ListDOS());
+        	ExecutableDOS getterFunction = (ExecutableDOS) context.getFunction(symbol);
+        	ExecutableDOS actualFunction = (ExecutableDOS) getterFunction.execute(context, new ListDOS());
     		
     	    ObjectDOS result = actualFunction.execute(context, stackFrame.getArguments());
     	    

@@ -10,11 +10,11 @@ import static org.junit.Assert.assertThat;
 
 import org.dynamos.structures.Context;
 import org.dynamos.structures.FunctionDOS;
+import org.dynamos.structures.FunctionDefinitionDOS;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.StandardObjects;
 import org.dynamos.structures.Symbol;
-import org.dynamos.structures.FunctionDOS.ContextualFunctionDOS;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -134,13 +134,13 @@ public class OpCodeInterpreterParameterTest {
 	}
     
 	private void setUpReceiverFunctionWith(Symbol[] argumentSymbols, OpCode[] receiverOpCodes) {
-		FunctionDOS receiverFunction = new FunctionDOS(interpreter, argumentSymbols, new Symbol[] {}, receiverOpCodes);
+		FunctionDefinitionDOS receiverFunction = new FunctionDefinitionDOS(interpreter, argumentSymbols, new Symbol[] {}, receiverOpCodes);
 		
 		Context emptyContext = new Context();
 		emptyContext.setSlot(zeroSymbol, StandardObjects.makeValueANumber(interpreter, new StandardObjects.ValueObject(0)));
 		emptyContext.setSlot(oneSymbol, StandardObjects.makeValueANumber(interpreter, new StandardObjects.ValueObject(1)));
 		
-		ContextualFunctionDOS contextualReceiverFunction = new FunctionDOS.ContextualFunctionDOS(receiverFunction, emptyContext);
+		FunctionDOS contextualReceiverFunction = new FunctionDOS(receiverFunction, emptyContext);
 		context.setFunction(functionName2, contextualReceiverFunction);
 	}
 

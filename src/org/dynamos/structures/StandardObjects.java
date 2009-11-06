@@ -37,15 +37,15 @@ public class StandardObjects {
 		Symbol falseResult = Symbol.get("falseResult");
 		
 		/* TODO this should definitely be opcodes... */
-        TRUE.setFunction(Symbol.get("ifTrue:ifFalse:"), new FunctionDOS.ContextualFunctionDOS(
-                    new FunctionDOS(interpreter, new Symbol[] {trueResult, falseResult}, new Symbol[] {}, new OpCode[] {
+        TRUE.setFunction(Symbol.get("ifTrue:ifFalse:"), new FunctionDOS(
+                    new FunctionDefinitionDOS(interpreter, new Symbol[] {trueResult, falseResult}, new Symbol[] {}, new OpCode[] {
                     		new OpCode.Push(trueResult),
                     		new OpCode.ContextCall(Symbol.SET_RESULT)
                     }),
                     context));
 
-        FALSE.setFunction(Symbol.get("ifTrue:ifFalse:"), new FunctionDOS.ContextualFunctionDOS(
-                    new FunctionDOS(interpreter, new Symbol[] {trueResult, falseResult}, new Symbol[] {}, new OpCode[] {
+        FALSE.setFunction(Symbol.get("ifTrue:ifFalse:"), new FunctionDOS(
+                    new FunctionDefinitionDOS(interpreter, new Symbol[] {trueResult, falseResult}, new Symbol[] {}, new OpCode[] {
                     		new OpCode.Push(falseResult),
                     		new OpCode.ContextCall(Symbol.SET_RESULT)
                     }),
@@ -75,8 +75,8 @@ public class StandardObjects {
         Context context = new Context();
         // TODO change these functions to be oopcodes that call VM...
         object.setFunction(Symbol.get("plus:"),
-                new FunctionDOS.ContextualFunctionDOS(
-                    new FunctionDOS(interpreter, null, new Symbol[] {}, null) {
+                new FunctionDOS(
+                    new FunctionDefinitionDOS(interpreter, null, new Symbol[] {}, null) {
 
                         @Override
                         public void execute(Context context) {
@@ -89,8 +89,8 @@ public class StandardObjects {
                     },
                     context));
         object.setFunction(Symbol.get("minus:"),
-                new FunctionDOS.ContextualFunctionDOS(
-                    new FunctionDOS(interpreter, null, new Symbol[] {}, null) {
+                new FunctionDOS(
+                    new FunctionDefinitionDOS(interpreter, null, new Symbol[] {}, null) {
 
                         @Override
                         public void execute(Context context) {
@@ -103,8 +103,8 @@ public class StandardObjects {
                     },
                     context));
         object.setFunction(Symbol.get("isLessThan:"),
-                new FunctionDOS.ContextualFunctionDOS(
-                    new FunctionDOS(interpreter, null, new Symbol[] {}, null) {
+                new FunctionDOS(
+                    new FunctionDefinitionDOS(interpreter, null, new Symbol[] {}, null) {
 
                         @Override
                         public void execute(Context context) {

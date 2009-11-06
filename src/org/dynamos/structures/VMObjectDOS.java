@@ -12,7 +12,7 @@ package org.dynamos.structures;
  */
 public class VMObjectDOS {
 
-    private static final FunctionDOS.ContextualFunctionDOS PRINT_FUNCTION = new FunctionDOS.ContextualFunctionDOS(null, null) {
+    private static final ExecutableDOS PRINT_FUNCTION = new ExecutableDOS() {
 
         @Override
         public ObjectDOS execute(ObjectDOS object, ListDOS arguments) {

@@ -10,6 +10,7 @@ import static org.junit.Assert.assertThat;
 
 import org.dynamos.structures.Context;
 import org.dynamos.structures.FunctionDOS;
+import org.dynamos.structures.FunctionDefinitionDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.StandardObjects;
 import org.dynamos.structures.Symbol;
@@ -90,13 +91,13 @@ public class FibonacciTest {
 		OpCodeInterpreter interpreter = new OpCodeInterpreter();
         Context context = new Context();
 
-        FunctionDOS anon1Function = new FunctionDOS(interpreter, new Symbol[] {}, new Symbol[] {}, new OpCode[] {
+        FunctionDefinitionDOS anon1Function = new FunctionDefinitionDOS(interpreter, new Symbol[] {}, new Symbol[] {}, new OpCode[] {
                 new OpCode.Push(one),
                 new OpCode.ContextCall(Symbol.SET_RESULT),
 	            new OpCode.Debug("returning (1) ", Symbol.RESULT)
         });
 
-        FunctionDOS anon2Function = new FunctionDOS(interpreter, new Symbol[] {}, new Symbol[] {temp1}, new OpCode[] {
+        FunctionDefinitionDOS anon2Function = new FunctionDefinitionDOS(interpreter, new Symbol[] {}, new Symbol[] {temp1}, new OpCode[] {
             new OpCode.Push(one),  // result = index - 1
             new OpCode.SetObject(index),
             new OpCode.MethodCall(minus$),
@@ -128,7 +129,7 @@ public class FibonacciTest {
         });
 
         
-        FunctionDOS.ContextualFunctionDOS fibonacciFunction = new FunctionDOS.ContextualFunctionDOS(new FunctionDOS(interpreter, new Symbol[] {index}, new Symbol[] {}, new OpCode[] {
+        FunctionDOS fibonacciFunction = new FunctionDOS(new FunctionDefinitionDOS(interpreter, new Symbol[] {index}, new Symbol[] {}, new OpCode[] {
 	            new OpCode.Debug("in fibonacci with argument", index),
 	            new OpCode.Push(two), // result = index isLessThan: two
 	            new OpCode.SetObject(index),
@@ -145,7 +146,7 @@ public class FibonacciTest {
 	            new OpCode.ContextCall(Symbol.CONTEXTUALIZE_FUNCTION),
 	            new OpCode.Debug("contextualized", Symbol.RESULT),
 	            
-	            new OpCode.ContextCallFunctionIn(Symbol.RESULT), // call anon function
+	            new OpCode.CallFunctionInSlot(Symbol.RESULT), // call anon function
 	            new OpCode.Debug("executed function", Symbol.RESULT),
 	
 	            new OpCode.Push(Symbol.RESULT), // is this really needed?

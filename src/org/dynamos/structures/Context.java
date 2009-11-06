@@ -45,12 +45,12 @@ public class Context extends ObjectDOS {
         return arguments;
     }
     
-    private class ContextualizeFunction extends FunctionDOS.ContextualFunctionDOS {
+    private class ContextualizeFunction extends ExecutableDOS {
     	@Override
     	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
-    		FunctionDOS function = (FunctionDOS) arguments.at(0);
+    		FunctionDefinitionDOS function = (FunctionDefinitionDOS) arguments.at(0);
     		Context context = (Context) arguments.at(1);
-    		return new FunctionDOS.ContextualFunctionDOS(function, context);
+    		return new FunctionDOS(function, context);
     	}
     }
 

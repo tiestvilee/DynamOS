@@ -32,7 +32,7 @@ public class OpCodeInterpreterCallTest {
     OpCodeInterpreter interpreter;
     Context context;
     ObjectDOS theObject;
-    FunctionDOS.ContextualFunctionDOS function;
+    FunctionDOS function;
 
     Symbol functionName = Symbol.get("functionName");
 
@@ -46,7 +46,7 @@ public class OpCodeInterpreterCallTest {
         interpreter = new OpCodeInterpreter();
         context = new Context();
         theObject = new ObjectDOS();
-        function = mock(FunctionDOS.ContextualFunctionDOS.class);
+        function = mock(FunctionDOS.class);
         expectedArgumentList = new ListDOS();
     }
 
@@ -128,7 +128,20 @@ public class OpCodeInterpreterCallTest {
         
         verify(function).execute(argThat(is(theObject)), argThat(matchArgumentListTo(expectedArgumentList)));
     }
+    
+    @Test
+    public void shouldCallAMethodInASlotInContext() {
+        context.setSlot(functionName, function);
 
+        OpCode[] opCodes = new OpCode[] {
+            new OpCode.CallFunctionInSlot(functionName)
+        };
+
+        interpreter.interpret(context, opCodes);
+
+        verify(function).execute(argThat(is(context)), argThat(matchArgumentListTo(expectedArgumentList)));
+    }
+    
     private Matcher<ListDOS> matchArgumentListTo(final ListDOS expected) {
 		return new BaseMatcher<ListDOS>() {
 

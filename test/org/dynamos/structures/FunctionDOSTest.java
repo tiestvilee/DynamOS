@@ -23,7 +23,7 @@ import org.junit.Test;
  */
 public class FunctionDOSTest {
 
-    FunctionDOS function;
+    FunctionDefinitionDOS function;
     Context context;
     ListDOS arguments;
     ObjectDOS object;
@@ -31,7 +31,7 @@ public class FunctionDOSTest {
 
     @Before
     public void setup() {
-        function = mock(FunctionDOS.class);
+        function = mock(FunctionDefinitionDOS.class);
         context = new Context();
         arguments = new ListDOS();
         object = new ObjectDOS();
@@ -40,7 +40,7 @@ public class FunctionDOSTest {
 
     @Test
     public void shouldCallFunctionWithArgumentsAndObject() {
-        FunctionDOS.ContextualFunctionDOS contextualFunction = new FunctionDOS.ContextualFunctionDOS(function, context);
+        FunctionDOS contextualFunction = new FunctionDOS(function, context);
 
         contextualFunction.execute(object, arguments);
 
@@ -53,7 +53,7 @@ public class FunctionDOSTest {
         OpCodeInterpreter interpreter = mock(OpCodeInterpreter.class);
         OpCode[] opCodes = new OpCode[] {};
         
-        FunctionDOS actualFunction = new FunctionDOS(interpreter, new Symbol[] {}, new Symbol[] {}, opCodes);
+        FunctionDefinitionDOS actualFunction = new FunctionDefinitionDOS(interpreter, new Symbol[] {}, new Symbol[] {}, opCodes);
 
         actualFunction.execute(context);
 
@@ -63,7 +63,7 @@ public class FunctionDOSTest {
     @Test
     public void shouldCreateLocals() {
     	Symbol local = Symbol.get("local");
-        FunctionDOS actualFunction = new FunctionDOS(interpreter, new Symbol[] {}, new Symbol[] {local}, null);
+        FunctionDefinitionDOS actualFunction = new FunctionDefinitionDOS(interpreter, new Symbol[] {}, new Symbol[] {local}, null);
 		
         actualFunction.execute(context);
 		
@@ -77,7 +77,7 @@ public class FunctionDOSTest {
 		context.setArguments(arguments);
 		
     	Symbol argument = Symbol.get("argument");
-        FunctionDOS actualFunction = new FunctionDOS(interpreter, new Symbol[] {argument}, new Symbol[] {}, null);
+        FunctionDefinitionDOS actualFunction = new FunctionDefinitionDOS(interpreter, new Symbol[] {argument}, new Symbol[] {}, null);
 		
         actualFunction.execute(context);
 		
@@ -90,7 +90,7 @@ public class FunctionDOSTest {
 		context.setArguments(arguments);
 		
     	Symbol argument = Symbol.get("argument");
-        FunctionDOS actualFunction = new FunctionDOS(interpreter, new Symbol[] {argument}, new Symbol[] {}, null);
+        FunctionDefinitionDOS actualFunction = new FunctionDefinitionDOS(interpreter, new Symbol[] {argument}, new Symbol[] {}, null);
 		
         actualFunction.execute(context);
 		
@@ -104,7 +104,7 @@ public class FunctionDOSTest {
 		arguments.add(value);
 		context.setArguments(arguments);
 		
-        FunctionDOS actualFunction = new FunctionDOS(interpreter, new Symbol[] {}, new Symbol[] {}, null);
+        FunctionDefinitionDOS actualFunction = new FunctionDefinitionDOS(interpreter, new Symbol[] {}, new Symbol[] {}, null);
 		
         actualFunction.execute(context);
 		
