@@ -15,8 +15,10 @@ import org.dynamos.structures.StandardObjects;
  * @author tiestvilee
  */
 public class OpCodeInterpreter {
+	Context.ContextBuilder contextBuilder;
 	
 	public OpCodeInterpreter() {
+		contextBuilder = Context.initializeContext(this);
 		StandardObjects.initialiseStandardObjects(this);
 	}
 
@@ -28,5 +30,9 @@ public class OpCodeInterpreter {
             }
         }
     }
+
+	public Context newContext() {
+		return contextBuilder.createContext();
+	}
 
 }

@@ -44,7 +44,7 @@ public class OpCodeInterpreterCallTest {
     @Before
     public void setUp() {
         interpreter = new OpCodeInterpreter();
-        context = new Context();
+        context = interpreter.newContext();
         theObject = new ObjectDOS();
         function = mock(FunctionDOS.class);
         expectedArgumentList = new ListDOS();
@@ -171,7 +171,7 @@ public class OpCodeInterpreterCallTest {
     @Test
     public void shouldCallThroughToVM() {
         Symbol vm = Symbol.get("VM");
-        context.setSlot(vm, VMObjectDOS.VM);
+        context.setSlot(vm, VMObjectDOS.VirtualMachine);
         context.setSlot(localArgumentName, theObject);
 
         OpCode[] opCodes = new OpCode[] {

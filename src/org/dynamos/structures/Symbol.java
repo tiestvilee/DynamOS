@@ -37,9 +37,9 @@ public class Symbol {
     public static final Symbol THIS = Symbol.get("this");
 	public static final Symbol SET_RESULT = Symbol.get("result:");
 	public static final Symbol CURRENT_CONTEXT = Symbol.get("currentContext");
-	public static final Symbol CONTEXTUALIZE_FUNCTION = Symbol.get("contextualizeFunction:in:");
 	public static final Symbol ADD_SLOT = Symbol.get("addSlot:");
 	public static final Symbol ADD_SLOT_WITH_VALUE = Symbol.get("addSlot:withValue:");
+	public static final Symbol CONTEXTUALIZE_FUNCTION = VMObjectDOS.CONTEXTUALIZE_FUNCTION;
 
 	public boolean isPotentialGetter() {
 		return !symbol.contains(":");

@@ -7,6 +7,7 @@ package org.dynamos.structures;
 
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.is;
@@ -31,11 +32,14 @@ public class FunctionDOSTest {
 
     @Before
     public void setup() {
+    	interpreter = mock(OpCodeInterpreter.class);
+    	context = new Context(interpreter);
+    	
         function = mock(FunctionDefinitionDOS.class);
-        context = new Context();
+        when(function.newContext()).thenReturn(new Context(interpreter));
+        
         arguments = new ListDOS();
         object = new ObjectDOS();
-        interpreter = mock(OpCodeInterpreter.class);
     }
 
     @Test
@@ -49,8 +53,6 @@ public class FunctionDOSTest {
 
     @Test
     public void shouldInterpretOpcodes() {
-        Context context = new Context();
-        OpCodeInterpreter interpreter = mock(OpCodeInterpreter.class);
         OpCode[] opCodes = new OpCode[] {};
         
         FunctionDefinitionDOS actualFunction = new FunctionDefinitionDOS(interpreter, new Symbol[] {}, new Symbol[] {}, opCodes);

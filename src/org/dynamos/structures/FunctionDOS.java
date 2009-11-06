@@ -13,7 +13,7 @@ public class FunctionDOS extends ExecutableDOS {
     }
 
     public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
-        Context newContext = new Context();
+        Context newContext = function.newContext();
         newContext.setParent(context);
         newContext.setArguments(arguments);
         newContext.setObject(theObject);

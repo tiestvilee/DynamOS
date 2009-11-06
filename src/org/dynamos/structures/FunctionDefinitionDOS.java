@@ -40,4 +40,8 @@ public class FunctionDefinitionDOS extends ObjectDOS {
         interpreter.interpret(context, opCodes);
     }
 
+	public Context newContext() {
+		return interpreter.newContext();
+	}
+
 }

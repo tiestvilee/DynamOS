@@ -38,7 +38,7 @@ public class OpCodeInterpreterReturnTest {
     @Before
     public void setUp() {
         interpreter = new OpCodeInterpreter();
-        context = new Context();
+        context = interpreter.newContext();
         theObject = new ObjectDOS();
     }
 
@@ -61,7 +61,7 @@ public class OpCodeInterpreterReturnTest {
     @Test
     public void shouldReturnAValueIntoDefaultSlot() {
         final ObjectDOS result = new ObjectDOS();
-        FunctionDefinitionDOS function = new FunctionDefinitionDOS(null, null, new Symbol[] {}, null) {
+        FunctionDefinitionDOS function = new FunctionDefinitionDOS(interpreter, null, new Symbol[] {}, null) {
 
             @Override
             public void execute(Context context) {

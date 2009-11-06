@@ -5,22 +5,55 @@
 
 package org.dynamos.structures;
 
+import org.dynamos.OpCodeInterpreter;
+
 
 /**
  *
  * @author tiestvilee
  */
 public class Context extends ObjectDOS {
+	
+	public static ContextBuilder initializeContext(OpCodeInterpreter interpreter) {
+		return new ContextBuilder(interpreter);
+	}
+	
+	public static class ContextBuilder {
+
+		private final OpCodeInterpreter interpreter;
+
+		protected ContextBuilder(OpCodeInterpreter interpreter) {
+			this.interpreter = interpreter;
+		}
+		
+		public Context createContext() {
+			return new Context(interpreter);
+		}
+		
+	}
 
     ListDOS arguments = new ListDOS();
     ObjectDOS object;
     
-    public Context() {
+    public Context(OpCodeInterpreter interpreter) {
         super();
         setSlot(Symbol.RESULT, StandardObjects.UNDEFINED);
         setSlot(Symbol.ARGUMENTS, arguments);
         setSlot(Symbol.CURRENT_CONTEXT, this);
-        setFunction(Symbol.CONTEXTUALIZE_FUNCTION, new ContextualizeFunction());
+        
+        Symbol functionDefinition = Symbol.get("functionDefinition");
+        Symbol context = Symbol.get("context");
+        
+        setFunction(Symbol.CONTEXTUALIZE_FUNCTION, new FunctionDOS(new FunctionDefinitionDOS(
+        		interpreter,
+        		new Symbol[] {functionDefinition, context},
+        		new Symbol[] {},
+        		new OpCode[] {
+        			new OpCode.Push(functionDefinition),
+        			new OpCode.Push(context),
+        			new OpCode.SetObject(VMObjectDOS.VM),
+        			new OpCode.MethodCall(VMObjectDOS.CONTEXTUALIZE_FUNCTION)
+        		}), this));
     }
     
     public void setObject(ObjectDOS object) {
@@ -43,15 +76,6 @@ public class Context extends ObjectDOS {
 
     public ListDOS getArguments() {
         return arguments;
-    }
-    
-    private class ContextualizeFunction extends ExecutableDOS {
-    	@Override
-    	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
-    		FunctionDefinitionDOS function = (FunctionDefinitionDOS) arguments.at(0);
-    		Context context = (Context) arguments.at(1);
-    		return new FunctionDOS(function, context);
-    	}
     }
 
 }

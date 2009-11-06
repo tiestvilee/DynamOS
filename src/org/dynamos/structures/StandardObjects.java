@@ -31,7 +31,7 @@ public class StandardObjects {
 	public static final UndefinedDOS UNDEFINED = new UndefinedDOS();
 
     public static void initialiseStandardObjects(OpCodeInterpreter interpreter) {
-        Context context = new Context();
+        Context context = interpreter.newContext();
 
         Symbol trueResult = Symbol.get("trueResult");
 		Symbol falseResult = Symbol.get("falseResult");
@@ -72,7 +72,7 @@ public class StandardObjects {
     }
 
     public static ValueObject makeValueANumber(final OpCodeInterpreter interpreter, final ValueObject object) {
-        Context context = new Context();
+        Context context = interpreter.newContext();
         // TODO change these functions to be oopcodes that call VM...
         object.setFunction(Symbol.get("plus:"),
                 new FunctionDOS(

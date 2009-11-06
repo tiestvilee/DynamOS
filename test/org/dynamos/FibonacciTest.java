@@ -14,6 +14,7 @@ import org.dynamos.structures.FunctionDefinitionDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.StandardObjects;
 import org.dynamos.structures.Symbol;
+import org.dynamos.structures.VMObjectDOS;
 import org.dynamos.structures.StandardObjects.ValueObject;
 import org.junit.Test;
 
@@ -89,7 +90,7 @@ public class FibonacciTest {
         System.out.println("******************************************************\n");
         
 		OpCodeInterpreter interpreter = new OpCodeInterpreter();
-        Context context = new Context();
+        Context context = interpreter.newContext();
 
         FunctionDefinitionDOS anon1Function = new FunctionDefinitionDOS(interpreter, new Symbol[] {}, new Symbol[] {}, new OpCode[] {
                 new OpCode.Push(one),
@@ -103,9 +104,7 @@ public class FibonacciTest {
             new OpCode.MethodCall(minus$),
 
             new OpCode.Push(Symbol.RESULT), // result = fibonacci( result )
-            //new OpCode.SetResultTarget(temp1),
             new OpCode.ContextCall(fibonacci$),
-            // TODO need to more result into temp1, should this be SetResultTarget or a separate call, maybe a 'set context value' call.
 
             new OpCode.Push(Symbol.RESULT),  // temp1 = result
             new OpCode.ContextCall(temp1Setter),  // temp1 = result
@@ -121,11 +120,7 @@ public class FibonacciTest {
             new OpCode.Debug("right side", Symbol.RESULT),
             new OpCode.Push(Symbol.RESULT), // temp1 = temp1 + result
             new OpCode.SetObject(temp1),
-            new OpCode.MethodCall(plus$),
-
-            new OpCode.Push(Symbol.RESULT), // is this really needed?
-            new OpCode.ContextCall(Symbol.SET_RESULT),
-            new OpCode.Debug("returning (2) ", Symbol.RESULT)
+            new OpCode.MethodCall(plus$)
         });
 
         
@@ -147,10 +142,7 @@ public class FibonacciTest {
 	            new OpCode.Debug("contextualized", Symbol.RESULT),
 	            
 	            new OpCode.CallFunctionInSlot(Symbol.RESULT), // call anon function
-	            new OpCode.Debug("executed function", Symbol.RESULT),
-	
-	            new OpCode.Push(Symbol.RESULT), // is this really needed?
-	            new OpCode.ContextCall(Symbol.SET_RESULT)
+	            new OpCode.Debug("executed function", Symbol.RESULT)
         	}),
         	context);
 
@@ -160,6 +152,7 @@ public class FibonacciTest {
         context.setSlot(anon1, anon1Function);
         context.setSlot(anon2, anon2Function);
         context.setFunction(fibonacci$, fibonacciFunction);
+        context.setSlot(VMObjectDOS.VM, VMObjectDOS.VirtualMachine);
         
         interpreter.interpret(context, new OpCode[] {
         	new OpCode.Push(sequenceIndexSymbol),

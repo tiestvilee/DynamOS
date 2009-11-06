@@ -19,6 +19,7 @@ public class OpCode {
     }
    
     protected ObjectDOS findFunctionInObjectAndExecute(ObjectDOS object, Symbol symbol, StackFrame stackFrame) {
+    	System.out.println("find and execute " + symbol + " on " + object);
     	ExecutableDOS function = (ExecutableDOS) object.getFunction(symbol);
 	    
 	    return function.execute(object, stackFrame.getArguments());
