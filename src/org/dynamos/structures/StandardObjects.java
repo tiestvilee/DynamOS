@@ -37,15 +37,15 @@ public class StandardObjects {
 		Symbol falseResult = Symbol.get("falseResult");
 		
 		/* TODO this should definitely be opcodes... */
-        TRUE.setSlot(Symbol.get("ifTrue:ifFalse:"), new FunctionDOS.ContextualFunctionDOS(
-                    new FunctionDOS(interpreter, new Symbol[] {trueResult, falseResult}, new OpCode[] {
+        TRUE.setFunction(Symbol.get("ifTrue:ifFalse:"), new FunctionDOS.ContextualFunctionDOS(
+                    new FunctionDOS(interpreter, new Symbol[] {trueResult, falseResult}, new Symbol[] {}, new OpCode[] {
                     		new OpCode.Push(trueResult),
                     		new OpCode.ContextCall(Symbol.SET_RESULT)
                     }),
                     context));
 
-        FALSE.setSlot(Symbol.get("ifTrue:ifFalse:"), new FunctionDOS.ContextualFunctionDOS(
-                    new FunctionDOS(interpreter, new Symbol[] {trueResult, falseResult}, new OpCode[] {
+        FALSE.setFunction(Symbol.get("ifTrue:ifFalse:"), new FunctionDOS.ContextualFunctionDOS(
+                    new FunctionDOS(interpreter, new Symbol[] {trueResult, falseResult}, new Symbol[] {}, new OpCode[] {
                     		new OpCode.Push(falseResult),
                     		new OpCode.ContextCall(Symbol.SET_RESULT)
                     }),
@@ -74,9 +74,9 @@ public class StandardObjects {
     public static ValueObject makeValueANumber(final OpCodeInterpreter interpreter, final ValueObject object) {
         Context context = new Context();
         // TODO change these functions to be oopcodes that call VM...
-        object.setSlot(Symbol.get("plus:"),
+        object.setFunction(Symbol.get("plus:"),
                 new FunctionDOS.ContextualFunctionDOS(
-                    new FunctionDOS(interpreter, null, null) {
+                    new FunctionDOS(interpreter, null, new Symbol[] {}, null) {
 
                         @Override
                         public void execute(Context context) {
@@ -88,9 +88,9 @@ public class StandardObjects {
 
                     },
                     context));
-        object.setSlot(Symbol.get("minus:"),
+        object.setFunction(Symbol.get("minus:"),
                 new FunctionDOS.ContextualFunctionDOS(
-                    new FunctionDOS(interpreter, null, null) {
+                    new FunctionDOS(interpreter, null, new Symbol[] {}, null) {
 
                         @Override
                         public void execute(Context context) {
@@ -102,9 +102,9 @@ public class StandardObjects {
 
                     },
                     context));
-        object.setSlot(Symbol.get("isLessThan:"),
+        object.setFunction(Symbol.get("isLessThan:"),
                 new FunctionDOS.ContextualFunctionDOS(
-                    new FunctionDOS(interpreter, null, null) {
+                    new FunctionDOS(interpreter, null, new Symbol[] {}, null) {
 
                         @Override
                         public void execute(Context context) {

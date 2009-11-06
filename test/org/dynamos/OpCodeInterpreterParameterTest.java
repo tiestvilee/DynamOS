@@ -134,12 +134,14 @@ public class OpCodeInterpreterParameterTest {
 	}
     
 	private void setUpReceiverFunctionWith(Symbol[] argumentSymbols, OpCode[] receiverOpCodes) {
-		FunctionDOS receiverFunction = new FunctionDOS(interpreter, argumentSymbols, receiverOpCodes);
+		FunctionDOS receiverFunction = new FunctionDOS(interpreter, argumentSymbols, new Symbol[] {}, receiverOpCodes);
+		
 		Context emptyContext = new Context();
 		emptyContext.setSlot(zeroSymbol, StandardObjects.makeValueANumber(interpreter, new StandardObjects.ValueObject(0)));
 		emptyContext.setSlot(oneSymbol, StandardObjects.makeValueANumber(interpreter, new StandardObjects.ValueObject(1)));
+		
 		ContextualFunctionDOS contextualReceiverFunction = new FunctionDOS.ContextualFunctionDOS(receiverFunction, emptyContext);
-		context.setSlot(functionName2, contextualReceiverFunction);
+		context.setFunction(functionName2, contextualReceiverFunction);
 	}
 
     @Test

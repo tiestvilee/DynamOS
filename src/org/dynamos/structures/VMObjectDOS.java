@@ -25,7 +25,7 @@ public class VMObjectDOS {
     public static final ObjectDOS VM;
     static {
         VM = new ObjectDOS();
-        VM.setSlot(Symbol.get("print"), PRINT_FUNCTION);
+        VM.setFunction(Symbol.get("print"), PRINT_FUNCTION);
         System.out.println("initialized VM");
     }
 }

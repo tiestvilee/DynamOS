@@ -10,7 +10,7 @@ public class ListDOS extends ObjectDOS {
 	List<ObjectDOS> list = new ArrayList<ObjectDOS>();
 	
 	public ListDOS() {
-		setSlot(Symbol.get("at:"), new AtFunction());
+		setFunction(Symbol.get("at:"), new AtFunction());
 	}
 
 	public void add(ObjectDOS object) {

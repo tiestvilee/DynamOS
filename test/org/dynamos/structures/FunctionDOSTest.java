@@ -8,6 +8,8 @@ package org.dynamos.structures;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.is;
 
 import org.dynamos.OpCodeInterpreter;
 import org.hamcrest.BaseMatcher;
@@ -22,25 +24,27 @@ import org.junit.Test;
 public class FunctionDOSTest {
 
     FunctionDOS function;
-    Context functionContext;
+    Context context;
     ListDOS arguments;
     ObjectDOS object;
+    OpCodeInterpreter interpreter;
 
     @Before
     public void setup() {
         function = mock(FunctionDOS.class);
-        functionContext = new Context();
+        context = new Context();
         arguments = new ListDOS();
         object = new ObjectDOS();
+        interpreter = mock(OpCodeInterpreter.class);
     }
 
     @Test
     public void shouldCallFunctionWithArgumentsAndObject() {
-        FunctionDOS.ContextualFunctionDOS contextualFunction = new FunctionDOS.ContextualFunctionDOS(function, functionContext);
+        FunctionDOS.ContextualFunctionDOS contextualFunction = new FunctionDOS.ContextualFunctionDOS(function, context);
 
         contextualFunction.execute(object, arguments);
 
-        verify(function).execute(argThat(matchesContextWithValues(arguments, object, functionContext)));
+        verify(function).execute(argThat(matchesContextWithValues(arguments, object, context)));
     }
 
     @Test
@@ -49,11 +53,62 @@ public class FunctionDOSTest {
         OpCodeInterpreter interpreter = mock(OpCodeInterpreter.class);
         OpCode[] opCodes = new OpCode[] {};
         
-        FunctionDOS actualFunction = new FunctionDOS(interpreter, new Symbol[] {}, opCodes);
+        FunctionDOS actualFunction = new FunctionDOS(interpreter, new Symbol[] {}, new Symbol[] {}, opCodes);
 
         actualFunction.execute(context);
 
         verify(interpreter).interpret(context, opCodes);
+    }
+    
+    @Test
+    public void shouldCreateLocals() {
+    	Symbol local = Symbol.get("local");
+        FunctionDOS actualFunction = new FunctionDOS(interpreter, new Symbol[] {}, new Symbol[] {local}, null);
+		
+        actualFunction.execute(context);
+		
+        assertThat(context.getSlot(local), is(StandardObjects.NULL));
+    }
+    
+    @Test
+    public void shouldPopulateProvidedArguments() {
+    	ObjectDOS value = new ObjectDOS();
+		arguments.add(value);
+		context.setArguments(arguments);
+		
+    	Symbol argument = Symbol.get("argument");
+        FunctionDOS actualFunction = new FunctionDOS(interpreter, new Symbol[] {argument}, new Symbol[] {}, null);
+		
+        actualFunction.execute(context);
+		
+        assertThat(context.getSlot(argument), is(value));
+        assertThat(((ListDOS) context.getSlot(Symbol.ARGUMENTS)).at(0), is(value));
+    }
+    
+    @Test
+    public void shouldUndefineMissingArguments() {
+		context.setArguments(arguments);
+		
+    	Symbol argument = Symbol.get("argument");
+        FunctionDOS actualFunction = new FunctionDOS(interpreter, new Symbol[] {argument}, new Symbol[] {}, null);
+		
+        actualFunction.execute(context);
+		
+        assertThat(context.getSlot(argument), is(StandardObjects.UNDEFINED.getClass()));
+        assertThat(((ListDOS) context.getSlot(Symbol.ARGUMENTS)).size(), is(0));
+    }
+    
+    @Test
+    public void shouldKeepSurplusArguments() {
+    	ObjectDOS value = new ObjectDOS();
+		arguments.add(value);
+		context.setArguments(arguments);
+		
+        FunctionDOS actualFunction = new FunctionDOS(interpreter, new Symbol[] {}, new Symbol[] {}, null);
+		
+        actualFunction.execute(context);
+		
+        assertThat(((ListDOS) context.getSlot(Symbol.ARGUMENTS)).at(0), is(value));
     }
 
     private MatchesContextWithValues matchesContextWithValues(final ListDOS arguments, ObjectDOS object, final Context functionContext) {

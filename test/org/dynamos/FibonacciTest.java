@@ -90,13 +90,13 @@ public class FibonacciTest {
 		OpCodeInterpreter interpreter = new OpCodeInterpreter();
         Context context = new Context();
 
-        FunctionDOS anon1Function = new FunctionDOS(interpreter, new Symbol[] {}, new OpCode[] {
+        FunctionDOS anon1Function = new FunctionDOS(interpreter, new Symbol[] {}, new Symbol[] {}, new OpCode[] {
                 new OpCode.Push(one),
-                new OpCode.ContextCall(Symbol.SET_RESULT)
+                new OpCode.ContextCall(Symbol.SET_RESULT),
+	            new OpCode.Debug("returning (1) ", Symbol.RESULT)
         });
 
-        FunctionDOS anon2Function = new FunctionDOS(interpreter, new Symbol[] {}, new OpCode[] {
-
+        FunctionDOS anon2Function = new FunctionDOS(interpreter, new Symbol[] {}, new Symbol[] {temp1}, new OpCode[] {
             new OpCode.Push(one),  // result = index - 1
             new OpCode.SetObject(index),
             new OpCode.MethodCall(minus$),
@@ -122,12 +122,13 @@ public class FibonacciTest {
             new OpCode.SetObject(temp1),
             new OpCode.MethodCall(plus$),
 
-            new OpCode.Push(Symbol.RESULT),
-            new OpCode.ContextCall(Symbol.SET_RESULT)
+            new OpCode.Push(Symbol.RESULT), // is this really needed?
+            new OpCode.ContextCall(Symbol.SET_RESULT),
+            new OpCode.Debug("returning (2) ", Symbol.RESULT)
         });
 
         
-        FunctionDOS.ContextualFunctionDOS fibonacciFunction = new FunctionDOS.ContextualFunctionDOS(new FunctionDOS(interpreter, new Symbol[] {index}, new OpCode[] {
+        FunctionDOS.ContextualFunctionDOS fibonacciFunction = new FunctionDOS.ContextualFunctionDOS(new FunctionDOS(interpreter, new Symbol[] {index}, new Symbol[] {}, new OpCode[] {
 	            new OpCode.Debug("in fibonacci with argument", index),
 	            new OpCode.Push(two), // result = index isLessThan: two
 	            new OpCode.SetObject(index),
@@ -137,15 +138,17 @@ public class FibonacciTest {
 	            new OpCode.Push(anon2),
 	            new OpCode.SetObject(Symbol.RESULT),
 	            new OpCode.MethodCall(ifTrue$IfFalse$),
+	            new OpCode.Debug("true or false?", Symbol.RESULT),
 	            
 	            new OpCode.Push(Symbol.RESULT),  // contextualize anon function
 	            new OpCode.Push(Symbol.CURRENT_CONTEXT),
 	            new OpCode.ContextCall(Symbol.CONTEXTUALIZE_FUNCTION),
+	            new OpCode.Debug("contextualized", Symbol.RESULT),
 	            
-	            new OpCode.ContextCall(Symbol.RESULT), // call anon function
+	            new OpCode.ContextCallFunctionIn(Symbol.RESULT), // call anon function
 	            new OpCode.Debug("executed function", Symbol.RESULT),
 	
-	            new OpCode.Push(Symbol.RESULT),
+	            new OpCode.Push(Symbol.RESULT), // is this really needed?
 	            new OpCode.ContextCall(Symbol.SET_RESULT)
         	}),
         	context);
@@ -155,7 +158,7 @@ public class FibonacciTest {
         context.setSlot(sequenceIndexSymbol, StandardObjects.numberDOS(interpreter, sequenceIndex));
         context.setSlot(anon1, anon1Function);
         context.setSlot(anon2, anon2Function);
-        context.setSlot(fibonacci$, fibonacciFunction);
+        context.setFunction(fibonacci$, fibonacciFunction);
         
         interpreter.interpret(context, new OpCode[] {
         	new OpCode.Push(sequenceIndexSymbol),

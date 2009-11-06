@@ -53,7 +53,7 @@ public class OpCodeInterpreterCallTest {
     /* When a context call is made, it is essentially a method call but with the context object */
     @Test
     public void shouldCallAMethodInContext() {
-        context.setSlot(functionName, function);
+        context.setFunction(functionName, function);
 
         OpCode[] opCodes = new OpCode[] {
             new OpCode.ContextCall(functionName)
@@ -66,7 +66,7 @@ public class OpCodeInterpreterCallTest {
 
     @Test
     public void shouldCallAMethodInContextWithParameter() {
-        context.setSlot(functionName, function);
+        context.setFunction(functionName, function);
         context.setSlot(localArgumentName, theObject);
 
         OpCode[] opCodes = new OpCode[] {
@@ -82,7 +82,7 @@ public class OpCodeInterpreterCallTest {
 
     @Test
     public void shouldCallAMethodOnAnObject() {
-        theObject.setSlot(functionName, function);
+        theObject.setFunction(functionName, function);
         context.setSlot(localObjectName, theObject);
 
         OpCode[] opCodes = new OpCode[] {
@@ -98,7 +98,7 @@ public class OpCodeInterpreterCallTest {
     @Test
     public void shouldCallAMethodOnObjectWithParameter() {
         final ObjectDOS expectedArgument = new ObjectDOS();
-        theObject.setSlot(functionName, function);
+        theObject.setFunction(functionName, function);
         context.setSlot(localObjectName, theObject);
         context.setSlot(localArgumentName, expectedArgument);
 
@@ -116,7 +116,7 @@ public class OpCodeInterpreterCallTest {
 
     @Test
     public void shouldCallAMethodOnThis() {
-        theObject.setSlot(functionName, function);
+        theObject.setFunction(functionName, function);
         context.setObject(theObject);
 
         OpCode[] opCodes = new OpCode[] {

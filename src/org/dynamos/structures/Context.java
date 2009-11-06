@@ -17,9 +17,10 @@ public class Context extends ObjectDOS {
     
     public Context() {
         super();
+        setSlot(Symbol.RESULT, StandardObjects.UNDEFINED);
         setSlot(Symbol.ARGUMENTS, arguments);
         setSlot(Symbol.CURRENT_CONTEXT, this);
-        setSlot(Symbol.CONTEXTUALIZE_FUNCTION, new ContextualizeFunction());
+        setFunction(Symbol.CONTEXTUALIZE_FUNCTION, new ContextualizeFunction());
     }
     
     public void setObject(ObjectDOS object) {

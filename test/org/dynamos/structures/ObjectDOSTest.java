@@ -62,7 +62,7 @@ public class ObjectDOSTest {
 
     @Test
     public void shouldReturnFunction() {
-        theObject.setSlot(symbol, function);
+        theObject.setFunction(symbol, function);
         assertThat(theObject.getFunction(symbol), is(function));
     }
     
@@ -77,7 +77,7 @@ public class ObjectDOSTest {
     @Test
     public void shouldReturnSetterFunctionByDefault() {
     	theObject.setSlot(symbol, value);
-    	FunctionDOS.ContextualFunctionDOS function = theObject.getFunction(Symbol.get("Symbol:"));
+    	FunctionDOS.ContextualFunctionDOS function = theObject.getFunction(symbol.toSetterSymbol());
     	assertThat(function, CoreMatchers.instanceOf(StandardFunctions.Setter.class));
     	assertThat(((StandardFunctions.Setter) function).forSlot(), is(symbol));
     }

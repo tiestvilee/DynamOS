@@ -11,6 +11,7 @@ import static org.junit.Assert.assertThat;
 
 import org.dynamos.structures.Context;
 import org.dynamos.structures.FunctionDOS;
+import org.dynamos.structures.ListDOS;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.Symbol;
@@ -59,15 +60,17 @@ public class OpCodeInterpreterReturnTest {
     @Test
     public void shouldReturnAValueIntoDefaultSlot() {
         final ObjectDOS result = new ObjectDOS();
-        FunctionDOS function = new FunctionDOS(null, null, null) {
+        FunctionDOS function = new FunctionDOS(null, null, new Symbol[] {}, null) {
 
             @Override
             public void execute(Context context) {
-                context.setSlot(Symbol.RESULT, result);
+            	ListDOS list = new ListDOS();
+            	list.add(result);
+                context.getFunction(Symbol.SET_RESULT).execute(context, list);
             }
 
         };
-        context.setSlot(functionName, new FunctionDOS.ContextualFunctionDOS(function, context));
+        context.setFunction(functionName, new FunctionDOS.ContextualFunctionDOS(function, context));
 
         OpCode[] opCodes = new OpCode[] {
             new OpCode.ContextCall(functionName)
