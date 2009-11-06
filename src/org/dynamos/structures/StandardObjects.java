@@ -12,14 +12,20 @@ import org.dynamos.OpCodeInterpreter;
  * @author tiestvilee
  */
 public class StandardObjects {
+    // TODO how to get at args - by index, by name
+    // TODO how to contextualise functions - how are non-contextual functions scoped
+    // TODO how to set context values
+    // TODO if we update Number, it must be our own version of Number, but then PICs are unique to every sandbox!
 
 	public static class NullDOS extends ObjectDOS {}
     public static final ObjectDOS NULL = new NullDOS();
 
 
-    public static final ObjectDOS TRUE = new ObjectDOS();
+	public static class TrueDOS extends ObjectDOS {}
+    public static final TrueDOS TRUE = new TrueDOS();
 
-    public static final ObjectDOS FALSE = new ObjectDOS();
+	public static class FalseDOS extends ObjectDOS {}
+    public static final FalseDOS FALSE = new FalseDOS();
 
     public static class UndefinedDOS extends ObjectDOS {}
 	public static final UndefinedDOS UNDEFINED = new UndefinedDOS();
@@ -27,33 +33,22 @@ public class StandardObjects {
     public static void initialiseStandardObjects(OpCodeInterpreter interpreter) {
         Context context = new Context();
 
-        /* TODO this should definitely be opcodes... */
+        Symbol trueResult = Symbol.get("trueResult");
+		Symbol falseResult = Symbol.get("falseResult");
+		
+		/* TODO this should definitely be opcodes... */
         TRUE.setSlot(Symbol.get("ifTrue:ifFalse:"), new FunctionDOS.ContextualFunctionDOS(
-                    new FunctionDOS(interpreter, null, new OpCode[] {
-                        //OpCode.Return() // TODO how to get at args - by index, by name
-                                // TODO how to contextualise functions - how are non-contextual functions scoped
-                                // TODO how to set context values
-                                // TODO if we update Number, it must be our own version of Number, but then PICs are unique to every sandbox!
+                    new FunctionDOS(interpreter, new Symbol[] {trueResult, falseResult}, new OpCode[] {
+                    		new OpCode.Push(trueResult),
+                    		new OpCode.ContextCall(Symbol.SET_RESULT)
                     }),
                     context));
 
         FALSE.setSlot(Symbol.get("ifTrue:ifFalse:"), new FunctionDOS.ContextualFunctionDOS(
-                    new FunctionDOS(interpreter, null, null) {
-
-                        @Override
-                        public void execute(Context context) {
-                            ObjectDOS falseBranch = (ObjectDOS) context.getArguments().at(1);
-                            ObjectDOS result;
-                            if(falseBranch instanceof FunctionDOS.ContextualFunctionDOS) {
-                                result = ((FunctionDOS.ContextualFunctionDOS) falseBranch).execute(context, new ListDOS());
-                            } else {
-                                // TODO what if executing a normal object simply returned that object... cool
-                                result = falseBranch;
-                            }
-                            context.setSlot(Symbol.RESULT, result);
-                        }
-
-                    },
+                    new FunctionDOS(interpreter, new Symbol[] {trueResult, falseResult}, new OpCode[] {
+                    		new OpCode.Push(falseResult),
+                    		new OpCode.ContextCall(Symbol.SET_RESULT)
+                    }),
                     context));
     }
 
@@ -116,6 +111,7 @@ public class StandardObjects {
                             int left = ((ValueObject) context.getObject()).getValue();
                             int right = ((ValueObject) context.getArguments().at(0)).getValue();
                             ObjectDOS result = left < right ? TRUE : FALSE;
+                            System.out.println("is less than returns " + (result == TRUE));
                             context.setSlot(Symbol.RESULT, result);
                         }
 

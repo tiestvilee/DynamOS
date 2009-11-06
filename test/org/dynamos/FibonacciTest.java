@@ -5,11 +5,15 @@
 
 package org.dynamos;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import org.dynamos.structures.Context;
 import org.dynamos.structures.FunctionDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.StandardObjects;
 import org.dynamos.structures.Symbol;
+import org.dynamos.structures.StandardObjects.ValueObject;
 import org.junit.Test;
 
 /**
@@ -35,31 +39,75 @@ public class FibonacciTest {
 
     Symbol one = Symbol.get("one");
     Symbol two = Symbol.get("two");
+    Symbol sequenceIndexSymbol = Symbol.get("sequenceIndex");
 
     Symbol anon1 = Symbol.get("anon1");
     Symbol anon2 = Symbol.get("anon2");
 
     Symbol temp1 = Symbol.get("temp1");
+    Symbol temp1Setter = Symbol.get("temp1:");
     Symbol temp2 = Symbol.get("temp2");
 
     @Test
-    public void shouldCallAMethodInContext() {
-        OpCodeInterpreter interpreter = new OpCodeInterpreter();
+    public void shouldCalculateFibonacciAt0() {
+    	
+    	assetFibonacciAt(0, 1);
+        
+    }
 
-        FunctionDOS anon1Function = new FunctionDOS(interpreter, null, new OpCode[] {
-            //new OpCode.Return(index)
+    @Test
+    public void shouldCalculateFibonacciAt1() {
+    	
+        assetFibonacciAt(1, 1);
+        
+    }
+
+    @Test
+    public void shouldCalculateFibonacciAt2() {
+    	
+        assetFibonacciAt(2, 2);
+        
+    }
+
+    @Test
+    public void shouldCalculateFibonacciAt3() {
+    	
+        assetFibonacciAt(3, 3);
+        
+    }
+
+    @Test
+    public void shouldCalculateFibonacciAt4() {
+    	
+        assetFibonacciAt(4, 5);
+        
+    }
+
+	private void assetFibonacciAt(int sequenceIndex, int expectedResult) {
+        
+        System.out.println("******************************************************\n");
+        
+		OpCodeInterpreter interpreter = new OpCodeInterpreter();
+        Context context = new Context();
+
+        FunctionDOS anon1Function = new FunctionDOS(interpreter, new Symbol[] {}, new OpCode[] {
+                new OpCode.Push(one),
+                new OpCode.ContextCall(Symbol.SET_RESULT)
         });
 
-        FunctionDOS anon2Function = new FunctionDOS(interpreter, null, new OpCode[] {
+        FunctionDOS anon2Function = new FunctionDOS(interpreter, new Symbol[] {}, new OpCode[] {
 
             new OpCode.Push(one),  // result = index - 1
             new OpCode.SetObject(index),
             new OpCode.MethodCall(minus$),
 
-            new OpCode.Push(Symbol.RESULT), // temp1 = fibonacci( result )
+            new OpCode.Push(Symbol.RESULT), // result = fibonacci( result )
             //new OpCode.SetResultTarget(temp1),
             new OpCode.ContextCall(fibonacci$),
             // TODO need to more result into temp1, should this be SetResultTarget or a separate call, maybe a 'set context value' call.
+
+            new OpCode.Push(Symbol.RESULT),  // temp1 = result
+            new OpCode.ContextCall(temp1Setter),  // temp1 = result
 
             new OpCode.Push(two),  // result = index - 2
             new OpCode.SetObject(index),
@@ -68,32 +116,54 @@ public class FibonacciTest {
             new OpCode.Push(Symbol.RESULT), // result = fibonacci( result )
             new OpCode.ContextCall(fibonacci$),
 
+            new OpCode.Debug("left side", temp1),
+            new OpCode.Debug("right side", Symbol.RESULT),
             new OpCode.Push(Symbol.RESULT), // temp1 = temp1 + result
             new OpCode.SetObject(temp1),
             new OpCode.MethodCall(plus$),
 
-            //new OpCode.Return(Symbol.RESULT)
+            new OpCode.Push(Symbol.RESULT),
+            new OpCode.ContextCall(Symbol.SET_RESULT)
         });
 
-        FunctionDOS fibonacciFunction = new FunctionDOS(interpreter, null, new OpCode[] {
-            new OpCode.Push(two), // result = index isLessThan: two
-            new OpCode.SetObject(index),
-            new OpCode.ContextCall(isLessThan$),
+        
+        FunctionDOS.ContextualFunctionDOS fibonacciFunction = new FunctionDOS.ContextualFunctionDOS(new FunctionDOS(interpreter, new Symbol[] {index}, new OpCode[] {
+	            new OpCode.Debug("in fibonacci with argument", index),
+	            new OpCode.Push(two), // result = index isLessThan: two
+	            new OpCode.SetObject(index),
+	            new OpCode.MethodCall(isLessThan$),
+	
+	            new OpCode.Push(anon1), // result = result ifTrue: [anon1] ifFalse: [anon2]
+	            new OpCode.Push(anon2),
+	            new OpCode.SetObject(Symbol.RESULT),
+	            new OpCode.MethodCall(ifTrue$IfFalse$),
+	            
+	            new OpCode.Push(Symbol.RESULT),  // contextualize anon function
+	            new OpCode.Push(Symbol.CURRENT_CONTEXT),
+	            new OpCode.ContextCall(Symbol.CONTEXTUALIZE_FUNCTION),
+	            
+	            new OpCode.ContextCall(Symbol.RESULT), // call anon function
+	            new OpCode.Debug("executed function", Symbol.RESULT),
+	
+	            new OpCode.Push(Symbol.RESULT),
+	            new OpCode.ContextCall(Symbol.SET_RESULT)
+        	}),
+        	context);
 
-            new OpCode.Push(anon1), // result = result ifTrue: [anon1] ifFalse: [anon2]
-            new OpCode.Push(anon2),
-            new OpCode.SetObject(Symbol.RESULT),
-            new OpCode.MethodCall(ifTrue$IfFalse$),
-
-            //new OpCode.Return(Symbol.RESULT)
-        });
-
-        Context context = new Context();
         context.setSlot(one, StandardObjects.numberDOS(interpreter, 1));
         context.setSlot(two, StandardObjects.numberDOS(interpreter, 2));
+        context.setSlot(sequenceIndexSymbol, StandardObjects.numberDOS(interpreter, sequenceIndex));
         context.setSlot(anon1, anon1Function);
         context.setSlot(anon2, anon2Function);
         context.setSlot(fibonacci$, fibonacciFunction);
-    }
+        
+        interpreter.interpret(context, new OpCode[] {
+        	new OpCode.Push(sequenceIndexSymbol),
+        	new OpCode.Debug("calling fibonacci with", sequenceIndexSymbol),
+        	new OpCode.ContextCall(fibonacci$)
+        });
+        
+        assertThat(((ValueObject) context.getSlot(Symbol.RESULT)).getValue(), is(expectedResult));
+	}
 
 }

@@ -46,9 +46,7 @@ public class ObjectDOS {
     }
 
     public String toString() {
-        return super.toString()
-        // + "[" + slots + "]"
-        ;
+        return getClass().getSimpleName() + slots.keySet();
     }
 
     public static final ObjectDOS OBJECT = new ObjectDOS();

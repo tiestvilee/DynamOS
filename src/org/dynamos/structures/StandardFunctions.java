@@ -30,7 +30,6 @@ public class StandardFunctions {
 		@Override
 		public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
 			theObject.setSlot(symbol, arguments.at(0));
-			System.out.println("get first from " + arguments.getRawList());
 			return (ObjectDOS) arguments.at(0);
 		}
 

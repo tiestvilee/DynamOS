@@ -8,12 +8,17 @@ package org.dynamos;
 import org.dynamos.structures.Context;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.StackFrame;
+import org.dynamos.structures.StandardObjects;
 
 /**
  *
  * @author tiestvilee
  */
 public class OpCodeInterpreter {
+	
+	public OpCodeInterpreter() {
+		StandardObjects.initialiseStandardObjects(this);
+	}
 
     public void interpret(Context context, OpCode[] opCodes) {
         StackFrame stackFrame = new StackFrame();

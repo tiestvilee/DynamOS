@@ -18,6 +18,8 @@ public class Context extends ObjectDOS {
     public Context() {
         super();
         setSlot(Symbol.ARGUMENTS, arguments);
+        setSlot(Symbol.CURRENT_CONTEXT, this);
+        setSlot(Symbol.CONTEXTUALIZE_FUNCTION, new ContextualizeFunction());
     }
     
     public void setObject(ObjectDOS object) {
@@ -40,6 +42,15 @@ public class Context extends ObjectDOS {
 
     public ListDOS getArguments() {
         return arguments;
+    }
+    
+    private class ContextualizeFunction extends FunctionDOS.ContextualFunctionDOS {
+    	@Override
+    	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+    		FunctionDOS function = (FunctionDOS) arguments.at(0);
+    		Context context = (Context) arguments.at(1);
+    		return new FunctionDOS.ContextualFunctionDOS(function, context);
+    	}
     }
 
 }
