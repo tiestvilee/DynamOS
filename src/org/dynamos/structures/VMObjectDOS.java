@@ -30,13 +30,22 @@ public class VMObjectDOS {
     		return new FunctionDOS(function, context);
     	}
     };
+
+    private static final ExecutableDOS NEW_OBJECT_EXEC = new ExecutableDOS() {
+    	@Override
+    	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+    		ObjectDOS result = new ObjectDOS();
+    		result.setParent(arguments.at(0));
+    		return result;
+    	}
+    };
     
     private static final ExecutableDOS ADD_EXEC = new ExecutableDOS() {
     	@Override
     	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
     		int right = ((ValueObject) arguments.at(0)).getValue();
             int left = ((ValueObject) arguments.at(1)).getValue();
-            return StandardObjects.numberDOS(left + right);
+            return new ValueObject(left + right);
     	}
     };
     
@@ -45,7 +54,7 @@ public class VMObjectDOS {
     	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
     		int right = ((ValueObject) arguments.at(0)).getValue();
             int left = ((ValueObject) arguments.at(1)).getValue();
-            return StandardObjects.numberDOS(left - right);
+            return new ValueObject(left - right);
     	}
     };
     
@@ -59,7 +68,10 @@ public class VMObjectDOS {
     };
     
 	public static final Symbol VM = Symbol.get("vm");
+	
 	public static final Symbol CONTEXTUALIZE_FUNCTION = Symbol.get("contextualizeFunction:in:");
+	public static final Symbol NEW_OBJECT = Symbol.get("newObjectWithPrototype:");
+	
 	public static final Symbol ADD = Symbol.get("add:to:");
 	public static final Symbol SUB = Symbol.get("subtract:from:");
 	public static final Symbol IS_LESS_THAN = Symbol.get("value:isLessThan:");

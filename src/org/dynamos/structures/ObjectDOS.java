@@ -22,6 +22,8 @@ public class ObjectDOS {
     public ObjectDOS() {
         slots = new HashMap<Symbol, ObjectDOS>();
         functions = new HashMap<Symbol, ExecutableDOS>();
+        
+        setFunction(Symbol.SET_PARENT, SET_PARENT_EXEC);
     }
 
     public void setSlot(Symbol symbol, ObjectDOS value) {
@@ -74,6 +76,14 @@ public class ObjectDOS {
         }
         return function;
     }
+    
+    private static ExecutableDOS SET_PARENT_EXEC = new ExecutableDOS() {
+		@Override
+		public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+			theObject.setParent(arguments.at(0));
+			return theObject;
+		}
+    };
 	
 	/* Runtime Definition of Object */
 	

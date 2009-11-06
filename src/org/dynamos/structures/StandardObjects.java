@@ -52,14 +52,18 @@ public class StandardObjects {
                     		new OpCode.ContextCall(Symbol.SET_RESULT)
                     }),
                     context));
-        
-        Context contextContainingVM = new Context();
-        contextContainingVM.setSlot(VMObjectDOS.VM, virtualMachine);
-        
+
         Symbol right = Symbol.get("right");
+        Symbol numberPrototype = Symbol.get("numberPrototype");
         
         NUMBER_PROTOTYPE = new ObjectDOS();
         
+        Context contextContainingVM = new Context();
+        contextContainingVM.setSlot(VMObjectDOS.VM, virtualMachine);
+        contextContainingVM.setSlot(numberPrototype, NUMBER_PROTOTYPE);
+        
+        // convert to number function...
+
         NUMBER_PROTOTYPE.setFunction(Symbol.get("plus:"), new FunctionDOS(new FunctionDefinitionDOS(
         		interpreter,
         		new Symbol[] {right},
@@ -68,7 +72,10 @@ public class StandardObjects {
        				new OpCode.Push(right),
         			new OpCode.Push(Symbol.THIS),
         			new OpCode.SetObject(VMObjectDOS.VM),
-        			new OpCode.MethodCall(VMObjectDOS.ADD)
+        			new OpCode.MethodCall(VMObjectDOS.ADD),
+        			new OpCode.Push(numberPrototype),
+        			new OpCode.SetObject(Symbol.RESULT),
+        			new OpCode.MethodCall(Symbol.SET_PARENT)
         		}), 
         		contextContainingVM));
 
@@ -80,7 +87,10 @@ public class StandardObjects {
        				new OpCode.Push(right),
         			new OpCode.Push(Symbol.THIS),
         			new OpCode.SetObject(VMObjectDOS.VM),
-        			new OpCode.MethodCall(VMObjectDOS.SUB)
+        			new OpCode.MethodCall(VMObjectDOS.SUB),
+        			new OpCode.Push(numberPrototype),
+        			new OpCode.SetObject(Symbol.RESULT),
+        			new OpCode.MethodCall(Symbol.SET_PARENT)
         		}), 
         		contextContainingVM));
         
