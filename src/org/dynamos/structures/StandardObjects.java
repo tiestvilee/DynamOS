@@ -108,12 +108,6 @@ public class StandardObjects {
             return value;
         }
 
-        // should this exist?  I think this should probably be immutable...
-        public void setValue(int value) {
-            this.value = value;
-        }
-
-
     }
 
     public static ValueObject makeValueANumber(final ValueObject object) {

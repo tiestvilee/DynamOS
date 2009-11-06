@@ -171,7 +171,7 @@ public class OpCodeInterpreterCallTest {
     @Test
     public void shouldCallThroughToVM() {
         Symbol vm = Symbol.get("VM");
-        context.setSlot(vm, VMObjectDOS.VirtualMachine);
+        context.setSlot(vm, VMObjectDOS.getVMObject());
         context.setSlot(localArgumentName, theObject);
 
         OpCode[] opCodes = new OpCode[] {

@@ -58,8 +58,6 @@ public class VMObjectDOS {
     	}
     };
     
-    public static final ObjectDOS VirtualMachine;
-
 	public static final Symbol VM = Symbol.get("vm");
 	public static final Symbol CONTEXTUALIZE_FUNCTION = Symbol.get("contextualizeFunction:in:");
 	public static final Symbol ADD = Symbol.get("add:to:");
@@ -67,17 +65,18 @@ public class VMObjectDOS {
 	public static final Symbol IS_LESS_THAN = Symbol.get("value:isLessThan:");
 
 	
-    static {
-        VirtualMachine = new ObjectDOS();
-        VirtualMachine.setFunction(Symbol.get("print"), PRINT_FUNCTION);
+    public static ObjectDOS getVMObject() {
+        ObjectDOS virtualMachine = new ObjectDOS();
+        virtualMachine.setFunction(Symbol.get("print"), PRINT_FUNCTION);
         
-        VirtualMachine.setFunction(CONTEXTUALIZE_FUNCTION, CONTEXTUALIZE_FUNCTION_EXEC);
+        virtualMachine.setFunction(CONTEXTUALIZE_FUNCTION, CONTEXTUALIZE_FUNCTION_EXEC);
         
-        VirtualMachine.setFunction(ADD, ADD_EXEC);
-        VirtualMachine.setFunction(SUB, SUB_EXEC);
-        VirtualMachine.setFunction(IS_LESS_THAN, IS_LESS_THAN_EXEC);
+        virtualMachine.setFunction(ADD, ADD_EXEC);
+        virtualMachine.setFunction(SUB, SUB_EXEC);
+        virtualMachine.setFunction(IS_LESS_THAN, IS_LESS_THAN_EXEC);
         
         
         System.out.println("initialized VM");
+        return virtualMachine;
     }
 }

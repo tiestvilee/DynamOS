@@ -152,7 +152,7 @@ public class FibonacciTest {
         context.setSlot(anon1, anon1Function);
         context.setSlot(anon2, anon2Function);
         context.setFunction(fibonacci$, fibonacciFunction);
-        context.setSlot(VMObjectDOS.VM, VMObjectDOS.VirtualMachine);
+        context.setSlot(VMObjectDOS.VM, VMObjectDOS.getVMObject());
         
         interpreter.interpret(context, new OpCode[] {
         	new OpCode.Push(sequenceIndexSymbol),
