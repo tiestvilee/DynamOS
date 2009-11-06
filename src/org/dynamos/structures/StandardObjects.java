@@ -84,21 +84,17 @@ public class StandardObjects {
         		}), 
         		contextContainingVM));
         
-        NUMBER_PROTOTYPE.setFunction(Symbol.get("isLessThan:"),
-                new FunctionDOS(
-                    new FunctionDefinitionDOS(interpreter, null, null, null) {
-
-                        @Override
-                        public void execute(Context context) {
-                            int left = ((ValueObject) context.getObject()).getValue();
-                            int right = ((ValueObject) context.getArguments().at(0)).getValue();
-                            ObjectDOS result = left < right ? TRUE : FALSE;
-                            System.out.println("is less than returns " + (result == TRUE));
-                            context.setSlot(Symbol.RESULT, result);
-                        }
-
-                    },
-                    context));
+        NUMBER_PROTOTYPE.setFunction(Symbol.get("isLessThan:"), new FunctionDOS(new FunctionDefinitionDOS(
+        		interpreter,
+        		new Symbol[] {right},
+        		new Symbol[] {},
+        		new OpCode[] {
+        			new OpCode.Push(Symbol.THIS),
+        			new OpCode.Push(right),
+        			new OpCode.SetObject(VMObjectDOS.VM),
+        			new OpCode.MethodCall(VMObjectDOS.IS_LESS_THAN)
+        		}), 
+        		contextContainingVM));
     }
 
     public static class ValueObject extends ObjectDOS {
