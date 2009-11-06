@@ -9,6 +9,7 @@ import org.dynamos.structures.Context;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.StackFrame;
 import org.dynamos.structures.StandardObjects;
+import org.dynamos.structures.VMObjectDOS;
 
 /**
  *
@@ -18,7 +19,7 @@ public class OpCodeInterpreter {
 	Context.ContextBuilder contextBuilder;
 	
 	public OpCodeInterpreter() {
-		contextBuilder = Context.initializeContext(this);
+		contextBuilder = Context.initializeContext(this, VMObjectDOS.VirtualMachine);
 		StandardObjects.initialiseStandardObjects(this);
 	}
 

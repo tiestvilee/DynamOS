@@ -14,20 +14,41 @@ import org.dynamos.OpCodeInterpreter;
  */
 public class Context extends ObjectDOS {
 	
-	public static ContextBuilder initializeContext(OpCodeInterpreter interpreter) {
-		return new ContextBuilder(interpreter);
+	public static ContextBuilder initializeContext(OpCodeInterpreter interpreter, ObjectDOS virtualMachine) {
+		return new ContextBuilder(interpreter, virtualMachine);
 	}
 	
 	public static class ContextBuilder {
 
-		private final OpCodeInterpreter interpreter;
+		private final ObjectDOS contextPrototype;
 
-		protected ContextBuilder(OpCodeInterpreter interpreter) {
-			this.interpreter = interpreter;
+        private final Symbol functionDefinition = Symbol.get("functionDefinition");
+        private final Symbol context = Symbol.get("context");
+        
+		protected ContextBuilder(OpCodeInterpreter interpreter, ObjectDOS virtualMachine) {
+			contextPrototype = new ObjectDOS();
+			contextPrototype.setSlot(Symbol.RESULT, StandardObjects.UNDEFINED);
+			
+	        Context contextContainingVM = new Context();
+	        contextContainingVM.setSlot(VMObjectDOS.VM, virtualMachine);
+	        
+	        contextPrototype.setFunction(Symbol.CONTEXTUALIZE_FUNCTION, new FunctionDOS(new FunctionDefinitionDOS(
+	        		interpreter,
+	        		new Symbol[] {functionDefinition, context},
+	        		new Symbol[] {},
+	        		new OpCode[] {
+	        			new OpCode.Push(functionDefinition),
+	        			new OpCode.Push(context),
+	        			new OpCode.SetObject(VMObjectDOS.VM),
+	        			new OpCode.MethodCall(VMObjectDOS.CONTEXTUALIZE_FUNCTION)
+	        		}), 
+	        		contextContainingVM));
 		}
 		
 		public Context createContext() {
-			return new Context(interpreter);
+			Context result = new Context();
+			result.setParent(contextPrototype);
+			return result;
 		}
 		
 	}
@@ -35,25 +56,10 @@ public class Context extends ObjectDOS {
     ListDOS arguments = new ListDOS();
     ObjectDOS object;
     
-    public Context(OpCodeInterpreter interpreter) {
+    public Context() {
         super();
-        setSlot(Symbol.RESULT, StandardObjects.UNDEFINED);
         setSlot(Symbol.ARGUMENTS, arguments);
         setSlot(Symbol.CURRENT_CONTEXT, this);
-        
-        Symbol functionDefinition = Symbol.get("functionDefinition");
-        Symbol context = Symbol.get("context");
-        
-        setFunction(Symbol.CONTEXTUALIZE_FUNCTION, new FunctionDOS(new FunctionDefinitionDOS(
-        		interpreter,
-        		new Symbol[] {functionDefinition, context},
-        		new Symbol[] {},
-        		new OpCode[] {
-        			new OpCode.Push(functionDefinition),
-        			new OpCode.Push(context),
-        			new OpCode.SetObject(VMObjectDOS.VM),
-        			new OpCode.MethodCall(VMObjectDOS.CONTEXTUALIZE_FUNCTION)
-        		}), this));
     }
     
     public void setObject(ObjectDOS object) {

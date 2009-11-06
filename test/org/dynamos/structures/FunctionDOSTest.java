@@ -33,10 +33,10 @@ public class FunctionDOSTest {
     @Before
     public void setup() {
     	interpreter = mock(OpCodeInterpreter.class);
-    	context = new Context(interpreter);
+    	context = new Context();
     	
         function = mock(FunctionDefinitionDOS.class);
-        when(function.newContext()).thenReturn(new Context(interpreter));
+        when(function.newContext()).thenReturn(new Context());
         
         arguments = new ListDOS();
         object = new ObjectDOS();
