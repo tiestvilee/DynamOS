@@ -29,8 +29,10 @@ public class StandardObjects {
 
     public static class UndefinedDOS extends ObjectDOS {}
 	public static final UndefinedDOS UNDEFINED = new UndefinedDOS();
+	
+	public static ObjectDOS NUMBER_PROTOTYPE;
 
-    public static void initialiseStandardObjects(OpCodeInterpreter interpreter) {
+    public static void initialiseStandardObjects(final OpCodeInterpreter interpreter, ObjectDOS virtualMachine) {
         Context context = interpreter.newContext();
 
         Symbol trueResult = Symbol.get("trueResult");
@@ -49,6 +51,53 @@ public class StandardObjects {
                     		new OpCode.Push(falseResult),
                     		new OpCode.ContextCall(Symbol.SET_RESULT)
                     }),
+                    context));
+        
+        Context contextContainingVM = new Context();
+        contextContainingVM.setSlot(VMObjectDOS.VM, virtualMachine);
+        
+        Symbol right = Symbol.get("right");
+        
+        NUMBER_PROTOTYPE = new ObjectDOS();
+        
+        NUMBER_PROTOTYPE.setFunction(Symbol.get("plus:"), new FunctionDOS(new FunctionDefinitionDOS(
+        		interpreter,
+        		new Symbol[] {right},
+        		new Symbol[] {},
+        		new OpCode[] {
+       				new OpCode.Push(right),
+        			new OpCode.Push(Symbol.THIS),
+        			new OpCode.SetObject(VMObjectDOS.VM),
+        			new OpCode.MethodCall(VMObjectDOS.ADD)
+        		}), 
+        		contextContainingVM));
+
+        NUMBER_PROTOTYPE.setFunction(Symbol.get("minus:"), new FunctionDOS(new FunctionDefinitionDOS(
+        		interpreter,
+        		new Symbol[] {right},
+        		new Symbol[] {},
+        		new OpCode[] {
+       				new OpCode.Push(right),
+        			new OpCode.Push(Symbol.THIS),
+        			new OpCode.SetObject(VMObjectDOS.VM),
+        			new OpCode.MethodCall(VMObjectDOS.SUB)
+        		}), 
+        		contextContainingVM));
+        
+        NUMBER_PROTOTYPE.setFunction(Symbol.get("isLessThan:"),
+                new FunctionDOS(
+                    new FunctionDefinitionDOS(interpreter, null, null, null) {
+
+                        @Override
+                        public void execute(Context context) {
+                            int left = ((ValueObject) context.getObject()).getValue();
+                            int right = ((ValueObject) context.getArguments().at(0)).getValue();
+                            ObjectDOS result = left < right ? TRUE : FALSE;
+                            System.out.println("is less than returns " + (result == TRUE));
+                            context.setSlot(Symbol.RESULT, result);
+                        }
+
+                    },
                     context));
     }
 
@@ -71,58 +120,15 @@ public class StandardObjects {
 
     }
 
-    public static ValueObject makeValueANumber(final OpCodeInterpreter interpreter, final ValueObject object) {
-        Context context = interpreter.newContext();
-        // TODO change these functions to be oopcodes that call VM...
-        object.setFunction(Symbol.get("plus:"),
-                new FunctionDOS(
-                    new FunctionDefinitionDOS(interpreter, null, new Symbol[] {}, null) {
+    public static ValueObject makeValueANumber(final ValueObject object) {
+        object.setParent(NUMBER_PROTOTYPE);
 
-                        @Override
-                        public void execute(Context context) {
-                            int left = ((ValueObject) context.getObject()).getValue();
-                            int right = ((ValueObject) context.getArguments().at(0)).getValue();
-                            ObjectDOS result = makeValueANumber(interpreter, new ValueObject(left + right));
-                            context.setSlot(Symbol.RESULT, result);
-                        }
-
-                    },
-                    context));
-        object.setFunction(Symbol.get("minus:"),
-                new FunctionDOS(
-                    new FunctionDefinitionDOS(interpreter, null, new Symbol[] {}, null) {
-
-                        @Override
-                        public void execute(Context context) {
-                            int left = ((ValueObject) context.getObject()).getValue();
-                            int right = ((ValueObject) context.getArguments().at(0)).getValue();
-                            ObjectDOS result = makeValueANumber(interpreter, new ValueObject(left - right));
-                            context.setSlot(Symbol.RESULT, result);
-                        }
-
-                    },
-                    context));
-        object.setFunction(Symbol.get("isLessThan:"),
-                new FunctionDOS(
-                    new FunctionDefinitionDOS(interpreter, null, new Symbol[] {}, null) {
-
-                        @Override
-                        public void execute(Context context) {
-                            int left = ((ValueObject) context.getObject()).getValue();
-                            int right = ((ValueObject) context.getArguments().at(0)).getValue();
-                            ObjectDOS result = left < right ? TRUE : FALSE;
-                            System.out.println("is less than returns " + (result == TRUE));
-                            context.setSlot(Symbol.RESULT, result);
-                        }
-
-                    },
-                    context));
         return object;
     }
 
-    public static ValueObject numberDOS(OpCodeInterpreter interpreter, int number) {
+    public static ValueObject numberDOS(int number) {
         ValueObject result = new ValueObject(number);
-        makeValueANumber(interpreter, result);
+        makeValueANumber(result);
         return result;
     }
 }

@@ -20,7 +20,7 @@ public class OpCodeInterpreter {
 	
 	public OpCodeInterpreter() {
 		contextBuilder = Context.initializeContext(this, VMObjectDOS.VirtualMachine);
-		StandardObjects.initialiseStandardObjects(this);
+		StandardObjects.initialiseStandardObjects(this, VMObjectDOS.VirtualMachine);
 	}
 
     public void interpret(Context context, OpCode[] opCodes) {

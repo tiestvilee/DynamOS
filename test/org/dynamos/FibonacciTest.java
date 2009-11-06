@@ -146,9 +146,9 @@ public class FibonacciTest {
         	}),
         	context);
 
-        context.setSlot(one, StandardObjects.numberDOS(interpreter, 1));
-        context.setSlot(two, StandardObjects.numberDOS(interpreter, 2));
-        context.setSlot(sequenceIndexSymbol, StandardObjects.numberDOS(interpreter, sequenceIndex));
+        context.setSlot(one, StandardObjects.numberDOS(1));
+        context.setSlot(two, StandardObjects.numberDOS(2));
+        context.setSlot(sequenceIndexSymbol, StandardObjects.numberDOS(sequenceIndex));
         context.setSlot(anon1, anon1Function);
         context.setSlot(anon2, anon2Function);
         context.setFunction(fibonacci$, fibonacciFunction);
