@@ -62,6 +62,7 @@ public class Context extends ObjectDOS {
         setSlot(Symbol.CURRENT_CONTEXT, this);
     }
     
+    // TODO can these be just slots?
     public void setObject(ObjectDOS object) {
         this.object = object;
         setSlot(Symbol.THIS, object);

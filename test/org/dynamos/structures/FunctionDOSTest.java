@@ -6,6 +6,7 @@
 package org.dynamos.structures;
 
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
@@ -33,10 +34,10 @@ public class FunctionDOSTest {
     @Before
     public void setup() {
     	interpreter = mock(OpCodeInterpreter.class);
-    	context = new Context();
+    	when(interpreter.newContext()).thenReturn(new Context());
     	
-        function = mock(FunctionDefinitionDOS.class);
-        when(function.newContext()).thenReturn(new Context());
+    	context = new Context();
+        function = new FunctionDefinitionDOS(interpreter, new Symbol[] {}, new Symbol[] {}, new OpCode[] {});
         
         arguments = new ListDOS();
         object = new ObjectDOS();
@@ -48,7 +49,7 @@ public class FunctionDOSTest {
 
         contextualFunction.execute(object, arguments);
 
-        verify(function).execute(argThat(matchesContextWithValues(arguments, object, context)));
+        verify(interpreter).interpret(argThat(matchesContextWithValues(arguments, object, context)), (OpCode[]) anyObject());
     }
 
     @Test
@@ -133,7 +134,7 @@ public class FunctionDOSTest {
         public boolean matches(Object item) {
             Context context = (Context) item;
             if (context.getArguments() != arguments) {
-                message += "arguments doesn't match [" + context.getArguments() + "] <> [" + arguments + "]\n";
+                message += "arguments doesn't match [" + context.getArguments().list + "] <> [" + arguments.list + "]\n";
                 return false;
             }
             if (context.getObject() != object) {
