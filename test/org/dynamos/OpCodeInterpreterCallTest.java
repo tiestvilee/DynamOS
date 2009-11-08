@@ -129,19 +129,6 @@ public class OpCodeInterpreterCallTest {
         verify(function).execute(argThat(is(theObject)), argThat(matchArgumentListTo(expectedArgumentList)));
     }
     
-    @Test
-    public void shouldCallAMethodInASlotInContext() {
-        context.setSlot(functionName, function);
-
-        OpCode[] opCodes = new OpCode[] {
-            new OpCode.CallFunctionInSlot(functionName)
-        };
-
-        interpreter.interpret(context, opCodes);
-
-        verify(function).execute(argThat(is(context)), argThat(matchArgumentListTo(expectedArgumentList)));
-    }
-    
     private Matcher<ListDOS> matchArgumentListTo(final ListDOS expected) {
 		return new BaseMatcher<ListDOS>() {
 

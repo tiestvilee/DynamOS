@@ -51,7 +51,7 @@ public class ObjectDOS {
 
     public ObjectDOS getParent() {
         if(parent == null) {
-            return OBJECT;
+            return this;
         }
         return parent;
     }
@@ -86,15 +86,8 @@ public class ObjectDOS {
     };
 	
 	/* Runtime Definition of Object */
-	
-    public static final ObjectDOS OBJECT = new ObjectDOS();
-    {
-//    	OBJECT.setFunction(Symbol.ADD_SLOT, new FunctionDOS.ContextualFunctionDOS() {
-//    		@Override
-//    		public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
-//    			theObject.setSlot(arguments.at(0), StandardObjects.NULL);
-//    			return theObject;
-//    		}
-//    	});
-    }
+    
+	public static void initialiseRootObject(ObjectDOS rootObject) {
+		rootObject.setFunction(Symbol.SET_PARENT, SET_PARENT_EXEC);
+	}
 }

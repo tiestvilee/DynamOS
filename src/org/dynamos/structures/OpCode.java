@@ -72,25 +72,6 @@ public class OpCode {
         }
     }
     
-    public static class CallFunctionInSlot extends OpCode {
-        private final Symbol symbol;
-
-		public CallFunctionInSlot(Symbol symbol) {
-			this.symbol = symbol;
-        }
-
-        @Override
-        public boolean execute(Context context, StackFrame stackFrame) {
-        	ExecutableDOS getterFunction = (ExecutableDOS) context.getFunction(symbol);
-        	ExecutableDOS actualFunction = (ExecutableDOS) getterFunction.execute(context, new ListDOS());
-    		
-    	    ObjectDOS result = actualFunction.execute(context, stackFrame.getArguments());
-    	    
-    	    context.setSlot(Symbol.RESULT, result);
-            return true;
-        }
-    }
-    
     public static class Push extends OpCode {
         private Symbol symbol;
         public Push(Symbol symbol) {

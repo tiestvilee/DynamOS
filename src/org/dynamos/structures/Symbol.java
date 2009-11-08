@@ -41,6 +41,7 @@ public class Symbol {
 	public static final Symbol ADD_SLOT_WITH_VALUE = Symbol.get("addSlot:withValue:");
 	public static final Symbol CONTEXTUALIZE_FUNCTION = VMObjectDOS.CONTEXTUALIZE_FUNCTION;
 	public static final Symbol SET_PARENT = Symbol.get("parent:");
+	public static final Symbol EXECUTE = Symbol.get("execute");
 
 	public boolean isPotentialGetter() {
 		return !symbol.contains(":");

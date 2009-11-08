@@ -141,7 +141,8 @@ public class FibonacciTest {
 	            new OpCode.ContextCall(Symbol.CONTEXTUALIZE_FUNCTION),
 	            new OpCode.Debug("contextualized", Symbol.RESULT),
 	            
-	            new OpCode.CallFunctionInSlot(Symbol.RESULT), // call anon function
+	            new OpCode.SetObject(Symbol.RESULT), // call anon function
+	            new OpCode.MethodCall(Symbol.EXECUTE),
 	            new OpCode.Debug("executed function", Symbol.RESULT)
         	}),
         	context);

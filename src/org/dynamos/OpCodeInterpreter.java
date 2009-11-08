@@ -20,6 +20,8 @@ public class OpCodeInterpreter {
 	Context.ContextBuilder contextBuilder;
 	
 	public OpCodeInterpreter() {
+		ObjectDOS rootObject = new ObjectDOS();
+		ObjectDOS.initialiseRootObject(rootObject);
 		ObjectDOS virtualMachine = VMObjectDOS.getVMObject();
 		contextBuilder = Context.initializeContext(this, virtualMachine);
 		StandardObjects.initialiseStandardObjects(this, virtualMachine);
