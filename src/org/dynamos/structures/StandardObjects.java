@@ -5,6 +5,7 @@
 
 package org.dynamos.structures;
 
+import org.dynamos.Environment;
 import org.dynamos.OpCodeInterpreter;
 
 /**
@@ -32,7 +33,7 @@ public class StandardObjects {
 	
 	public static ObjectDOS NUMBER_PROTOTYPE;
 
-    public static void initialiseStandardObjects(final OpCodeInterpreter interpreter, ObjectDOS virtualMachine) {
+    public static void initialiseStandardObjects(final OpCodeInterpreter interpreter, Environment environment) {
         Context context = interpreter.newContext();
 
         Symbol trueResult = Symbol.get("trueResult");
@@ -59,7 +60,7 @@ public class StandardObjects {
         NUMBER_PROTOTYPE = new ObjectDOS();
         
         Context contextContainingVM = new Context();
-        contextContainingVM.setSlot(VMObjectDOS.VM, virtualMachine);
+        contextContainingVM.setSlot(VMObjectDOS.VM, environment.getVirtualMachine());
         contextContainingVM.setSlot(numberPrototype, NUMBER_PROTOTYPE);
         
         // convert to number function...

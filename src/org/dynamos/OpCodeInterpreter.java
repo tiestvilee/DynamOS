@@ -6,25 +6,19 @@
 package org.dynamos;
 
 import org.dynamos.structures.Context;
-import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.StackFrame;
-import org.dynamos.structures.StandardObjects;
-import org.dynamos.structures.VMObjectDOS;
 
 /**
  *
  * @author tiestvilee
  */
 public class OpCodeInterpreter {
-	Context.ContextBuilder contextBuilder;
+	Environment environment;
 	
 	public OpCodeInterpreter() {
-		ObjectDOS rootObject = new ObjectDOS();
-		ObjectDOS.initialiseRootObject(rootObject);
-		ObjectDOS virtualMachine = VMObjectDOS.getVMObject();
-		contextBuilder = Context.initializeContext(this, virtualMachine);
-		StandardObjects.initialiseStandardObjects(this, virtualMachine);
+		environment = new Environment(this);
+		environment.init(this);
 	}
 
     public void interpret(Context context, OpCode[] opCodes) {
@@ -37,7 +31,7 @@ public class OpCodeInterpreter {
     }
 
 	public Context newContext() {
-		return contextBuilder.createContext();
+		return environment.getContextBuilder().createContext();
 	}
 
 }

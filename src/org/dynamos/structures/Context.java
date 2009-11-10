@@ -5,6 +5,7 @@
 
 package org.dynamos.structures;
 
+import org.dynamos.Environment;
 import org.dynamos.OpCodeInterpreter;
 
 
@@ -14,8 +15,8 @@ import org.dynamos.OpCodeInterpreter;
  */
 public class Context extends ObjectDOS {
 	
-	public static ContextBuilder initializeContext(OpCodeInterpreter interpreter, ObjectDOS virtualMachine) {
-		return new ContextBuilder(interpreter, virtualMachine);
+	public static ContextBuilder initializeContext(OpCodeInterpreter interpreter, Environment environment) {
+		return new ContextBuilder(interpreter, environment);
 	}
 	
 	public static class ContextBuilder {
@@ -25,12 +26,12 @@ public class Context extends ObjectDOS {
         private final Symbol functionDefinition = Symbol.get("functionDefinition");
         private final Symbol context = Symbol.get("context");
         
-		protected ContextBuilder(OpCodeInterpreter interpreter, ObjectDOS virtualMachine) {
+		protected ContextBuilder(OpCodeInterpreter interpreter, Environment environment) {
 			contextPrototype = new ObjectDOS();
 			contextPrototype.setSlot(Symbol.RESULT, StandardObjects.UNDEFINED);
 			
 	        Context contextContainingVM = new Context();
-	        contextContainingVM.setSlot(VMObjectDOS.VM, virtualMachine);
+	        contextContainingVM.setSlot(VMObjectDOS.VM, environment.getVirtualMachine());
 	        
 	        contextPrototype.setFunction(Symbol.CONTEXTUALIZE_FUNCTION, new FunctionDOS(new FunctionDefinitionDOS(
 	        		interpreter,
