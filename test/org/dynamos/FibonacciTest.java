@@ -14,7 +14,6 @@ import org.dynamos.structures.FunctionDefinitionDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.StandardObjects;
 import org.dynamos.structures.Symbol;
-import org.dynamos.structures.VMObjectDOS;
 import org.dynamos.structures.StandardObjects.ValueObject;
 import org.junit.Test;
 
@@ -90,7 +89,7 @@ public class FibonacciTest {
         System.out.println("******************************************************\n");
         
 		OpCodeInterpreter interpreter = new OpCodeInterpreter();
-        Context context = interpreter.newContext();
+        Context applicationContext = interpreter.newContext();
 
         FunctionDefinitionDOS anon1Function = new FunctionDefinitionDOS(interpreter, new Symbol[] {}, new Symbol[] {}, new OpCode[] {
                 new OpCode.Push(one),
@@ -145,23 +144,22 @@ public class FibonacciTest {
 	            new OpCode.MethodCall(Symbol.EXECUTE),
 	            new OpCode.Debug("executed function", Symbol.RESULT)
         	}),
-        	context);
+        	applicationContext);
 
-        context.setSlot(one, StandardObjects.numberDOS(interpreter.getEnvironment(), 1));
-        context.setSlot(two, StandardObjects.numberDOS(interpreter.getEnvironment(), 2));
-        context.setSlot(sequenceIndexSymbol, StandardObjects.numberDOS(interpreter.getEnvironment(), sequenceIndex));
-        context.setSlot(anon1, anon1Function);
-        context.setSlot(anon2, anon2Function);
-        context.setFunction(fibonacci$, fibonacciFunction);
-        context.setSlot(VMObjectDOS.VM, VMObjectDOS.getVMObject(interpreter.getEnvironment()));
+        applicationContext.setSlot(one, StandardObjects.numberDOS(interpreter.getEnvironment(), 1));
+        applicationContext.setSlot(two, StandardObjects.numberDOS(interpreter.getEnvironment(), 2));
+        applicationContext.setSlot(sequenceIndexSymbol, StandardObjects.numberDOS(interpreter.getEnvironment(), sequenceIndex));
+        applicationContext.setSlot(anon1, anon1Function);
+        applicationContext.setSlot(anon2, anon2Function);
+        applicationContext.setFunction(fibonacci$, fibonacciFunction);
         
-        interpreter.interpret(context, new OpCode[] {
+        interpreter.interpret(applicationContext, new OpCode[] {
         	new OpCode.Push(sequenceIndexSymbol),
         	new OpCode.Debug("calling fibonacci with", sequenceIndexSymbol),
         	new OpCode.ContextCall(fibonacci$)
         });
         
-        assertThat(((ValueObject) context.getSlot(Symbol.RESULT)).getValue(), is(expectedResult));
+        assertThat(((ValueObject) applicationContext.getSlot(Symbol.RESULT)).getValue(), is(expectedResult));
 	}
 
 }
