@@ -19,53 +19,78 @@ public class StandardObjects {
     // TODO if we update Number, it must be our own version of Number, but then PICs are unique to every sandbox!
 
 	public static class NullDOS extends ObjectDOS {}
-    public static final ObjectDOS NULL = new NullDOS();
-
+	public static class UndefinedDOS extends ObjectDOS {}
 
 	public static class TrueDOS extends ObjectDOS {}
-    public static final TrueDOS TRUE = new TrueDOS();
-
 	public static class FalseDOS extends ObjectDOS {}
+
+    public static final TrueDOS TRUE = new TrueDOS();
     public static final FalseDOS FALSE = new FalseDOS();
 
-    public static class UndefinedDOS extends ObjectDOS {}
-	public static final UndefinedDOS UNDEFINED = new UndefinedDOS();
-	
-	public static ObjectDOS NUMBER_PROTOTYPE;
-
-    public static void initialiseStandardObjects(final OpCodeInterpreter interpreter, Environment environment) {
-        Context context = interpreter.newContext();
+    public static void initialiseBooleans(final OpCodeInterpreter interpreter) {
+        Context booleanContext = interpreter.newContext();
 
         Symbol trueResult = Symbol.get("trueResult");
 		Symbol falseResult = Symbol.get("falseResult");
 		
-		/* TODO this should definitely be opcodes... */
         TRUE.setFunction(Symbol.get("ifTrue:ifFalse:"), new FunctionDOS(
                     new FunctionDefinitionDOS(interpreter, new Symbol[] {trueResult, falseResult}, new Symbol[] {}, new OpCode[] {
                     		new OpCode.Push(trueResult),
                     		new OpCode.ContextCall(Symbol.SET_RESULT)
                     }),
-                    context));
+                    booleanContext));
 
         FALSE.setFunction(Symbol.get("ifTrue:ifFalse:"), new FunctionDOS(
                     new FunctionDefinitionDOS(interpreter, new Symbol[] {trueResult, falseResult}, new Symbol[] {}, new OpCode[] {
                     		new OpCode.Push(falseResult),
                     		new OpCode.ContextCall(Symbol.SET_RESULT)
                     }),
-                    context));
+                    booleanContext));
+    }
 
-        Symbol right = Symbol.get("right");
-        Symbol numberPrototype = Symbol.get("numberPrototype");
+	public static ObjectDOS createNumberLibrary(final OpCodeInterpreter interpreter, Environment environment) {
         
-        NUMBER_PROTOTYPE = environment.createNewObject();
+        // the context in which the number library exists
+        Context numberLibraryContext = interpreter.newContext();
         
-        Context contextContainingVM = interpreter.newContext();
-        contextContainingVM.setSlot(VMObjectDOS.VM, environment.getVirtualMachine());
-        contextContainingVM.setSlot(numberPrototype, NUMBER_PROTOTYPE);
+        // number library depends upon the VM, but that's all
+        numberLibraryContext.setSlot(VMObjectDOS.VM, environment.getVirtualMachine());
         
-        // convert to number function...
+        Symbol numberPrototypeSymbol = Symbol.get("numberPrototype");
+        
+        createNumberPrototype(interpreter, environment, numberLibraryContext, numberPrototypeSymbol);
+        
+        // createNumberFactory
+        Symbol numberFactorySymbol = Symbol.get("numberFactory");
+        Symbol number = Symbol.get("number");
+        
+        ObjectDOS numberFactory = environment.createNewObject();
+        numberLibraryContext.setSlot(numberFactorySymbol, numberFactory);
+        
+        // add appropriate function to the prototype
+        numberFactory.setFunction(Symbol.get("numberFrom:"), new FunctionDOS(new FunctionDefinitionDOS(
+        		interpreter,
+        		new Symbol[] {number},
+        		new Symbol[] {},
+        		new OpCode[] {
+        			new OpCode.Push(numberPrototypeSymbol),
+        			new OpCode.SetObject(number),
+        			new OpCode.MethodCall(Symbol.SET_PARENT)
+        		}), 
+        		numberLibraryContext));
+        
+        return numberFactory;
+	}
 
-        NUMBER_PROTOTYPE.setFunction(Symbol.get("plus:"), new FunctionDOS(new FunctionDefinitionDOS(
+	private static void createNumberPrototype(final OpCodeInterpreter interpreter, Environment environment, Context numberLibraryContext, Symbol numberPrototypeSymbol) {
+		Symbol right = Symbol.get("right");
+        
+        // define the prototype for all numbers
+        ObjectDOS numberPrototype = environment.createNewObject();
+        numberLibraryContext.setSlot(numberPrototypeSymbol, numberPrototype);
+        
+        // add all appropriate functions to the prototype
+        numberPrototype.setFunction(Symbol.get("plus:"), new FunctionDOS(new FunctionDefinitionDOS(
         		interpreter,
         		new Symbol[] {right},
         		new Symbol[] {},
@@ -74,13 +99,13 @@ public class StandardObjects {
         			new OpCode.Push(Symbol.THIS),
         			new OpCode.SetObject(VMObjectDOS.VM),
         			new OpCode.MethodCall(VMObjectDOS.ADD),
-        			new OpCode.Push(numberPrototype),
+        			new OpCode.Push(numberPrototypeSymbol),
         			new OpCode.SetObject(Symbol.RESULT),
         			new OpCode.MethodCall(Symbol.SET_PARENT)
         		}), 
-        		contextContainingVM));
+        		numberLibraryContext));
 
-        NUMBER_PROTOTYPE.setFunction(Symbol.get("minus:"), new FunctionDOS(new FunctionDefinitionDOS(
+        numberPrototype.setFunction(Symbol.get("minus:"), new FunctionDOS(new FunctionDefinitionDOS(
         		interpreter,
         		new Symbol[] {right},
         		new Symbol[] {},
@@ -89,13 +114,13 @@ public class StandardObjects {
         			new OpCode.Push(Symbol.THIS),
         			new OpCode.SetObject(VMObjectDOS.VM),
         			new OpCode.MethodCall(VMObjectDOS.SUB),
-        			new OpCode.Push(numberPrototype),
+        			new OpCode.Push(numberPrototypeSymbol),
         			new OpCode.SetObject(Symbol.RESULT),
         			new OpCode.MethodCall(Symbol.SET_PARENT)
         		}), 
-        		contextContainingVM));
+        		numberLibraryContext));
         
-        NUMBER_PROTOTYPE.setFunction(Symbol.get("isLessThan:"), new FunctionDOS(new FunctionDefinitionDOS(
+        numberPrototype.setFunction(Symbol.get("isLessThan:"), new FunctionDOS(new FunctionDefinitionDOS(
         		interpreter,
         		new Symbol[] {right},
         		new Symbol[] {},
@@ -105,8 +130,8 @@ public class StandardObjects {
         			new OpCode.SetObject(VMObjectDOS.VM),
         			new OpCode.MethodCall(VMObjectDOS.IS_LESS_THAN)
         		}), 
-        		contextContainingVM));
-    }
+        		numberLibraryContext));
+	}
 
     public static class ValueObject extends ObjectDOS {
         private int value;
@@ -121,15 +146,12 @@ public class StandardObjects {
 
     }
 
-    public static ObjectDOS makeValueANumber(final ObjectDOS object) {
-        object.setParent(NUMBER_PROTOTYPE);
-
-        return object;
-    }
-
     public static ObjectDOS numberDOS(Environment env, int number) {
         ObjectDOS result = env.createNewValueObject(number);
-        makeValueANumber(result);
+        ExecutableDOS numberFromFunction = env.getNumberFactory().getFunction(Symbol.get("numberFrom:"));
+		ListDOS arguments = new ListDOS();
+		arguments.add(result);
+		numberFromFunction.execute(result, arguments);
         return result;
     }
 }

@@ -15,12 +15,18 @@ public class ObjectDOS {
 	
 	/* Compile time definition of Object */
 	
-    HashMap<Symbol, ObjectDOS> slots;
-    HashMap<Symbol, ExecutableDOS> functions;
-    ObjectDOS parent;
+    private HashMap<Symbol, ObjectDOS> slots;
+    private HashMap<Symbol, ExecutableDOS> functions;
+    private ObjectDOS parent;
+	private ObjectDOS nullObject;
+	
+	public ObjectDOS(ObjectDOS nullObject) {
+		this();
+		this.nullObject = nullObject;
+	}
 
     public ObjectDOS() {
-        slots = new HashMap<Symbol, ObjectDOS>();
+		slots = new HashMap<Symbol, ObjectDOS>();
         functions = new HashMap<Symbol, ExecutableDOS>();
     }
 
@@ -36,7 +42,7 @@ public class ObjectDOS {
         final ObjectDOS slot = slots.get(symbol);
         if(slot == null) {
             if(parent == null) {
-                return StandardObjects.NULL;
+                return nullObject; // TODO this sux, only gets here for the top object, otherwise returns null :(
             }
             return parent.getSlot(symbol);
         }

@@ -13,6 +13,7 @@ import static org.mockito.Mockito.verify;
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 
+import org.dynamos.Environment;
 import org.dynamos.OpCodeInterpreter;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -29,12 +30,19 @@ public class FunctionDOSTest {
     Context context;
     ListDOS arguments;
     ObjectDOS object;
+    ObjectDOS undefined = new StandardObjects.UndefinedDOS();
+    ObjectDOS nullObject = new StandardObjects.NullDOS();
     OpCodeInterpreter interpreter;
+    Environment environment;
 
     @Before
     public void setup() {
     	interpreter = mock(OpCodeInterpreter.class);
+    	environment = mock(Environment.class);
     	when(interpreter.newContext()).thenReturn(new Context());
+    	when(interpreter.getEnvironment()).thenReturn(environment);
+    	when(environment.getNull()).thenReturn(nullObject);
+    	when(environment.getUndefined()).thenReturn(undefined);
     	
     	context = new Context();
         function = new FunctionDefinitionDOS(interpreter, new Symbol[] {}, new Symbol[] {}, new OpCode[] {});
@@ -70,7 +78,7 @@ public class FunctionDOSTest {
 		
         actualFunction.execute(context);
 		
-        assertThat(context.getSlot(local), is(StandardObjects.NULL));
+        assertThat(context.getSlot(local), is((ObjectDOS) nullObject));
     }
     
     @Test
@@ -97,7 +105,7 @@ public class FunctionDOSTest {
 		
         actualFunction.execute(context);
 		
-        assertThat(context.getSlot(argument), is(StandardObjects.UNDEFINED.getClass()));
+        assertThat(context.getSlot(argument), is(undefined));
         assertThat(((ListDOS) context.getSlot(Symbol.ARGUMENTS)).size(), is(0));
     }
     

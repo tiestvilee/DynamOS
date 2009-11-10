@@ -110,7 +110,7 @@ public class OpCodeInterpreterParameterTest {
 		
         interpreter.interpret(context, callerOpCodes);
 
-		assertThat( (StandardObjects.UndefinedDOS) context.getSlot(Symbol.RESULT), is(StandardObjects.UNDEFINED));
+		assertThat( (StandardObjects.UndefinedDOS) context.getSlot(Symbol.RESULT), is(interpreter.getEnvironment().getUndefined()));
 	}
 	
 	@Test

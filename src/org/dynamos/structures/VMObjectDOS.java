@@ -31,7 +31,7 @@ public class VMObjectDOS {
             @Override
             public ObjectDOS execute(ObjectDOS object, ListDOS arguments) {
                 System.out.println(arguments.at(0));
-                return StandardObjects.NULL;
+                return environment.getNull();
             }
         };
 

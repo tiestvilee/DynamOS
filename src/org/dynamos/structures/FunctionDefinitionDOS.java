@@ -18,7 +18,6 @@ public class FunctionDefinitionDOS extends ObjectDOS {
 	private final Symbol[] locals;
 
     public FunctionDefinitionDOS(OpCodeInterpreter interpreter, Symbol[] arguments, Symbol[] locals, OpCode[] opCodes) {
-        super();
         this.interpreter = interpreter;
 		this.arguments = arguments;
 		this.locals = locals;
@@ -32,10 +31,10 @@ public class FunctionDefinitionDOS extends ObjectDOS {
     		context.setSlot(arguments[index], context.arguments.at(index));
     	}
     	for(;index < arguments.length; index++) {
-    		context.setSlot(arguments[index], StandardObjects.UNDEFINED);
+    		context.setSlot(arguments[index], interpreter.getEnvironment().getUndefined());
     	}
     	for(index=0;index < locals.length; index++) {
-    		context.setSlot(locals[index], StandardObjects.NULL);
+    		context.setSlot(locals[index], interpreter.getEnvironment().getNull());
     	}
         interpreter.interpret(context, opCodes);
     }

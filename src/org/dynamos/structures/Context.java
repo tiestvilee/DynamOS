@@ -28,7 +28,7 @@ public class Context extends ObjectDOS {
         
 		protected ContextBuilder(OpCodeInterpreter interpreter, Environment environment) {
 			contextPrototype = environment.createNewObject();
-			contextPrototype.setSlot(Symbol.RESULT, StandardObjects.UNDEFINED);
+			contextPrototype.setSlot(Symbol.RESULT, environment.getUndefined());
 			
 	        Context contextContainingVM = new Context();
 	        contextContainingVM.setSlot(VMObjectDOS.VM, environment.getVirtualMachine());

@@ -22,6 +22,7 @@ public class ObjectDOSTest {
     ObjectDOS theObject;
     Symbol symbol = Symbol.get("Symbol");
     ObjectDOS value = new ObjectDOS();
+    ObjectDOS nullDOS = new StandardObjects.NullDOS();
     FunctionDOS function = new FunctionDOS(null, null);
 
     @Before
@@ -57,7 +58,8 @@ public class ObjectDOSTest {
 
     @Test
     public void shouldReturnNullIfNoSlot() {
-        assertSame(StandardObjects.NULL, theObject.getSlot(symbol));
+    	theObject = new ObjectDOS(nullDOS); // TODO again, this sux the big time
+        assertSame(nullDOS, theObject.getSlot(symbol));
     }
 
     @Test
