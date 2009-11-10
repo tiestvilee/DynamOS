@@ -3,6 +3,7 @@ package org.dynamos;
 import org.dynamos.structures.Context;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.StandardObjects;
+import org.dynamos.structures.Symbol;
 import org.dynamos.structures.VMObjectDOS;
 import org.dynamos.structures.Context.ContextBuilder;
 import org.dynamos.structures.StandardObjects.NullDOS;
@@ -17,6 +18,7 @@ public class Environment {
     
 	private ObjectDOS nullDOS;
     private ObjectDOS undefined;
+	private ObjectDOS booleanContainer;
 
     /*
 	 * need
@@ -41,8 +43,7 @@ public class Environment {
 	}
 	
 	public void init(OpCodeInterpreter interpreter) {
-		StandardObjects.initialiseBooleans(interpreter);
-
+		booleanContainer = StandardObjects.initialiseBooleans(interpreter, this);
         numberFactory = StandardObjects.createNumberLibrary(interpreter, this);
     }
 	
@@ -76,6 +77,14 @@ public class Environment {
 		StandardObjects.ValueObject object = new StandardObjects.ValueObject(value);
 		object.setParent(rootObject);
 		return object;
+	}
+
+	public ObjectDOS getTrue() {
+		return booleanContainer.getSlot(Symbol.get("true"));
+	}
+
+	public ObjectDOS getFalse() {
+		return booleanContainer.getSlot(Symbol.get("false"));
 	}
 	
 	

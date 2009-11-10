@@ -76,7 +76,7 @@ public class VMObjectDOS {
         	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
                 int left = ((ValueObject) arguments.at(0)).getValue();
                 int right = ((ValueObject) arguments.at(1)).getValue();
-                return left < right ? StandardObjects.TRUE : StandardObjects.FALSE;
+                return left < right ? environment.getTrue() : environment.getFalse();
         	}
         };
         

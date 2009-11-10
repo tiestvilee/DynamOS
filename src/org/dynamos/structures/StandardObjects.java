@@ -24,28 +24,32 @@ public class StandardObjects {
 	public static class TrueDOS extends ObjectDOS {}
 	public static class FalseDOS extends ObjectDOS {}
 
-    public static final TrueDOS TRUE = new TrueDOS();
-    public static final FalseDOS FALSE = new FalseDOS();
-
-    public static void initialiseBooleans(final OpCodeInterpreter interpreter) {
+    public static ObjectDOS initialiseBooleans(final OpCodeInterpreter interpreter, Environment environment) {
         Context booleanContext = interpreter.newContext();
 
         Symbol trueResult = Symbol.get("trueResult");
 		Symbol falseResult = Symbol.get("falseResult");
 		
-        TRUE.setFunction(Symbol.get("ifTrue:ifFalse:"), new FunctionDOS(
+		TrueDOS trueObject = new TrueDOS();
+        trueObject.setFunction(Symbol.get("ifTrue:ifFalse:"), new FunctionDOS(
                     new FunctionDefinitionDOS(interpreter, new Symbol[] {trueResult, falseResult}, new Symbol[] {}, new OpCode[] {
                     		new OpCode.Push(trueResult),
                     		new OpCode.ContextCall(Symbol.SET_RESULT)
                     }),
                     booleanContext));
 
-        FALSE.setFunction(Symbol.get("ifTrue:ifFalse:"), new FunctionDOS(
+        FalseDOS falseObject = new FalseDOS();
+        falseObject.setFunction(Symbol.get("ifTrue:ifFalse:"), new FunctionDOS(
                     new FunctionDefinitionDOS(interpreter, new Symbol[] {trueResult, falseResult}, new Symbol[] {}, new OpCode[] {
                     		new OpCode.Push(falseResult),
                     		new OpCode.ContextCall(Symbol.SET_RESULT)
                     }),
                     booleanContext));
+        
+        ObjectDOS booleanContainer = environment.createNewObject();
+        booleanContainer.setSlot(Symbol.get("true"), trueObject);
+        booleanContainer.setSlot(Symbol.get("false"), falseObject);
+        return booleanContainer;
     }
 
 	public static ObjectDOS createNumberLibrary(final OpCodeInterpreter interpreter, Environment environment) {
