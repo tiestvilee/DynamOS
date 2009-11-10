@@ -12,7 +12,6 @@ import org.dynamos.structures.Context;
 import org.dynamos.structures.FunctionDOS;
 import org.dynamos.structures.FunctionDefinitionDOS;
 import org.dynamos.structures.OpCode;
-import org.dynamos.structures.StandardObjects;
 import org.dynamos.structures.Symbol;
 import org.dynamos.structures.StandardObjects.ValueObject;
 import org.junit.Test;
@@ -48,6 +47,7 @@ public class FibonacciTest {
     Symbol temp1 = Symbol.get("temp1");
     Symbol temp1Setter = Symbol.get("temp1:");
     Symbol temp2 = Symbol.get("temp2");
+	Symbol numberFactory = Symbol.get("numberFactory");;
 
     @Test
     public void shouldCalculateFibonacciAt0() {
@@ -89,7 +89,9 @@ public class FibonacciTest {
         System.out.println("******************************************************\n");
         
 		OpCodeInterpreter interpreter = new OpCodeInterpreter();
+		
         Context applicationContext = interpreter.newContext();
+		applicationContext.setSlot(numberFactory, interpreter.getEnvironment().getNumberFactory());
 
         FunctionDefinitionDOS anon1Function = new FunctionDefinitionDOS(interpreter, new Symbol[] {}, new Symbol[] {}, new OpCode[] {
                 new OpCode.Push(one),
@@ -146,14 +148,35 @@ public class FibonacciTest {
         	}),
         	applicationContext);
 
-        applicationContext.setSlot(one, StandardObjects.numberDOS(interpreter.getEnvironment(), 1));
-        applicationContext.setSlot(two, StandardObjects.numberDOS(interpreter.getEnvironment(), 2));
-        applicationContext.setSlot(sequenceIndexSymbol, StandardObjects.numberDOS(interpreter.getEnvironment(), sequenceIndex));
+        applicationContext.setSlot(one, interpreter.getEnvironment().getNull());
+        applicationContext.setSlot(two, interpreter.getEnvironment().getNull());
+        applicationContext.setSlot(sequenceIndexSymbol, interpreter.getEnvironment().getNull());
         applicationContext.setSlot(anon1, anon1Function);
         applicationContext.setSlot(anon2, anon2Function);
         applicationContext.setFunction(fibonacci$, fibonacciFunction);
         
         interpreter.interpret(applicationContext, new OpCode[] {
+        	new OpCode.CreateValueObject(interpreter, 1),
+        	new OpCode.Push(Symbol.RESULT),
+        	new OpCode.SetObject(numberFactory),
+        	new OpCode.MethodCall(Symbol.get("numberFrom:")),
+        	new OpCode.Push(Symbol.RESULT),
+        	new OpCode.ContextCall(Symbol.get("one:")),
+
+        	new OpCode.CreateValueObject(interpreter, 2),
+        	new OpCode.Push(Symbol.RESULT),
+        	new OpCode.SetObject(numberFactory),
+        	new OpCode.MethodCall(Symbol.get("numberFrom:")),
+        	new OpCode.Push(Symbol.RESULT),
+        	new OpCode.ContextCall(Symbol.get("two:")),
+        	
+        	new OpCode.CreateValueObject(interpreter, sequenceIndex),
+        	new OpCode.Push(Symbol.RESULT),
+        	new OpCode.SetObject(numberFactory),
+        	new OpCode.MethodCall(Symbol.get("numberFrom:")),
+        	new OpCode.Push(Symbol.RESULT),
+        	new OpCode.ContextCall(Symbol.get("sequenceIndex:")),
+
         	new OpCode.Push(sequenceIndexSymbol),
         	new OpCode.Debug("calling fibonacci with", sequenceIndexSymbol),
         	new OpCode.ContextCall(fibonacci$)

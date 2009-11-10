@@ -5,6 +5,7 @@
 
 package org.dynamos.structures;
 
+import org.dynamos.OpCodeInterpreter;
 import org.dynamos.structures.StandardObjects.ValueObject;
 
 /**
@@ -13,7 +14,8 @@ import org.dynamos.structures.StandardObjects.ValueObject;
  */
 public class OpCode {
 
-    public boolean execute(Context context, StackFrame stackFrame) {
+
+	public boolean execute(Context context, StackFrame stackFrame) {
         // NOOP
         return false;
     }
@@ -85,6 +87,23 @@ public class OpCode {
             return false;
         }
     }
+    
+
+    public static class CreateValueObject extends OpCode {
+        private final int value;
+		private final OpCodeInterpreter interpreter;
+
+		public CreateValueObject(OpCodeInterpreter interpreter, int value) {
+			this.interpreter = interpreter; // TODO this sux
+			this.value = value;
+		}
+
+        @Override
+        public boolean execute(Context context, StackFrame stackFrame) {
+        	context.setSlot(Symbol.RESULT, interpreter.getEnvironment().createNewValueObject(value));
+            return false;
+        }
+	}
 
     public static class Debug extends OpCode {
         private Symbol symbol;
