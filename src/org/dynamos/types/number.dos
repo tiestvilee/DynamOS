@@ -1,0 +1,23 @@
+(function createNumber: virtualMachine
+  (local numberPrototype)
+  
+  (function newNumber: value
+    (value setParent: numberPrototype))
+  
+  (function plus: to
+    (virtualMachine add: to to: this))
+
+  (function minus: from
+    (virtualMachine subtract: to from: this))
+
+  (function isLessThan: number
+    (virtualMachine value: number isLessThan: this))
+  
+  (numberPrototype: (virtualMachine newObjectWithPrototype: (virtualMachine object)))
+  
+  (numberPrototype addFunction: (plus:))
+  (numberPrototype addFunction: (minus:))
+  (numberPrototype addFunction: (isLessThan:))
+  
+  (result: (newNumber:))
+)
