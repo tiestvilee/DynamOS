@@ -57,9 +57,9 @@ public class StandardObjects {
         Symbol right = Symbol.get("right");
         Symbol numberPrototype = Symbol.get("numberPrototype");
         
-        NUMBER_PROTOTYPE = new ObjectDOS();
+        NUMBER_PROTOTYPE = environment.createNewObject();
         
-        Context contextContainingVM = new Context();
+        Context contextContainingVM = interpreter.newContext();
         contextContainingVM.setSlot(VMObjectDOS.VM, environment.getVirtualMachine());
         contextContainingVM.setSlot(numberPrototype, NUMBER_PROTOTYPE);
         
@@ -121,14 +121,14 @@ public class StandardObjects {
 
     }
 
-    public static ValueObject makeValueANumber(final ValueObject object) {
+    public static ObjectDOS makeValueANumber(final ObjectDOS object) {
         object.setParent(NUMBER_PROTOTYPE);
 
         return object;
     }
 
-    public static ValueObject numberDOS(int number) {
-        ValueObject result = new ValueObject(number);
+    public static ObjectDOS numberDOS(Environment env, int number) {
+        ObjectDOS result = env.createNewValueObject(number);
         makeValueANumber(result);
         return result;
     }

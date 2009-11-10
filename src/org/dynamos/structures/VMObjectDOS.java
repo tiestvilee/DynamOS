@@ -5,6 +5,7 @@
 
 package org.dynamos.structures;
 
+import org.dynamos.Environment;
 import org.dynamos.structures.StandardObjects.ValueObject;
 
 
@@ -14,59 +15,7 @@ import org.dynamos.structures.StandardObjects.ValueObject;
  */
 public class VMObjectDOS {
 
-    private static final ExecutableDOS PRINT_FUNCTION = new ExecutableDOS() {
-        @Override
-        public ObjectDOS execute(ObjectDOS object, ListDOS arguments) {
-            System.out.println(arguments.at(0));
-            return StandardObjects.NULL;
-        }
-    };
 
-    private static final ExecutableDOS CONTEXTUALIZE_FUNCTION_EXEC = new ExecutableDOS() {
-    	@Override
-    	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
-    		FunctionDefinitionDOS function = (FunctionDefinitionDOS) arguments.at(0);
-    		Context context = (Context) arguments.at(1);
-    		return new FunctionDOS(function, context);
-    	}
-    };
-
-    private static final ExecutableDOS NEW_OBJECT_EXEC = new ExecutableDOS() {
-    	@Override
-    	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
-    		ObjectDOS result = new ObjectDOS();
-    		result.setParent(arguments.at(0));
-    		return result;
-    	}
-    };
-    
-    private static final ExecutableDOS ADD_EXEC = new ExecutableDOS() {
-    	@Override
-    	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
-    		int right = ((ValueObject) arguments.at(0)).getValue();
-            int left = ((ValueObject) arguments.at(1)).getValue();
-            return new ValueObject(left + right);
-    	}
-    };
-    
-    private static final ExecutableDOS SUB_EXEC = new ExecutableDOS() {
-    	@Override
-    	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
-    		int right = ((ValueObject) arguments.at(0)).getValue();
-            int left = ((ValueObject) arguments.at(1)).getValue();
-            return new ValueObject(left - right);
-    	}
-    };
-    
-    private static final ExecutableDOS IS_LESS_THAN_EXEC = new ExecutableDOS() {
-    	@Override
-    	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
-            int left = ((ValueObject) arguments.at(0)).getValue();
-            int right = ((ValueObject) arguments.at(1)).getValue();
-            return left < right ? StandardObjects.TRUE : StandardObjects.FALSE;
-    	}
-    };
-    
 	public static final Symbol VM = Symbol.get("vm");
 	
 	public static final Symbol CONTEXTUALIZE_FUNCTION = Symbol.get("contextualizeFunction:in:");
@@ -77,8 +26,62 @@ public class VMObjectDOS {
 	public static final Symbol IS_LESS_THAN = Symbol.get("value:isLessThan:");
 
 	
-    public static ObjectDOS getVMObject() {
-        ObjectDOS virtualMachine = new ObjectDOS();
+    public static ObjectDOS getVMObject(final Environment environment) {
+        ExecutableDOS PRINT_FUNCTION = new ExecutableDOS() {
+            @Override
+            public ObjectDOS execute(ObjectDOS object, ListDOS arguments) {
+                System.out.println(arguments.at(0));
+                return StandardObjects.NULL;
+            }
+        };
+
+        ExecutableDOS CONTEXTUALIZE_FUNCTION_EXEC = new ExecutableDOS() {
+        	@Override
+        	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+        		FunctionDefinitionDOS function = (FunctionDefinitionDOS) arguments.at(0);
+        		Context context = (Context) arguments.at(1);
+        		return new FunctionDOS(function, context);
+        	}
+        };
+
+        ExecutableDOS NEW_OBJECT_EXEC = new ExecutableDOS() {
+        	@Override
+        	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+        		ObjectDOS result = environment.createNewObject();
+        		result.setParent(arguments.at(0));
+        		return result;
+        	}
+        };
+        
+        ExecutableDOS ADD_EXEC = new ExecutableDOS() {
+        	@Override
+        	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+        		int right = ((ValueObject) arguments.at(0)).getValue();
+                int left = ((ValueObject) arguments.at(1)).getValue();
+                return environment.createNewValueObject(left + right);
+        	}
+        };
+        
+        ExecutableDOS SUB_EXEC = new ExecutableDOS() {
+        	@Override
+        	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+        		int right = ((ValueObject) arguments.at(0)).getValue();
+                int left = ((ValueObject) arguments.at(1)).getValue();
+                return environment.createNewValueObject(left - right);
+        	}
+        };
+        
+        ExecutableDOS IS_LESS_THAN_EXEC = new ExecutableDOS() {
+        	@Override
+        	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+                int left = ((ValueObject) arguments.at(0)).getValue();
+                int right = ((ValueObject) arguments.at(1)).getValue();
+                return left < right ? StandardObjects.TRUE : StandardObjects.FALSE;
+        	}
+        };
+        
+    	
+        ObjectDOS virtualMachine = environment.createNewObject();
         virtualMachine.setFunction(Symbol.get("print"), PRINT_FUNCTION);
         
         virtualMachine.setFunction(CONTEXTUALIZE_FUNCTION, CONTEXTUALIZE_FUNCTION_EXEC);

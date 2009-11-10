@@ -31,9 +31,9 @@ public class OpCodeInterpreterParameterTest {
 
     Symbol localArgumentName = Symbol.get("argument");
     Symbol localObjectName = Symbol.get("object");
-	private ObjectDOS argument1 = new ObjectDOS();
-	private ObjectDOS argument2 = new ObjectDOS();
-	private ObjectDOS argument3 = new ObjectDOS();
+	private ObjectDOS argument1;
+	private ObjectDOS argument2;
+	private ObjectDOS argument3;
 	private Symbol argument1Symbol = Symbol.get("argument1");
 	private Symbol argument2Symbol = Symbol.get("argument2");
 	private Symbol zeroSymbol = Symbol.get("zero");
@@ -46,6 +46,10 @@ public class OpCodeInterpreterParameterTest {
     @Before
     public void setUp() {
         interpreter = new OpCodeInterpreter();
+		
+		argument1 = interpreter.getEnvironment().createNewObject();
+		argument2 = interpreter.getEnvironment().createNewObject();
+		argument3 = interpreter.getEnvironment().createNewObject();
         
         context = interpreter.newContext();
 		context.setSlot(local1Symbol, argument1);
@@ -137,8 +141,8 @@ public class OpCodeInterpreterParameterTest {
 		FunctionDefinitionDOS receiverFunction = new FunctionDefinitionDOS(interpreter, argumentSymbols, new Symbol[] {}, receiverOpCodes);
 		
 		Context emptyContext = interpreter.newContext();
-		emptyContext.setSlot(zeroSymbol, StandardObjects.numberDOS(0));
-		emptyContext.setSlot(oneSymbol, StandardObjects.numberDOS(1));
+		emptyContext.setSlot(zeroSymbol, StandardObjects.numberDOS(interpreter.getEnvironment(), 0));
+		emptyContext.setSlot(oneSymbol, StandardObjects.numberDOS(interpreter.getEnvironment(), 1));
 		
 		FunctionDOS contextualReceiverFunction = new FunctionDOS(receiverFunction, emptyContext);
 		context.setFunction(functionName2, contextualReceiverFunction);

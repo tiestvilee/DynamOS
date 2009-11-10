@@ -34,4 +34,8 @@ public class OpCodeInterpreter {
 		return environment.getContextBuilder().createContext();
 	}
 
+	public Environment getEnvironment() {
+		return environment;
+	}
+
 }

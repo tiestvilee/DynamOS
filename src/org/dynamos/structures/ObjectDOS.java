@@ -22,8 +22,6 @@ public class ObjectDOS {
     public ObjectDOS() {
         slots = new HashMap<Symbol, ObjectDOS>();
         functions = new HashMap<Symbol, ExecutableDOS>();
-        
-        setFunction(Symbol.SET_PARENT, SET_PARENT_EXEC);
     }
 
     public void setSlot(Symbol symbol, ObjectDOS value) {

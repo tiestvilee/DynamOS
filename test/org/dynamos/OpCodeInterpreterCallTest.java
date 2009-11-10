@@ -45,7 +45,7 @@ public class OpCodeInterpreterCallTest {
     public void setUp() {
         interpreter = new OpCodeInterpreter();
         context = interpreter.newContext();
-        theObject = new ObjectDOS();
+        theObject = interpreter.getEnvironment().createNewObject();
         function = mock(FunctionDOS.class);
         expectedArgumentList = new ListDOS();
     }
@@ -97,7 +97,7 @@ public class OpCodeInterpreterCallTest {
 
     @Test
     public void shouldCallAMethodOnObjectWithParameter() {
-        final ObjectDOS expectedArgument = new ObjectDOS();
+        final ObjectDOS expectedArgument = interpreter.getEnvironment().createNewObject();
         theObject.setFunction(functionName, function);
         context.setSlot(localObjectName, theObject);
         context.setSlot(localArgumentName, expectedArgument);
@@ -158,7 +158,7 @@ public class OpCodeInterpreterCallTest {
     @Test
     public void shouldCallThroughToVM() {
         Symbol vm = Symbol.get("VM");
-        context.setSlot(vm, VMObjectDOS.getVMObject());
+        context.setSlot(vm, VMObjectDOS.getVMObject(interpreter.getEnvironment()));
         context.setSlot(localArgumentName, theObject);
 
         OpCode[] opCodes = new OpCode[] {

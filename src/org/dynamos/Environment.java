@@ -10,6 +10,7 @@ public class Environment {
 
 	private Context.ContextBuilder contextBuilder;
 	private ObjectDOS virtualMachine;
+	private ObjectDOS rootObject;
 	/*
 	 * need
 	 *  object prototype
@@ -20,9 +21,9 @@ public class Environment {
 	 */
 
 	public Environment(OpCodeInterpreter interpreter) {
-		ObjectDOS rootObject = new ObjectDOS();
+		rootObject = new ObjectDOS();
 		ObjectDOS.initialiseRootObject(rootObject);
-		virtualMachine = VMObjectDOS.getVMObject();
+		virtualMachine = VMObjectDOS.getVMObject(this);
 		contextBuilder = Context.initializeContext(interpreter, this);
 	}
 	
@@ -36,6 +37,18 @@ public class Environment {
 
 	public ContextBuilder getContextBuilder() {
 		return contextBuilder;
+	}
+	
+	public ObjectDOS createNewObject() {
+		ObjectDOS object = new ObjectDOS();
+		object.setParent(rootObject);
+		return object;
+	}
+	
+	public ObjectDOS createNewValueObject(int value) {
+		StandardObjects.ValueObject object = new StandardObjects.ValueObject(value);
+		object.setParent(rootObject);
+		return object;
 	}
 
 }

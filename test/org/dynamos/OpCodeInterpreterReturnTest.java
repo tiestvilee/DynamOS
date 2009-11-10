@@ -39,12 +39,13 @@ public class OpCodeInterpreterReturnTest {
     public void setUp() {
         interpreter = new OpCodeInterpreter();
         context = interpreter.newContext();
-        theObject = new ObjectDOS();
+        theObject = interpreter.getEnvironment().createNewObject();
+;
     }
 
     @Test
     public void shouldReturnValue() {
-        ObjectDOS result = new ObjectDOS();
+        ObjectDOS result = interpreter.getEnvironment().createNewObject();
         Symbol resultSymbol = Symbol.get("theResult");
         context.setSlot(resultSymbol, result);
 
@@ -60,7 +61,7 @@ public class OpCodeInterpreterReturnTest {
 
     @Test
     public void shouldReturnAValueIntoDefaultSlot() {
-        final ObjectDOS result = new ObjectDOS();
+        final ObjectDOS result = interpreter.getEnvironment().createNewObject();
         FunctionDefinitionDOS function = new FunctionDefinitionDOS(interpreter, null, new Symbol[] {}, null) {
 
             @Override

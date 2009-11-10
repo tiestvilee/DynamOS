@@ -147,13 +147,13 @@ public class FibonacciTest {
         	}),
         	context);
 
-        context.setSlot(one, StandardObjects.numberDOS(1));
-        context.setSlot(two, StandardObjects.numberDOS(2));
-        context.setSlot(sequenceIndexSymbol, StandardObjects.numberDOS(sequenceIndex));
+        context.setSlot(one, StandardObjects.numberDOS(interpreter.getEnvironment(), 1));
+        context.setSlot(two, StandardObjects.numberDOS(interpreter.getEnvironment(), 2));
+        context.setSlot(sequenceIndexSymbol, StandardObjects.numberDOS(interpreter.getEnvironment(), sequenceIndex));
         context.setSlot(anon1, anon1Function);
         context.setSlot(anon2, anon2Function);
         context.setFunction(fibonacci$, fibonacciFunction);
-        context.setSlot(VMObjectDOS.VM, VMObjectDOS.getVMObject());
+        context.setSlot(VMObjectDOS.VM, VMObjectDOS.getVMObject(interpreter.getEnvironment()));
         
         interpreter.interpret(context, new OpCode[] {
         	new OpCode.Push(sequenceIndexSymbol),
