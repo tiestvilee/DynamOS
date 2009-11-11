@@ -10,7 +10,7 @@ public class ListDOS extends ObjectDOS {
 	List<ObjectDOS> list = new ArrayList<ObjectDOS>();
 	
 	public ListDOS() {
-		setFunction(Symbol.get("at:"), new AtFunction());
+		setFunction(Symbol.get("at:"), new AtFunction());  // is this bad?  can only define this here as it uses non-static class
 	}
 
 	public void add(ObjectDOS object) {

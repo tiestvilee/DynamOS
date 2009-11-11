@@ -43,14 +43,6 @@ public class Symbol {
 	public static final Symbol SET_PARENT = Symbol.get("parent:");
 	public static final Symbol EXECUTE = Symbol.get("execute");
 
-	public boolean isPotentialGetter() {
-		return !symbol.contains(":");
-	}
-
-	public boolean isPotentialSetter() {
-		return symbol.indexOf(":") == symbol.lastIndexOf(":");
-	}
-
 	public Symbol toSetterSymbol() {
 		return Symbol.get(symbol + ":");
 	}

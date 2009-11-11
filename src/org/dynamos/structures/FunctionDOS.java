@@ -11,6 +11,7 @@ public class FunctionDOS extends ExecutableDOS {
         this.function = function;
         this.context = context;
         
+        // TODO should move this into prototype
         setFunction(Symbol.EXECUTE, new ExecuteFunction());
     }
 

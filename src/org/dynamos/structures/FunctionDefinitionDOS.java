@@ -17,6 +17,7 @@ public class FunctionDefinitionDOS extends ObjectDOS {
 	private final Symbol[] arguments;
 	private final Symbol[] locals;
 
+	// TODO should have parent set to rootObject
     public FunctionDefinitionDOS(OpCodeInterpreter interpreter, Symbol[] arguments, Symbol[] locals, OpCode[] opCodes) {
         this.interpreter = interpreter;
 		this.arguments = arguments;
