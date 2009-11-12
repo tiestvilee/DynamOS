@@ -1,7 +1,10 @@
 package org.dynamos;
 
 import org.dynamos.structures.Context;
+import org.dynamos.structures.FunctionDOS;
+import org.dynamos.structures.FunctionDefinitionDOS;
 import org.dynamos.structures.ObjectDOS;
+import org.dynamos.structures.OpCode;
 import org.dynamos.structures.StandardObjects;
 import org.dynamos.structures.Symbol;
 import org.dynamos.structures.VMObjectDOS;
@@ -19,6 +22,7 @@ public class Environment {
 	private ObjectDOS nullDOS;
     private ObjectDOS undefined;
 	private ObjectDOS booleanContainer;
+	private final OpCodeInterpreter interpreter;
 
     /*
 	 * need
@@ -30,6 +34,8 @@ public class Environment {
 	 */
 
 	public Environment(OpCodeInterpreter interpreter) {
+		this.interpreter = interpreter;
+		
 		rootObject = new ObjectDOS();
 		ObjectDOS.initialiseRootObject(rootObject);
 		
@@ -86,7 +92,29 @@ public class Environment {
 	public ObjectDOS getFalse() {
 		return booleanContainer.getSlot(Symbol.get("false"));
 	}
-	
-	
+
+	public ObjectDOS getRootObject() {
+		return rootObject;
+	}
+
+	public FunctionDOS createFunction(Symbol[] arguments, Symbol[] locals, OpCode[] opCodes, Context localContext) {
+		return createFunction(createFunctionDefinition(arguments, locals, opCodes), localContext);
+	}
+
+	public FunctionDOS createFunction(FunctionDefinitionDOS functionDefinition, Context localContext) {
+		FunctionDOS function = new FunctionDOS(
+				functionDefinition,
+				localContext);
+		return function;
+	}
+
+	public FunctionDefinitionDOS createFunctionDefinition(Symbol[] arguments, Symbol[] locals, OpCode[] opCodes) {
+		FunctionDefinitionDOS functionDefinition = new FunctionDefinitionDOS(
+				interpreter, 
+				arguments,
+				locals, 
+				opCodes);
+		return functionDefinition;
+	}
 
 }

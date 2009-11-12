@@ -40,7 +40,7 @@ public class VMObjectDOS {
         	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
         		FunctionDefinitionDOS function = (FunctionDefinitionDOS) arguments.at(0);
         		Context context = (Context) arguments.at(1);
-        		return new FunctionDOS(function, context);
+        		return environment.createFunction(function, context);
         	}
         };
 
