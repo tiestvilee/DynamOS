@@ -43,6 +43,7 @@ public class Symbol {
 	public static final Symbol SET_PARENT_$ = Symbol.get("parent:");
 	public static final Symbol EXECUTE = Symbol.get("execute");
 	public static final Symbol SET_FUNCTION_$_TO_$ = Symbol.get("setFunction:to:");
+	public static final Symbol NEW_OBJECT = VMObjectDOS.NEW_OBJECT;
 
 	public Symbol toSetterSymbol() {
 		return Symbol.get(symbol + ":");

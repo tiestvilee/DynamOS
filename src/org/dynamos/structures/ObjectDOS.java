@@ -7,6 +7,8 @@ package org.dynamos.structures;
 
 import java.util.HashMap;
 
+import org.dynamos.Environment;
+
 /**
  *
  * @author tiestvilee
@@ -18,13 +20,8 @@ public class ObjectDOS {
     private HashMap<Symbol, ObjectDOS> slots;
     private HashMap<Symbol, ExecutableDOS> functions;
     private ObjectDOS parent;
-	private ObjectDOS nullObject;
+	private ObjectDOS undefined;
 	
-	public ObjectDOS(ObjectDOS nullObject) {
-		this();
-		this.nullObject = nullObject;
-	}
-
     public ObjectDOS() {
 		slots = new HashMap<Symbol, ObjectDOS>();
         functions = new HashMap<Symbol, ExecutableDOS>();
@@ -42,7 +39,7 @@ public class ObjectDOS {
         final ObjectDOS slot = slots.get(symbol);
         if(slot == null) {
             if(parent == null) {
-                return nullObject; // TODO this sux, only gets here for the top object, otherwise returns null :(
+                return undefined;
             }
             return parent.getSlot(symbol);
         }
@@ -99,7 +96,8 @@ public class ObjectDOS {
 	
 	/* Runtime Definition of Object */
     
-	public static void initialiseRootObject(ObjectDOS rootObject) {
+	public static void initialiseRootObject(Environment environment, ObjectDOS rootObject) {
+		rootObject.undefined = environment.getUndefined();
 		rootObject.setFunction(Symbol.SET_PARENT_$, SET_PARENT_EXEC);
 		rootObject.setFunction(Symbol.SET_FUNCTION_$_TO_$, SET_FUNCTION_$_TO_$_EXEC);
 	}

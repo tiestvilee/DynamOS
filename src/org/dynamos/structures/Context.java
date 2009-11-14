@@ -44,6 +44,17 @@ public class Context extends ObjectDOS {
 	        				new OpCode.MethodCall(VMObjectDOS.CONTEXTUALIZE_FUNCTION_$_IN_$)
 	        		},
 	        		contextContainingVM));
+
+			contextPrototype.setFunction(Symbol.NEW_OBJECT, 
+					environment.createFunction( 
+						new Symbol[] {}, 
+						new Symbol[] {}, 
+						new OpCode[] {
+							new OpCode.SetObject(VMObjectDOS.VM),
+							new OpCode.MethodCall(VMObjectDOS.NEW_OBJECT)
+						}, 
+						contextContainingVM ));
+			
 		}
 		
 		public Context createContext() {

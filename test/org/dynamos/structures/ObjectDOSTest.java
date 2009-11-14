@@ -9,6 +9,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 
+import org.dynamos.Environment;
+import org.dynamos.OpCodeInterpreter;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,8 +60,10 @@ public class ObjectDOSTest {
 
     @Test
     public void shouldReturnNullIfNoSlot() {
-    	theObject = new ObjectDOS(nullDOS); // TODO again, this sux the big time
-        assertSame(nullDOS, theObject.getSlot(symbol));
+    	theObject = new ObjectDOS(); // TODO again, this sux the big time
+    	Environment env = new Environment(new OpCodeInterpreter());
+		ObjectDOS.initialiseRootObject(env, theObject);
+        assertSame(env.getUndefined(), theObject.getSlot(symbol));
     }
 
     @Test

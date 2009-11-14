@@ -37,12 +37,13 @@ public class Environment {
 		this.interpreter = interpreter;
 		
 		rootObject = new ObjectDOS();
-		ObjectDOS.initialiseRootObject(rootObject);
-		
+
 		nullDOS = new NullDOS();
 		nullDOS.setParent(rootObject);
 		undefined = new UndefinedDOS();
 		undefined.setParent(rootObject);
+		
+		ObjectDOS.initialiseRootObject(this, rootObject);
 		
 		virtualMachine = VMObjectDOS.getVMObject(this);
 		contextBuilder = Context.initializeContext(interpreter, this);

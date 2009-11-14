@@ -11,7 +11,6 @@ import static org.junit.Assert.assertThat;
 import org.dynamos.structures.Context;
 import org.dynamos.structures.FunctionDOS;
 import org.dynamos.structures.FunctionDefinitionDOS;
-import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.Symbol;
 import org.dynamos.structures.StandardObjects.ValueObject;
@@ -154,11 +153,14 @@ public class FibonacciTest {
         fibonacciLibraryContext.setSlot(anon1, anon1Function); // move these into the libarary definition...
         fibonacciLibraryContext.setSlot(anon2, anon2Function);
         fibonacciLibraryContext.setSlot(fibonacciDefinition, fibonacciFunction);
-        ObjectDOS fibonacciLibraryObject = interpreter.getEnvironment().createNewObject();
-		fibonacciLibraryContext.setSlot(fibonacciLibrarySlot, fibonacciLibraryObject); //  move this into a temp...
 
-        FunctionDOS fibonacciLibrary = new FunctionDOS(new FunctionDefinitionDOS(interpreter, new Symbol[] {numberFactory}, new Symbol[] {one, two, temp1}, new OpCode[] {
+        FunctionDOS fibonacciLibrary = new FunctionDOS(new FunctionDefinitionDOS(interpreter, new Symbol[] {numberFactory}, new Symbol[] {one, two, temp1, fibonacciLibrarySlot}, new OpCode[] {
             	new OpCode.Debug("creating fibonacci library", numberFactory),
+            	
+            	new OpCode.ContextCall(Symbol.NEW_OBJECT), // create a new, empy object
+            	
+            	new OpCode.Push(Symbol.RESULT),
+            	new OpCode.ContextCall(fibonacciLibrarySlot.toSetterSymbol()),
             	
             	new OpCode.CreateValueObject(interpreter, 1),  // create constant for '1'
             	new OpCode.Push(Symbol.RESULT),
