@@ -73,7 +73,7 @@ public class OpCodeInterpreterParameterTest {
 		OpCode[] receiverOpCodes = new OpCode[] {
         	new OpCode.ContextCall(argumentSymbol),
          	new OpCode.Push(Symbol.RESULT),
-        	new OpCode.ContextCall(Symbol.SET_RESULT)
+        	new OpCode.ContextCall(Symbol.RESULT_$)
         };
 		Symbol[] argumentSymbols = new Symbol[] {argumentSymbol, argument2Symbol};
 		
@@ -96,7 +96,7 @@ public class OpCodeInterpreterParameterTest {
 		OpCode[] receiverOpCodes = new OpCode[] {
         	new OpCode.ContextCall(argument2Symbol),
          	new OpCode.Push(Symbol.RESULT),
-        	new OpCode.ContextCall(Symbol.SET_RESULT)
+        	new OpCode.ContextCall(Symbol.RESULT_$)
         };
 		Symbol[] argumentSymbols = new Symbol[] {argument1Symbol, argument2Symbol};
 		
@@ -118,7 +118,7 @@ public class OpCodeInterpreterParameterTest {
 		OpCode[] receiverOpCodes = new OpCode[] {
         	new OpCode.ContextCall(argument2Symbol),
          	new OpCode.Push(Symbol.RESULT),
-        	new OpCode.ContextCall(Symbol.SET_RESULT)
+        	new OpCode.ContextCall(Symbol.RESULT_$)
         };
 		Symbol[] argumentSymbols = new Symbol[] {argument1Symbol, argument2Symbol};
 		
@@ -156,7 +156,7 @@ public class OpCodeInterpreterParameterTest {
          	new OpCode.SetObject(Symbol.RESULT),
         	new OpCode.MethodCall(Symbol.get("at:")),
          	new OpCode.Push(Symbol.RESULT),
-        	new OpCode.ContextCall(Symbol.SET_RESULT)
+        	new OpCode.ContextCall(Symbol.RESULT_$)
         };
 		Symbol[] argumentSymbols = new Symbol[] {argument1Symbol, argument2Symbol};
 		

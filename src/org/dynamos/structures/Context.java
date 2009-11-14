@@ -33,7 +33,7 @@ public class Context extends ObjectDOS {
 	        Context contextContainingVM = createContext();
 	        contextContainingVM.setSlot(VMObjectDOS.VM, environment.getVirtualMachine());
 	        
-	        contextPrototype.setFunction(Symbol.CONTEXTUALIZE_FUNCTION, 
+	        contextPrototype.setFunction(Symbol.CONTEXTUALIZE_FUNCTION_$_IN_$, 
 	        		environment.createFunction(
        				new Symbol[] {functionDefinition, context}, 
 	        		new Symbol[] {},
@@ -41,7 +41,7 @@ public class Context extends ObjectDOS {
 	        				new OpCode.Push(functionDefinition),
 	        				new OpCode.Push(context),
 	        				new OpCode.SetObject(VMObjectDOS.VM),
-	        				new OpCode.MethodCall(VMObjectDOS.CONTEXTUALIZE_FUNCTION)
+	        				new OpCode.MethodCall(VMObjectDOS.CONTEXTUALIZE_FUNCTION_$_IN_$)
 	        		},
 	        		contextContainingVM));
 		}

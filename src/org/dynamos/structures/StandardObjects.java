@@ -44,7 +44,7 @@ public class StandardObjects {
 				new Symbol[] {trueResult, falseResult },
 				new Symbol[] {},
 				new OpCode[] {new OpCode.Push(trueResult),
-				new OpCode.ContextCall(Symbol.SET_RESULT) },
+				new OpCode.ContextCall(Symbol.RESULT_$) },
 				booleanContext));
 
 		FalseDOS falseObject = new FalseDOS();
@@ -53,7 +53,7 @@ public class StandardObjects {
 				new Symbol[] {trueResult, falseResult },
 				new Symbol[] {},
 				new OpCode[] {new OpCode.Push(falseResult),
-				new OpCode.ContextCall(Symbol.SET_RESULT) },
+				new OpCode.ContextCall(Symbol.RESULT_$) },
 				booleanContext));
 
 		ObjectDOS booleanContainer = environment.createNewObject();
@@ -89,7 +89,7 @@ public class StandardObjects {
 		OpCode[] opCodes = new OpCode[] {
 									new OpCode.Push(numberPrototypeSymbol),
 									new OpCode.SetObject(number),
-									new OpCode.MethodCall(Symbol.SET_PARENT) 
+									new OpCode.MethodCall(Symbol.SET_PARENT_$) 
 								};
 		Symbol[] locals = new Symbol[] {};
 		Symbol[] arguments = new Symbol[] { number };
@@ -114,7 +114,7 @@ public class StandardObjects {
        				new OpCode.Push(right),
         			new OpCode.Push(Symbol.THIS),
         			new OpCode.SetObject(VMObjectDOS.VM),
-        			new OpCode.MethodCall(VMObjectDOS.ADD),
+        			new OpCode.MethodCall(VMObjectDOS.ADD_$_TO_$),
         			new OpCode.Push(Symbol.RESULT),
         			new OpCode.SetObject(numberFactorySymbol),
         			new OpCode.MethodCall(Symbol.get("numberFrom:"))
@@ -128,7 +128,7 @@ public class StandardObjects {
        				new OpCode.Push(right),
         			new OpCode.Push(Symbol.THIS),
         			new OpCode.SetObject(VMObjectDOS.VM),
-        			new OpCode.MethodCall(VMObjectDOS.SUB),
+        			new OpCode.MethodCall(VMObjectDOS.SUBTRACT_$_FROM_$),
         			new OpCode.Push(Symbol.RESULT),
         			new OpCode.SetObject(numberFactorySymbol),
         			new OpCode.MethodCall(Symbol.get("numberFrom:"))
@@ -142,7 +142,7 @@ public class StandardObjects {
         			new OpCode.Push(Symbol.THIS),
         			new OpCode.Push(right),
         			new OpCode.SetObject(VMObjectDOS.VM),
-        			new OpCode.MethodCall(VMObjectDOS.IS_LESS_THAN)
+        			new OpCode.MethodCall(VMObjectDOS.VALUE_$_IS_LESS_THAN_$)
         		}, 
         		numberLibraryContext));
 	}

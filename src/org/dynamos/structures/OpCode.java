@@ -87,7 +87,20 @@ public class OpCode {
             return false;
         }
     }
-    
+
+	public static class PushSymbol extends OpCode {
+        private Symbol symbol;
+        public PushSymbol(Symbol symbol) {
+            this.symbol = symbol;
+        }
+
+        @Override
+        public boolean execute(Context context, StackFrame stackFrame) {
+            stackFrame.pushArgument(new SymbolWrapper(symbol));
+            return false;
+        }
+	}
+
 
     public static class CreateValueObject extends OpCode {
         private final int value;

@@ -105,6 +105,7 @@ public class Environment {
 		FunctionDOS function = new FunctionDOS(
 				functionDefinition,
 				localContext);
+		function.setParent(rootObject);
 		return function;
 	}
 
@@ -114,6 +115,7 @@ public class Environment {
 				arguments,
 				locals, 
 				opCodes);
+		functionDefinition.setParent(rootObject);
 		return functionDefinition;
 	}
 

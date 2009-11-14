@@ -18,12 +18,12 @@ public class VMObjectDOS {
 
 	public static final Symbol VM = Symbol.get("vm");
 	
-	public static final Symbol CONTEXTUALIZE_FUNCTION = Symbol.get("contextualizeFunction:in:");
-	public static final Symbol NEW_OBJECT = Symbol.get("newObjectWithPrototype:");
+	public static final Symbol CONTEXTUALIZE_FUNCTION_$_IN_$ = Symbol.get("contextualizeFunction:in:");
+	public static final Symbol NEW_OBJECT_WITH_PROTOTYPE_$ = Symbol.get("newObjectWithPrototype:");
 	
-	public static final Symbol ADD = Symbol.get("add:to:");
-	public static final Symbol SUB = Symbol.get("subtract:from:");
-	public static final Symbol IS_LESS_THAN = Symbol.get("value:isLessThan:");
+	public static final Symbol ADD_$_TO_$ = Symbol.get("add:to:");
+	public static final Symbol SUBTRACT_$_FROM_$ = Symbol.get("subtract:from:");
+	public static final Symbol VALUE_$_IS_LESS_THAN_$ = Symbol.get("value:isLessThan:");
 
 	
     public static ObjectDOS getVMObject(final Environment environment) {
@@ -84,11 +84,11 @@ public class VMObjectDOS {
         ObjectDOS virtualMachine = environment.createNewObject();
         virtualMachine.setFunction(Symbol.get("print"), PRINT_FUNCTION);
         
-        virtualMachine.setFunction(CONTEXTUALIZE_FUNCTION, CONTEXTUALIZE_FUNCTION_EXEC);
+        virtualMachine.setFunction(CONTEXTUALIZE_FUNCTION_$_IN_$, CONTEXTUALIZE_FUNCTION_EXEC);
         
-        virtualMachine.setFunction(ADD, ADD_EXEC);
-        virtualMachine.setFunction(SUB, SUB_EXEC);
-        virtualMachine.setFunction(IS_LESS_THAN, IS_LESS_THAN_EXEC);
+        virtualMachine.setFunction(ADD_$_TO_$, ADD_EXEC);
+        virtualMachine.setFunction(SUBTRACT_$_FROM_$, SUB_EXEC);
+        virtualMachine.setFunction(VALUE_$_IS_LESS_THAN_$, IS_LESS_THAN_EXEC);
         
         
         System.out.println("initialized VM");

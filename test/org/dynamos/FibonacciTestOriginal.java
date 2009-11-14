@@ -95,7 +95,7 @@ public class FibonacciTestOriginal {
 
         FunctionDefinitionDOS anon1Function = new FunctionDefinitionDOS(interpreter, new Symbol[] {}, new Symbol[] {}, new OpCode[] {
                 new OpCode.Push(one),
-                new OpCode.ContextCall(Symbol.SET_RESULT),
+                new OpCode.ContextCall(Symbol.RESULT_$),
 	            new OpCode.Debug("returning (1) ", Symbol.RESULT)
         });
 
@@ -139,7 +139,7 @@ public class FibonacciTestOriginal {
 	            
 	            new OpCode.Push(Symbol.RESULT),  // contextualize anon function
 	            new OpCode.Push(Symbol.CURRENT_CONTEXT),
-	            new OpCode.ContextCall(Symbol.CONTEXTUALIZE_FUNCTION),
+	            new OpCode.ContextCall(Symbol.CONTEXTUALIZE_FUNCTION_$_IN_$),
 	            new OpCode.Debug("contextualized", Symbol.RESULT),
 	            
 	            new OpCode.SetObject(Symbol.RESULT), // call anon function

@@ -88,10 +88,19 @@ public class ObjectDOS {
 			return theObject;
 		}
     };
+    
+    private static ExecutableDOS SET_FUNCTION_$_TO_$_EXEC = new ExecutableDOS() {
+		@Override
+		public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+			theObject.setFunction(((SymbolWrapper) arguments.at(0)).getSymbol(), (ExecutableDOS) arguments.at(1));
+			return theObject;
+		}
+    };
 	
 	/* Runtime Definition of Object */
     
 	public static void initialiseRootObject(ObjectDOS rootObject) {
-		rootObject.setFunction(Symbol.SET_PARENT, SET_PARENT_EXEC);
+		rootObject.setFunction(Symbol.SET_PARENT_$, SET_PARENT_EXEC);
+		rootObject.setFunction(Symbol.SET_FUNCTION_$_TO_$, SET_FUNCTION_$_TO_$_EXEC);
 	}
 }

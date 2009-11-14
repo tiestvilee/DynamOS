@@ -11,6 +11,7 @@ import static org.junit.Assert.assertThat;
 import org.dynamos.structures.Context;
 import org.dynamos.structures.FunctionDOS;
 import org.dynamos.structures.FunctionDefinitionDOS;
+import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.Symbol;
 import org.dynamos.structures.StandardObjects.ValueObject;
@@ -47,7 +48,11 @@ public class FibonacciTest {
     Symbol temp1 = Symbol.get("temp1");
     Symbol temp1Setter = Symbol.get("temp1:");
     Symbol temp2 = Symbol.get("temp2");
-	Symbol numberFactory = Symbol.get("numberFactory");;
+	Symbol numberFactory = Symbol.get("numberFactory");
+	
+	Symbol fibonacciLibrarySlot = Symbol.get("fibonacciLibrary");
+	Symbol fibonacciLibraryDefinition = Symbol.get("fibonacciLibraryDefinition");
+	private Symbol fibonacciDefinition = Symbol.get("fibonacciDefinition");
 
     @Test
     public void shouldCalculateFibonacciAt0() {
@@ -90,12 +95,9 @@ public class FibonacciTest {
         
 		OpCodeInterpreter interpreter = new OpCodeInterpreter();
 		
-        Context applicationContext = interpreter.newContext();
-		applicationContext.setSlot(numberFactory, interpreter.getEnvironment().getNumberFactory());
-
         FunctionDefinitionDOS anon1Function = new FunctionDefinitionDOS(interpreter, new Symbol[] {}, new Symbol[] {}, new OpCode[] {
                 new OpCode.Push(one),
-                new OpCode.ContextCall(Symbol.SET_RESULT),
+                new OpCode.ContextCall(Symbol.RESULT_$),
 	            new OpCode.Debug("returning (1) ", Symbol.RESULT)
         });
 
@@ -125,8 +127,9 @@ public class FibonacciTest {
         });
 
         
-        FunctionDOS fibonacciFunction = new FunctionDOS(new FunctionDefinitionDOS(interpreter, new Symbol[] {index}, new Symbol[] {}, new OpCode[] {
+        FunctionDefinitionDOS fibonacciFunction = new FunctionDefinitionDOS(interpreter, new Symbol[] {index}, new Symbol[] {}, new OpCode[] {
 	            new OpCode.Debug("in fibonacci with argument", index),
+	            new OpCode.Debug("******************************", numberFactory),
 	            new OpCode.Push(two), // result = index isLessThan: two
 	            new OpCode.SetObject(index),
 	            new OpCode.MethodCall(isLessThan$),
@@ -139,47 +142,91 @@ public class FibonacciTest {
 	            
 	            new OpCode.Push(Symbol.RESULT),  // contextualize anon function
 	            new OpCode.Push(Symbol.CURRENT_CONTEXT),
-	            new OpCode.ContextCall(Symbol.CONTEXTUALIZE_FUNCTION),
+	            new OpCode.ContextCall(Symbol.CONTEXTUALIZE_FUNCTION_$_IN_$),
 	            new OpCode.Debug("contextualized", Symbol.RESULT),
 	            
 	            new OpCode.SetObject(Symbol.RESULT), // call anon function
 	            new OpCode.MethodCall(Symbol.EXECUTE),
 	            new OpCode.Debug("executed function", Symbol.RESULT)
-        	}),
-        	applicationContext);
+        	});
+        
+        Context fibonacciLibraryContext = interpreter.newContext();
+        fibonacciLibraryContext.setSlot(anon1, anon1Function); // move these into the libarary definition...
+        fibonacciLibraryContext.setSlot(anon2, anon2Function);
+        fibonacciLibraryContext.setSlot(fibonacciDefinition, fibonacciFunction);
+        ObjectDOS fibonacciLibraryObject = interpreter.getEnvironment().createNewObject();
+		fibonacciLibraryContext.setSlot(fibonacciLibrarySlot, fibonacciLibraryObject); //  move this into a temp...
 
-        applicationContext.setSlot(one, interpreter.getEnvironment().getNull());
-        applicationContext.setSlot(two, interpreter.getEnvironment().getNull());
+        FunctionDOS fibonacciLibrary = new FunctionDOS(new FunctionDefinitionDOS(interpreter, new Symbol[] {numberFactory}, new Symbol[] {one, two, temp1}, new OpCode[] {
+            	new OpCode.Debug("creating fibonacci library", numberFactory),
+            	
+            	new OpCode.CreateValueObject(interpreter, 1),  // create constant for '1'
+            	new OpCode.Push(Symbol.RESULT),
+            	new OpCode.SetObject(numberFactory),
+            	new OpCode.MethodCall(Symbol.get("numberFrom:")),
+            	new OpCode.Push(Symbol.RESULT),
+            	new OpCode.ContextCall(Symbol.get("one:")),
+
+            	new OpCode.CreateValueObject(interpreter, 2),  // create constant for '2'
+            	new OpCode.Push(Symbol.RESULT),
+            	new OpCode.SetObject(numberFactory),
+            	new OpCode.MethodCall(Symbol.get("numberFrom:")),
+            	new OpCode.Push(Symbol.RESULT),
+            	new OpCode.ContextCall(Symbol.get("two:")),
+            	
+            	new OpCode.Push(fibonacciDefinition),  // contextualise the fibonacci function
+            	new OpCode.Push(Symbol.CURRENT_CONTEXT),
+            	new OpCode.ContextCall(Symbol.CONTEXTUALIZE_FUNCTION_$_IN_$),
+            	
+            	new OpCode.Push(Symbol.RESULT),
+            	new OpCode.ContextCall(temp1.toSetterSymbol()),
+            	
+            	new OpCode.PushSymbol(fibonacci$),  // add to the context
+            	new OpCode.Push(temp1),
+            	new OpCode.ContextCall(Symbol.SET_FUNCTION_$_TO_$),
+            	
+            	new OpCode.PushSymbol(fibonacci$),  // and add to the fibonacci library
+            	new OpCode.Push(temp1),
+            	new OpCode.SetObject(fibonacciLibrarySlot),
+            	new OpCode.MethodCall(Symbol.SET_FUNCTION_$_TO_$),
+	            new OpCode.Debug("created fibonacci library", fibonacciLibrarySlot),
+            	
+            	new OpCode.Push(fibonacciLibrarySlot),  // return the library
+            	new OpCode.ContextCall(Symbol.RESULT_$)
+    	}),
+    	fibonacciLibraryContext);
+
+
+        Context applicationContext = interpreter.newContext();
+		applicationContext.setSlot(numberFactory, interpreter.getEnvironment().getNumberFactory());
+		applicationContext.setFunction(fibonacciLibraryDefinition, fibonacciLibrary);
         applicationContext.setSlot(sequenceIndexSymbol, interpreter.getEnvironment().getNull());
-        applicationContext.setSlot(anon1, anon1Function);
-        applicationContext.setSlot(anon2, anon2Function);
-        applicationContext.setFunction(fibonacci$, fibonacciFunction);
+        applicationContext.setSlot(fibonacciLibrarySlot, interpreter.getEnvironment().getNull());
+
+        applicationContext.setSlot(Symbol.get("stupid"), new FunctionDOS(new FunctionDefinitionDOS(interpreter, new Symbol[] {}, new Symbol [] {}, new OpCode[] {
+        		new OpCode.Debug("in!", numberFactory),
+        }),
+        applicationContext));
         
         interpreter.interpret(applicationContext, new OpCode[] {
-        	new OpCode.CreateValueObject(interpreter, 1),
-        	new OpCode.Push(Symbol.RESULT),
-        	new OpCode.SetObject(numberFactory),
-        	new OpCode.MethodCall(Symbol.get("numberFrom:")),
-        	new OpCode.Push(Symbol.RESULT),
-        	new OpCode.ContextCall(Symbol.get("one:")),
-
-        	new OpCode.CreateValueObject(interpreter, 2),
-        	new OpCode.Push(Symbol.RESULT),
-        	new OpCode.SetObject(numberFactory),
-        	new OpCode.MethodCall(Symbol.get("numberFrom:")),
-        	new OpCode.Push(Symbol.RESULT),
-        	new OpCode.ContextCall(Symbol.get("two:")),
-        	
-        	new OpCode.CreateValueObject(interpreter, sequenceIndex),
+        	new OpCode.CreateValueObject(interpreter, sequenceIndex), // set up the index we want to get fibonacci for
         	new OpCode.Push(Symbol.RESULT),
         	new OpCode.SetObject(numberFactory),
         	new OpCode.MethodCall(Symbol.get("numberFrom:")),
         	new OpCode.Push(Symbol.RESULT),
         	new OpCode.ContextCall(Symbol.get("sequenceIndex:")),
+        	
+        	new OpCode.Debug("about to create fibonacci library", fibonacciLibraryDefinition),
+        	new OpCode.Push(numberFactory),  // initialise the fibonacciLibrary
+        	new OpCode.ContextCall(fibonacciLibraryDefinition),
+        	
+        	new OpCode.Push(Symbol.RESULT),  // and store it in a slot
+        	new OpCode.ContextCall(fibonacciLibrarySlot.toSetterSymbol()),
 
-        	new OpCode.Push(sequenceIndexSymbol),
+        	new OpCode.Push(sequenceIndexSymbol),  // now call fibonacci function
+        	new OpCode.SetObject(fibonacciLibrarySlot),
         	new OpCode.Debug("calling fibonacci with", sequenceIndexSymbol),
-        	new OpCode.ContextCall(fibonacci$)
+        	new OpCode.MethodCall(fibonacci$)
         });
         
         assertThat(((ValueObject) applicationContext.getSlot(Symbol.RESULT)).getValue(), is(expectedResult));

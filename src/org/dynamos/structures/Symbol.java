@@ -35,13 +35,14 @@ public class Symbol {
     public static final Symbol ARGUMENTS = Symbol.get("arguments");
     public static final Symbol RESULT = Symbol.get("result");
     public static final Symbol THIS = Symbol.get("this");
-	public static final Symbol SET_RESULT = Symbol.get("result:");
+	public static final Symbol RESULT_$ = Symbol.get("result:");
 	public static final Symbol CURRENT_CONTEXT = Symbol.get("currentContext");
-	public static final Symbol ADD_SLOT = Symbol.get("addSlot:");
-	public static final Symbol ADD_SLOT_WITH_VALUE = Symbol.get("addSlot:withValue:");
-	public static final Symbol CONTEXTUALIZE_FUNCTION = VMObjectDOS.CONTEXTUALIZE_FUNCTION;
-	public static final Symbol SET_PARENT = Symbol.get("parent:");
+	public static final Symbol ADD_SLOT_$ = Symbol.get("addSlot:");
+	public static final Symbol ADD_SLOT_$_WITH_VALUE_$ = Symbol.get("addSlot:withValue:");
+	public static final Symbol CONTEXTUALIZE_FUNCTION_$_IN_$ = VMObjectDOS.CONTEXTUALIZE_FUNCTION_$_IN_$;
+	public static final Symbol SET_PARENT_$ = Symbol.get("parent:");
 	public static final Symbol EXECUTE = Symbol.get("execute");
+	public static final Symbol SET_FUNCTION_$_TO_$ = Symbol.get("setFunction:to:");
 
 	public Symbol toSetterSymbol() {
 		return Symbol.get(symbol + ":");

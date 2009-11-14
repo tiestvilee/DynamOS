@@ -51,7 +51,7 @@ public class OpCodeInterpreterReturnTest {
 
         OpCode[] opCodes = new OpCode[] {
         	new OpCode.Push(resultSymbol),
-        	new OpCode.ContextCall(Symbol.SET_RESULT)
+        	new OpCode.ContextCall(Symbol.RESULT_$)
         };
 
         interpreter.interpret(context, opCodes);
@@ -68,7 +68,7 @@ public class OpCodeInterpreterReturnTest {
             public void execute(Context context) {
             	ListDOS list = new ListDOS();
             	list.add(result);
-                context.getFunction(Symbol.SET_RESULT).execute(context, list);
+                context.getFunction(Symbol.RESULT_$).execute(context, list);
             }
 
         };
