@@ -26,34 +26,33 @@ public class OpCodeInterpreter {
 
     public void interpret(Context context, OpCode[] opCodes) {
         StackFrame stackFrame = new StackFrame();
-        int opcodeListDepth = 0;
         for(int i=0; i<opCodes.length; i++) {
 			if(opCodes[i] instanceof OpCode.StartOpCodeList) {
-        		opcodeListDepth++;
-        		ListDOS opcodeList = new ListDOS();
-                i += 1;
-				System.out.println("starting opcode list " + i + " depth " + opcodeListDepth);
-                for(;i<opCodes.length && opcodeListDepth > 0;i++) {
-					if(opCodes[i] instanceof OpCode.StartOpCodeList) {
-						System.out.println("another opcode list " + i + " depth " + opcodeListDepth);
-		        		opcodeListDepth++;
-		        	} else 
-					if(opCodes[i] instanceof OpCode.EndOpCodeList) {
-						System.out.println("end of an opcode list " + i + " depth " + opcodeListDepth);
-		        		opcodeListDepth--;
-		        	} else {
-						System.out.println("add opcode " + opCodes[i]);
-		        		opcodeList.add(new OpCodeWrapper(opCodes[i]));
-		        	}
-                }
-        		context.setSlot(Symbol.RESULT, opcodeList);
-                i -= 1;
+				i = storeOpCodesInList(context, opCodes, i);
         	}
 			else if(opCodes[i].execute(context, stackFrame)) {
                 stackFrame = new StackFrame();
             }
         }
     }
+
+	private int storeOpCodesInList(Context context, OpCode[] opCodes, int i) {
+		int opcodeListDepth = 1;
+		ListDOS opcodeList = new ListDOS();
+		i += 1;
+		for(;i<opCodes.length && opcodeListDepth > 0;i++) {
+			if(opCodes[i] instanceof OpCode.StartOpCodeList) {
+				opcodeListDepth++;
+			} else 
+			if(opCodes[i] instanceof OpCode.EndOpCodeList) {
+				opcodeListDepth--;
+			}
+			opcodeList.add(new OpCodeWrapper(opCodes[i]));
+		}
+		opcodeList.getRawList().remove(opcodeList.getRawList().size() - 1); // get rid of last endopcode - not needed
+		context.setSlot(Symbol.RESULT, opcodeList);
+		return i - 1;
+	}
 
 	public Context newContext() {
 		return environment.getContextBuilder().createContext();

@@ -98,101 +98,12 @@ public class FibonacciTest {
         System.out.println("******************************************************\n");
         
 		OpCodeInterpreter interpreter = new OpCodeInterpreter();
-		
-        FunctionDefinitionDOS anon1Function = new FunctionDefinitionDOS(interpreter, new Symbol[] {}, new Symbol[] {}, new OpCode[] {
-                new OpCode.Push(one),
-                new OpCode.FunctionCall(Symbol.RESULT_$),
-	            new OpCode.Debug("returning (1) ", Symbol.RESULT)
-        });
-
-        FunctionDefinitionDOS anon2Function = new FunctionDefinitionDOS(interpreter, new Symbol[] {}, new Symbol[] {temp1}, new OpCode[] {
-	            new OpCode.Push(one),  // result = index - 1
-	            new OpCode.SetObject(index),
-	            new OpCode.FunctionCall(minus$),
-	
-	            new OpCode.Push(Symbol.RESULT), // result = fibonacci( result )
-	            new OpCode.FunctionCall(fibonacci$),
-	
-	            new OpCode.Push(Symbol.RESULT),  // temp1 = result
-	            new OpCode.FunctionCall(temp1Setter),  // temp1 = result
-	
-	            new OpCode.Push(two),  // result = index - 2
-	            new OpCode.SetObject(index),
-	            new OpCode.FunctionCall(minus$),
-	
-	            new OpCode.Push(Symbol.RESULT), // result = fibonacci( result )
-	            new OpCode.FunctionCall(fibonacci$),
-	
-	            new OpCode.Debug("left side", temp1),
-	            new OpCode.Debug("right side", Symbol.RESULT),
-	            new OpCode.Push(Symbol.RESULT), // temp1 = temp1 + result
-	            new OpCode.SetObject(temp1),
-	            new OpCode.FunctionCall(plus$)
-        });
-
-        
-        FunctionDefinitionDOS fibonacciFunction = new FunctionDefinitionDOS(interpreter, new Symbol[] {index}, new Symbol[] {}, new OpCode[] {
-	            new OpCode.Debug("in fibonacci with argument", index),
-	            new OpCode.Debug("******************************", numberFactory),
-	            new OpCode.Push(two), // result = index isLessThan: two
-	            new OpCode.SetObject(index),
-	            new OpCode.FunctionCall(isLessThan$),
-	
-	            new OpCode.Push(anon1), // result = result ifTrue: [anon1] ifFalse: [anon2]
-	            new OpCode.Push(anon2),
-	            new OpCode.SetObject(Symbol.RESULT),
-	            new OpCode.FunctionCall(ifTrue$IfFalse$),
-	            new OpCode.Debug("true or false?", Symbol.RESULT),
-	            
-	            new OpCode.Push(Symbol.RESULT),  // contextualize anon function
-	            new OpCode.Push(Symbol.CURRENT_CONTEXT),
-	            new OpCode.FunctionCall(Symbol.CONTEXTUALIZE_FUNCTION_$_IN_$),
-	            new OpCode.Debug("contextualized", Symbol.RESULT),
-	            
-	            new OpCode.SetObject(Symbol.RESULT), // call anon function
-	            new OpCode.FunctionCall(Symbol.EXECUTE),
-	            new OpCode.Debug("executed function", Symbol.RESULT)
-        	});
         
         Context fibonacciLibraryContext = interpreter.newContext();
-        fibonacciLibraryContext.setSlot(anon1, anon1Function); // TODO move these into the libarary definition...
-        fibonacciLibraryContext.setSlot(anon2, anon2Function);
-        fibonacciLibraryContext.setSlot(fibonacciDefinition, fibonacciFunction);
-
-        FunctionDOS fibonacciLibrary = new FunctionDOS(new FunctionDefinitionDOS(interpreter, new Symbol[] {numberFactory, listFactory}, new Symbol[] {one, two, temp1, fibonacciLibrarySlot, argumentList, locals, opcodes}, new OpCode[] {
+        
+        FunctionDOS fibonacciLibrary = new FunctionDOS(new FunctionDefinitionDOS(interpreter, new Symbol[] {numberFactory, listFactory}, new Symbol[] {one, two, temp1, fibonacciLibrarySlot, argumentList, locals, opcodes, anon1, anon2}, new OpCode[] {
             	new OpCode.Debug("creating fibonacci library", numberFactory),
-            	
-            	
-            	new OpCode.SetObject(listFactory), // empty symbol list
-            	new OpCode.FunctionCall(Symbol.get("newList")),
-            	new OpCode.Push(Symbol.RESULT), // copy into arguments
-            	new OpCode.FunctionCall(argumentList.toSetterSymbol()),
-            	new OpCode.Push(argumentList), // copy into locals
-            	new OpCode.FunctionCall(locals.toSetterSymbol()),
-            	
-            	new OpCode.StartOpCodeList(),
-	            new OpCode.Debug("in function", listFactory), 
-            	new OpCode.EndOpCodeList(),
-	            new OpCode.Debug("got opcodes", Symbol.RESULT), 
-            	
-            	new OpCode.Push(argumentList),
-            	new OpCode.Push(locals),
-            	new OpCode.Push(Symbol.RESULT),
-            	new OpCode.FunctionCall(Symbol.CREATE_FUNCTION_WITH_ARGUMENTS_$_LOCALS_$_OPCODES_$),
-	            new OpCode.Debug("created", Symbol.RESULT),
-            	
-            	new OpCode.Push(Symbol.RESULT),  // contextualise the newly created function
-            	new OpCode.Push(Symbol.CURRENT_CONTEXT),
-            	new OpCode.FunctionCall(Symbol.CONTEXTUALIZE_FUNCTION_$_IN_$),	  
-	            new OpCode.Debug("contextualized", Symbol.RESULT), 
-            	
-	            new OpCode.SetObject(Symbol.RESULT), // call newly created function
-	            new OpCode.FunctionCall(Symbol.EXECUTE),
-            	
-            	
-            	new OpCode.FunctionCall(Symbol.NEW_OBJECT), // create a new, empy object, move into fibonacciLibrarySlot
-            	new OpCode.Push(Symbol.RESULT),
-            	new OpCode.FunctionCall(fibonacciLibrarySlot.toSetterSymbol()),
+
             	
             	new OpCode.CreateValueObject(interpreter, 1),  // create constant for '1'
             	new OpCode.Push(Symbol.RESULT),
@@ -207,17 +118,144 @@ public class FibonacciTest {
             	new OpCode.FunctionCall(Symbol.get("numberFrom:")),
             	new OpCode.Push(Symbol.RESULT),
             	new OpCode.FunctionCall(Symbol.get("two:")),
+
+            	// create second anonymous function
+            	new OpCode.SetObject(listFactory), // empty symbol list
+            	new OpCode.FunctionCall(Symbol.get("newList")),
+            	new OpCode.Push(Symbol.RESULT), // copy into arguments
+            	new OpCode.FunctionCall(argumentList.toSetterSymbol()),
             	
-            	new OpCode.Push(fibonacciDefinition),  // contextualise the fibonacci function
-            	new OpCode.Push(Symbol.CURRENT_CONTEXT),
-            	new OpCode.FunctionCall(Symbol.CONTEXTUALIZE_FUNCTION_$_IN_$),
+            	new OpCode.SetObject(listFactory), // empty symbol list
+            	new OpCode.FunctionCall(Symbol.get("newList")),
+            	new OpCode.Push(Symbol.RESULT), // copy into locals
+            	new OpCode.FunctionCall(locals.toSetterSymbol()),
+            	new OpCode.PushSymbol(temp1), // add 'temp1' local
+            	new OpCode.SetObject(argumentList),
+            	new OpCode.FunctionCall(Symbol.get("add:")),
             	
+            	new OpCode.StartOpCodeList(),
+		            new OpCode.Push(one),  // result = index - 1
+		            new OpCode.SetObject(index),
+		            new OpCode.FunctionCall(minus$),
+		
+		            new OpCode.Push(Symbol.RESULT), // result = fibonacci( result )
+		            new OpCode.FunctionCall(fibonacci$),
+		
+		            new OpCode.Push(Symbol.RESULT),  // temp1 = result
+		            new OpCode.FunctionCall(temp1Setter),  // temp1 = result
+		
+		            new OpCode.Push(two),  // result = index - 2
+		            new OpCode.SetObject(index),
+		            new OpCode.FunctionCall(minus$),
+		
+		            new OpCode.Push(Symbol.RESULT), // result = fibonacci( result )
+		            new OpCode.FunctionCall(fibonacci$),
+		
+		            new OpCode.Debug("left side", temp1),
+		            new OpCode.Debug("right side", Symbol.RESULT),
+		            new OpCode.Push(Symbol.RESULT), // temp1 = temp1 + result
+		            new OpCode.SetObject(temp1),
+		            new OpCode.FunctionCall(plus$),
+            	new OpCode.EndOpCodeList(),
+	            new OpCode.Debug("got opcodes", Symbol.RESULT), 
+            	
+            	new OpCode.Push(argumentList), // create anon2 function
+            	new OpCode.Push(locals),
             	new OpCode.Push(Symbol.RESULT),
-            	new OpCode.FunctionCall(temp1.toSetterSymbol()),
+            	new OpCode.FunctionCall(Symbol.CREATE_FUNCTION_WITH_ARGUMENTS_$_LOCALS_$_OPCODES_$),
+	            new OpCode.Debug("created", Symbol.RESULT),
+	            
+	            new OpCode.Push(Symbol.RESULT),
+	            new OpCode.FunctionCall(anon2.toSetterSymbol()),
+
+            	// Create fibonacci function
+            	new OpCode.SetObject(listFactory), // empty symbol list
+            	new OpCode.FunctionCall(Symbol.get("newList")),
+            	new OpCode.Push(Symbol.RESULT), // copy into arguments
+            	new OpCode.FunctionCall(argumentList.toSetterSymbol()),
+            	new OpCode.PushSymbol(index), // add 'index' parameter
+            	new OpCode.SetObject(argumentList),
+            	new OpCode.FunctionCall(Symbol.get("add:")),
             	
-            	new OpCode.PushSymbol(fibonacci$),  // add to the context
-            	new OpCode.Push(temp1),
-            	new OpCode.FunctionCall(Symbol.SET_FUNCTION_$_TO_$),
+            	new OpCode.SetObject(listFactory), // empty symbol list
+            	new OpCode.FunctionCall(Symbol.get("newList")),
+            	new OpCode.Push(Symbol.RESULT), // copy into locals
+            	new OpCode.FunctionCall(locals.toSetterSymbol()),
+            	
+            	new OpCode.StartOpCodeList(),
+	            	// create first anonymous function
+            		// mainly here to make sure the nesting of op code lists works
+	            	new OpCode.SetObject(listFactory), // empty symbol list
+	            	new OpCode.FunctionCall(Symbol.get("newList")),
+	            	new OpCode.Push(Symbol.RESULT), // copy into arguments
+	            	new OpCode.FunctionCall(argumentList.toSetterSymbol()),
+	            	
+	            	new OpCode.SetObject(listFactory), // empty symbol list
+	            	new OpCode.FunctionCall(Symbol.get("newList")),
+	            	new OpCode.Push(Symbol.RESULT), // copy into locals
+	            	new OpCode.FunctionCall(locals.toSetterSymbol()),
+	            	
+	            	new OpCode.StartOpCodeList(),
+		                new OpCode.Push(one),
+		                new OpCode.FunctionCall(Symbol.RESULT_$),
+			            new OpCode.Debug("returning (1) ", Symbol.RESULT),
+	            	new OpCode.EndOpCodeList(),
+		            new OpCode.Debug("got opcodes", Symbol.RESULT), 
+	            	
+	            	new OpCode.Push(argumentList), // create anon1 function
+	            	new OpCode.Push(locals),
+	            	new OpCode.Push(Symbol.RESULT),
+	            	new OpCode.FunctionCall(Symbol.CREATE_FUNCTION_WITH_ARGUMENTS_$_LOCALS_$_OPCODES_$),
+		            new OpCode.Debug("created", Symbol.RESULT),
+		            
+		            new OpCode.Push(Symbol.RESULT),
+		            new OpCode.FunctionCall(anon1.toSetterSymbol()),
+
+		            // actual fibonacci function code
+		            new OpCode.Debug("in fibonacci with argument", index),
+		            new OpCode.Debug("******************************", numberFactory),
+		            new OpCode.Push(two), // result = index isLessThan: two
+		            new OpCode.SetObject(index),
+		            new OpCode.FunctionCall(isLessThan$),
+		
+		            new OpCode.Push(anon1), // result = result ifTrue: [anon1] ifFalse: [anon2]
+		            new OpCode.Push(anon2),
+		            new OpCode.SetObject(Symbol.RESULT),
+		            new OpCode.FunctionCall(ifTrue$IfFalse$),
+		            new OpCode.Debug("true or false?", Symbol.RESULT),
+		            
+		            new OpCode.Push(Symbol.RESULT),  // contextualize anon function
+		            new OpCode.Push(Symbol.CURRENT_CONTEXT),
+		            new OpCode.FunctionCall(Symbol.CONTEXTUALIZE_FUNCTION_$_IN_$),
+		            new OpCode.Debug("contextualized", Symbol.RESULT),
+		            
+		            new OpCode.SetObject(Symbol.RESULT), // call anon function
+		            new OpCode.FunctionCall(Symbol.EXECUTE),
+		            new OpCode.Debug("executed function", Symbol.RESULT),
+            	new OpCode.EndOpCodeList(),
+	            new OpCode.Debug("got opcodes", Symbol.RESULT), 
+            	
+            	new OpCode.Push(argumentList), // create fibonacci function
+            	new OpCode.Push(locals),
+            	new OpCode.Push(Symbol.RESULT),
+            	new OpCode.FunctionCall(Symbol.CREATE_FUNCTION_WITH_ARGUMENTS_$_LOCALS_$_OPCODES_$),
+	            new OpCode.Debug("created", Symbol.RESULT),
+            	
+            	new OpCode.Push(Symbol.RESULT),  // contextualise the newly created function
+            	new OpCode.Push(Symbol.CURRENT_CONTEXT),
+            	new OpCode.FunctionCall(Symbol.CONTEXTUALIZE_FUNCTION_$_IN_$),	  
+	            new OpCode.Debug("contextualized", Symbol.RESULT), 
+            	
+	            new OpCode.Push(Symbol.RESULT),  // store fibonacci function temp
+	            new OpCode.FunctionCall(temp1.toSetterSymbol()),
+	            
+	            new OpCode.PushSymbol(fibonacci$),  // save fibonacci to context
+	            new OpCode.Push(temp1),
+	            new OpCode.FunctionCall(Symbol.SET_FUNCTION_$_TO_$),
+            	
+            	new OpCode.FunctionCall(Symbol.NEW_OBJECT), // create a new, empy object, move into fibonacciLibrarySlot
+            	new OpCode.Push(Symbol.RESULT),
+            	new OpCode.FunctionCall(fibonacciLibrarySlot.toSetterSymbol()),
             	
             	new OpCode.PushSymbol(fibonacci$),  // and add to the fibonacci library
             	new OpCode.Push(temp1),

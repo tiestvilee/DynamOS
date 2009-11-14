@@ -11,6 +11,7 @@ public class ListDOS extends ObjectDOS {
 	
 	public ListDOS() {
 		setFunction(Symbol.get("at:"), new AtFunction());  // is this bad?  can only define this here as it uses non-static class
+		setFunction(Symbol.get("add:"), new AddFunction());  // is this bad?  can only define this here as it uses non-static class
 	}
 
 	public void add(ObjectDOS object) {
@@ -35,6 +36,14 @@ public class ListDOS extends ObjectDOS {
 			StandardObjects.ValueObject index = (ValueObject) arguments.getRawList().get(0);
 			System.out.println("made it! " + index.getValue() +  " " + list.get(index.getValue()));
 			return list.get(index.getValue());
+		}
+	}
+	
+	class AddFunction extends ExecutableDOS {
+		@Override
+		public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+			list.add(arguments.at(0));
+			return ListDOS.this;
 		}
 	}
 
