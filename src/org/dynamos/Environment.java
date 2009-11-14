@@ -23,6 +23,7 @@ public class Environment {
     private ObjectDOS undefined;
 	private ObjectDOS booleanContainer;
 	private final OpCodeInterpreter interpreter;
+	private ObjectDOS listFactory;
 
     /*
 	 * need
@@ -52,6 +53,7 @@ public class Environment {
 	public void init(OpCodeInterpreter interpreter) {
 		booleanContainer = StandardObjects.initialiseBooleans(interpreter, this);
         numberFactory = StandardObjects.createNumberLibrary(interpreter, this);
+        listFactory = StandardObjects.createListLibrary(interpreter, this);
     }
 	
 	public ObjectDOS getVirtualMachine() {
@@ -64,6 +66,10 @@ public class Environment {
 	
 	public ObjectDOS getNumberFactory() {
 		return numberFactory;
+	}
+	
+	public ObjectDOS getListFactory() {
+		return listFactory;
 	}
 	
 	public ObjectDOS getUndefined() {

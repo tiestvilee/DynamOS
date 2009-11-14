@@ -125,5 +125,13 @@ public class OpCode {
             return false;
         }
     }
+    
+	public static class StartOpCodeList extends OpCode {
+
+	}
+    
+	public static class EndOpCodeList extends OpCode {
+
+	}
 
 }

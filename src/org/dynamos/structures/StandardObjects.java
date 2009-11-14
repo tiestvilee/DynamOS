@@ -62,6 +62,22 @@ public class StandardObjects {
 		return booleanContainer;
 	}
 
+	public static ObjectDOS createListLibrary(final OpCodeInterpreter interpreter, Environment environment) {
+		ObjectDOS listFactory = environment.createNewObject();
+		
+		// add appropriate function to the prototype
+		listFactory.setFunction(Symbol.get("newList"), new ExecutableDOS() {
+
+			@Override
+			public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+				return new ListDOS();
+			}
+			
+		});
+
+		return listFactory;
+	}
+
 	public static ObjectDOS createNumberLibrary(final OpCodeInterpreter interpreter, Environment environment) {
 
 		Symbol numberPrototypeSymbol = Symbol.get("numberPrototype");
@@ -86,15 +102,15 @@ public class StandardObjects {
 		ObjectDOS numberFactory = environment.createNewObject();
 		numberLibraryContext.setSlot(numberFactorySymbol, numberFactory);
 
-		OpCode[] opCodes = new OpCode[] {
-									new OpCode.Push(numberPrototypeSymbol),
-									new OpCode.SetObject(number),
-									new OpCode.FunctionCall(Symbol.SET_PARENT_$) 
-								};
-		Symbol[] locals = new Symbol[] {};
-		Symbol[] arguments = new Symbol[] { number };
 		// add appropriate function to the prototype
-		numberFactory.setFunction(Symbol.get("numberFrom:"), environment.createFunction(arguments, locals, opCodes, numberLibraryContext));
+		numberFactory.setFunction(Symbol.get("numberFrom:"), environment.createFunction(
+				new Symbol[] { number }, 
+				new Symbol[] {}, 
+				new OpCode[] {
+					new OpCode.Push(numberPrototypeSymbol),
+					new OpCode.SetObject(number),
+					new OpCode.FunctionCall(Symbol.SET_PARENT_$) 
+				}, numberLibraryContext));
 		return numberFactory;
 	}
 
