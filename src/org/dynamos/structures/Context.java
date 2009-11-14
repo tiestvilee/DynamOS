@@ -41,7 +41,7 @@ public class Context extends ObjectDOS {
 	        				new OpCode.Push(functionDefinition),
 	        				new OpCode.Push(context),
 	        				new OpCode.SetObject(VMObjectDOS.VM),
-	        				new OpCode.MethodCall(VMObjectDOS.CONTEXTUALIZE_FUNCTION_$_IN_$)
+	        				new OpCode.FunctionCall(VMObjectDOS.CONTEXTUALIZE_FUNCTION_$_IN_$)
 	        		},
 	        		contextContainingVM));
 
@@ -51,7 +51,7 @@ public class Context extends ObjectDOS {
 						new Symbol[] {}, 
 						new OpCode[] {
 							new OpCode.SetObject(VMObjectDOS.VM),
-							new OpCode.MethodCall(VMObjectDOS.NEW_OBJECT)
+							new OpCode.FunctionCall(VMObjectDOS.NEW_OBJECT)
 						}, 
 						contextContainingVM ));
 			

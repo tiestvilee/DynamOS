@@ -44,7 +44,7 @@ public class StandardObjects {
 				new Symbol[] {trueResult, falseResult },
 				new Symbol[] {},
 				new OpCode[] {new OpCode.Push(trueResult),
-				new OpCode.ContextCall(Symbol.RESULT_$) },
+				new OpCode.FunctionCall(Symbol.RESULT_$) },
 				booleanContext));
 
 		FalseDOS falseObject = new FalseDOS();
@@ -53,7 +53,7 @@ public class StandardObjects {
 				new Symbol[] {trueResult, falseResult },
 				new Symbol[] {},
 				new OpCode[] {new OpCode.Push(falseResult),
-				new OpCode.ContextCall(Symbol.RESULT_$) },
+				new OpCode.FunctionCall(Symbol.RESULT_$) },
 				booleanContext));
 
 		ObjectDOS booleanContainer = environment.createNewObject();
@@ -89,7 +89,7 @@ public class StandardObjects {
 		OpCode[] opCodes = new OpCode[] {
 									new OpCode.Push(numberPrototypeSymbol),
 									new OpCode.SetObject(number),
-									new OpCode.MethodCall(Symbol.SET_PARENT_$) 
+									new OpCode.FunctionCall(Symbol.SET_PARENT_$) 
 								};
 		Symbol[] locals = new Symbol[] {};
 		Symbol[] arguments = new Symbol[] { number };
@@ -114,10 +114,10 @@ public class StandardObjects {
        				new OpCode.Push(right),
         			new OpCode.Push(Symbol.THIS),
         			new OpCode.SetObject(VMObjectDOS.VM),
-        			new OpCode.MethodCall(VMObjectDOS.ADD_$_TO_$),
+        			new OpCode.FunctionCall(VMObjectDOS.ADD_$_TO_$),
         			new OpCode.Push(Symbol.RESULT),
         			new OpCode.SetObject(numberFactorySymbol),
-        			new OpCode.MethodCall(Symbol.get("numberFrom:"))
+        			new OpCode.FunctionCall(Symbol.get("numberFrom:"))
         		}, 
         		numberLibraryContext));
 
@@ -128,10 +128,10 @@ public class StandardObjects {
        				new OpCode.Push(right),
         			new OpCode.Push(Symbol.THIS),
         			new OpCode.SetObject(VMObjectDOS.VM),
-        			new OpCode.MethodCall(VMObjectDOS.SUBTRACT_$_FROM_$),
+        			new OpCode.FunctionCall(VMObjectDOS.SUBTRACT_$_FROM_$),
         			new OpCode.Push(Symbol.RESULT),
         			new OpCode.SetObject(numberFactorySymbol),
-        			new OpCode.MethodCall(Symbol.get("numberFrom:"))
+        			new OpCode.FunctionCall(Symbol.get("numberFrom:"))
         		},
         		numberLibraryContext));
         
@@ -142,7 +142,7 @@ public class StandardObjects {
         			new OpCode.Push(Symbol.THIS),
         			new OpCode.Push(right),
         			new OpCode.SetObject(VMObjectDOS.VM),
-        			new OpCode.MethodCall(VMObjectDOS.VALUE_$_IS_LESS_THAN_$)
+        			new OpCode.FunctionCall(VMObjectDOS.VALUE_$_IS_LESS_THAN_$)
         		}, 
         		numberLibraryContext));
 	}

@@ -71,9 +71,9 @@ public class OpCodeInterpreterParameterTest {
 
 	private void shouldReturnNamedArgument(Symbol argumentSymbol, ObjectDOS agumentValue) {
 		OpCode[] receiverOpCodes = new OpCode[] {
-        	new OpCode.ContextCall(argumentSymbol),
+        	new OpCode.FunctionCall(argumentSymbol),
          	new OpCode.Push(Symbol.RESULT),
-        	new OpCode.ContextCall(Symbol.RESULT_$)
+        	new OpCode.FunctionCall(Symbol.RESULT_$)
         };
 		Symbol[] argumentSymbols = new Symbol[] {argumentSymbol, argument2Symbol};
 		
@@ -83,7 +83,7 @@ public class OpCodeInterpreterParameterTest {
 		OpCode[] callerOpCodes = new OpCode[] {
         	new OpCode.Push(local1Symbol),
         	new OpCode.Push(local2Symbol),
-        	new OpCode.ContextCall(functionName2)
+        	new OpCode.FunctionCall(functionName2)
         };
 		
         interpreter.interpret(context, callerOpCodes);
@@ -94,9 +94,9 @@ public class OpCodeInterpreterParameterTest {
 	@Test
 	public void shouldReturnUndefinedIfArgumentNotProvided() {
 		OpCode[] receiverOpCodes = new OpCode[] {
-        	new OpCode.ContextCall(argument2Symbol),
+        	new OpCode.FunctionCall(argument2Symbol),
          	new OpCode.Push(Symbol.RESULT),
-        	new OpCode.ContextCall(Symbol.RESULT_$)
+        	new OpCode.FunctionCall(Symbol.RESULT_$)
         };
 		Symbol[] argumentSymbols = new Symbol[] {argument1Symbol, argument2Symbol};
 		
@@ -105,7 +105,7 @@ public class OpCodeInterpreterParameterTest {
 		
 		OpCode[] callerOpCodes = new OpCode[] {
         	new OpCode.Push(local1Symbol),
-        	new OpCode.ContextCall(functionName2)
+        	new OpCode.FunctionCall(functionName2)
         };
 		
         interpreter.interpret(context, callerOpCodes);
@@ -116,9 +116,9 @@ public class OpCodeInterpreterParameterTest {
 	@Test
 	public void shouldIgnoreExtraArguments() {
 		OpCode[] receiverOpCodes = new OpCode[] {
-        	new OpCode.ContextCall(argument2Symbol),
+        	new OpCode.FunctionCall(argument2Symbol),
          	new OpCode.Push(Symbol.RESULT),
-        	new OpCode.ContextCall(Symbol.RESULT_$)
+        	new OpCode.FunctionCall(Symbol.RESULT_$)
         };
 		Symbol[] argumentSymbols = new Symbol[] {argument1Symbol, argument2Symbol};
 		
@@ -129,7 +129,7 @@ public class OpCodeInterpreterParameterTest {
         	new OpCode.Push(local1Symbol),
         	new OpCode.Push(local2Symbol),
         	new OpCode.Push(local3Symbol),
-        	new OpCode.ContextCall(functionName2)
+        	new OpCode.FunctionCall(functionName2)
         };
 
         interpreter.interpret(context, callerOpCodes);
@@ -151,12 +151,12 @@ public class OpCodeInterpreterParameterTest {
     @Test
     public void shouldHaveArgumentsListAvailable() {
 		OpCode[] receiverOpCodes = new OpCode[] {
-        	new OpCode.ContextCall(Symbol.ARGUMENTS),
+        	new OpCode.FunctionCall(Symbol.ARGUMENTS),
          	new OpCode.Push(zeroSymbol),
          	new OpCode.SetObject(Symbol.RESULT),
-        	new OpCode.MethodCall(Symbol.get("at:")),
+        	new OpCode.FunctionCall(Symbol.get("at:")),
          	new OpCode.Push(Symbol.RESULT),
-        	new OpCode.ContextCall(Symbol.RESULT_$)
+        	new OpCode.FunctionCall(Symbol.RESULT_$)
         };
 		Symbol[] argumentSymbols = new Symbol[] {argument1Symbol, argument2Symbol};
 		
@@ -167,7 +167,7 @@ public class OpCodeInterpreterParameterTest {
         	new OpCode.Push(local1Symbol),
         	new OpCode.Push(local2Symbol),
         	new OpCode.Push(local3Symbol),
-        	new OpCode.ContextCall(functionName2)
+        	new OpCode.FunctionCall(functionName2)
         };
 
         interpreter.interpret(context, callerOpCodes);

@@ -29,31 +29,19 @@ public class OpCode {
 
 	public static final OpCode NOOP = new OpCode();
 
-    public static class MethodCall extends OpCode {
+    public static class FunctionCall extends OpCode {
         private Symbol symbol;
-        public MethodCall(Symbol symbol) {
+        public FunctionCall(Symbol symbol) {
             this.symbol = symbol;
         }
 
         @Override
         public boolean execute(Context context, StackFrame stackFrame) {
-            ObjectDOS object = stackFrame.getObject();
-            ObjectDOS result = findFunctionInObjectAndExecute(object, symbol, stackFrame);
-
-            context.setSlot(Symbol.RESULT, result);
-            return true;
-        }
-    }
-
-    public static class ContextCall extends OpCode {
-        private Symbol symbol;
-        public ContextCall(Symbol symbol) {
-            this.symbol = symbol;
-        }
-
-        @Override
-        public boolean execute(Context context, StackFrame stackFrame) {
-        	ObjectDOS result = findFunctionInObjectAndExecute(context, symbol, stackFrame);
+        	ObjectDOS target = context;
+        	if(stackFrame.getObject() != null) {
+        		target = stackFrame.getObject();
+        	}
+        	ObjectDOS result = findFunctionInObjectAndExecute(target, symbol, stackFrame);
 
         	context.setSlot(Symbol.RESULT, result);
             return true;

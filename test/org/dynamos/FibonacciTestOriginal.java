@@ -95,33 +95,33 @@ public class FibonacciTestOriginal {
 
         FunctionDefinitionDOS anon1Function = new FunctionDefinitionDOS(interpreter, new Symbol[] {}, new Symbol[] {}, new OpCode[] {
                 new OpCode.Push(one),
-                new OpCode.ContextCall(Symbol.RESULT_$),
+                new OpCode.FunctionCall(Symbol.RESULT_$),
 	            new OpCode.Debug("returning (1) ", Symbol.RESULT)
         });
 
         FunctionDefinitionDOS anon2Function = new FunctionDefinitionDOS(interpreter, new Symbol[] {}, new Symbol[] {temp1}, new OpCode[] {
             new OpCode.Push(one),  // result = index - 1
             new OpCode.SetObject(index),
-            new OpCode.MethodCall(minus$),
+            new OpCode.FunctionCall(minus$),
 
             new OpCode.Push(Symbol.RESULT), // result = fibonacci( result )
-            new OpCode.ContextCall(fibonacci$),
+            new OpCode.FunctionCall(fibonacci$),
 
             new OpCode.Push(Symbol.RESULT),  // temp1 = result
-            new OpCode.ContextCall(temp1Setter),  // temp1 = result
+            new OpCode.FunctionCall(temp1Setter),  // temp1 = result
 
             new OpCode.Push(two),  // result = index - 2
             new OpCode.SetObject(index),
-            new OpCode.MethodCall(minus$),
+            new OpCode.FunctionCall(minus$),
 
             new OpCode.Push(Symbol.RESULT), // result = fibonacci( result )
-            new OpCode.ContextCall(fibonacci$),
+            new OpCode.FunctionCall(fibonacci$),
 
             new OpCode.Debug("left side", temp1),
             new OpCode.Debug("right side", Symbol.RESULT),
             new OpCode.Push(Symbol.RESULT), // temp1 = temp1 + result
             new OpCode.SetObject(temp1),
-            new OpCode.MethodCall(plus$)
+            new OpCode.FunctionCall(plus$)
         });
 
         
@@ -129,21 +129,21 @@ public class FibonacciTestOriginal {
 	            new OpCode.Debug("in fibonacci with argument", index),
 	            new OpCode.Push(two), // result = index isLessThan: two
 	            new OpCode.SetObject(index),
-	            new OpCode.MethodCall(isLessThan$),
+	            new OpCode.FunctionCall(isLessThan$),
 	
 	            new OpCode.Push(anon1), // result = result ifTrue: [anon1] ifFalse: [anon2]
 	            new OpCode.Push(anon2),
 	            new OpCode.SetObject(Symbol.RESULT),
-	            new OpCode.MethodCall(ifTrue$IfFalse$),
+	            new OpCode.FunctionCall(ifTrue$IfFalse$),
 	            new OpCode.Debug("true or false?", Symbol.RESULT),
 	            
 	            new OpCode.Push(Symbol.RESULT),  // contextualize anon function
 	            new OpCode.Push(Symbol.CURRENT_CONTEXT),
-	            new OpCode.ContextCall(Symbol.CONTEXTUALIZE_FUNCTION_$_IN_$),
+	            new OpCode.FunctionCall(Symbol.CONTEXTUALIZE_FUNCTION_$_IN_$),
 	            new OpCode.Debug("contextualized", Symbol.RESULT),
 	            
 	            new OpCode.SetObject(Symbol.RESULT), // call anon function
-	            new OpCode.MethodCall(Symbol.EXECUTE),
+	            new OpCode.FunctionCall(Symbol.EXECUTE),
 	            new OpCode.Debug("executed function", Symbol.RESULT)
         	}),
         	applicationContext);
@@ -158,7 +158,7 @@ public class FibonacciTestOriginal {
         interpreter.interpret(applicationContext, new OpCode[] {
         	new OpCode.Push(sequenceIndexSymbol),
         	new OpCode.Debug("calling fibonacci with", sequenceIndexSymbol),
-        	new OpCode.ContextCall(fibonacci$)
+        	new OpCode.FunctionCall(fibonacci$)
         });
         
         assertThat(((ValueObject) applicationContext.getSlot(Symbol.RESULT)).getValue(), is(expectedResult));

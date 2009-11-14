@@ -56,7 +56,7 @@ public class OpCodeInterpreterCallTest {
         context.setFunction(functionName, function);
 
         OpCode[] opCodes = new OpCode[] {
-            new OpCode.ContextCall(functionName)
+            new OpCode.FunctionCall(functionName)
         };
 
         interpreter.interpret(context, opCodes);
@@ -71,7 +71,7 @@ public class OpCodeInterpreterCallTest {
 
         OpCode[] opCodes = new OpCode[] {
             new OpCode.Push(localArgumentName),
-            new OpCode.ContextCall(functionName)
+            new OpCode.FunctionCall(functionName)
         };
 
         interpreter.interpret(context, opCodes);
@@ -87,7 +87,7 @@ public class OpCodeInterpreterCallTest {
 
         OpCode[] opCodes = new OpCode[] {
             new OpCode.SetObject(localObjectName),
-            new OpCode.MethodCall(functionName)
+            new OpCode.FunctionCall(functionName)
         };
 
         interpreter.interpret(context, opCodes);
@@ -105,7 +105,7 @@ public class OpCodeInterpreterCallTest {
         OpCode[] opCodes = new OpCode[] {
             new OpCode.Push(localArgumentName),
             new OpCode.SetObject(localObjectName),
-            new OpCode.MethodCall(functionName)
+            new OpCode.FunctionCall(functionName)
         };
 
         interpreter.interpret(context, opCodes);
@@ -121,7 +121,7 @@ public class OpCodeInterpreterCallTest {
 
         OpCode[] opCodes = new OpCode[] {
             new OpCode.SetObject(Symbol.THIS),
-            new OpCode.MethodCall(functionName)
+            new OpCode.FunctionCall(functionName)
         };
 
         interpreter.interpret(context, opCodes);
@@ -164,7 +164,7 @@ public class OpCodeInterpreterCallTest {
         OpCode[] opCodes = new OpCode[] {
             new OpCode.Push(localArgumentName),
             new OpCode.SetObject(vm),
-            new OpCode.MethodCall(Symbol.get("print"))
+            new OpCode.FunctionCall(Symbol.get("print"))
         };
 
         interpreter.interpret(context, opCodes);
