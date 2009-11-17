@@ -184,7 +184,7 @@ public class FibonacciTest {
             	
             	new OpCode.StartOpCodeList(),
 	            	// create first anonymous function
-            		// mainly here to make sure the nesting of op code lists works
+            		// mainly here to make sure the nesting of op code lists works, otherwise would be in top context
 	            	new OpCode.SetObject(listFactory), // empty symbol list
 	            	new OpCode.FunctionCall(Symbol.get("newList")),
 	            	new OpCode.Push(Symbol.RESULT), // copy into arguments
