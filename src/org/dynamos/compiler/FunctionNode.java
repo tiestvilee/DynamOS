@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class FunctionNode extends ASTNode {
+public class FunctionNode extends StatementContainingNode {
 
 	private String name;
 	private List<String> arguments = new ArrayList<String>();
@@ -13,7 +13,7 @@ public class FunctionNode extends ASTNode {
 		return name;
 	}
 	
-	public List<String>getArguments() {
+	public List<String> getArguments() {
 		return Collections.unmodifiableList(arguments);
 	}
 
