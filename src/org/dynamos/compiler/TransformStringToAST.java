@@ -127,12 +127,27 @@ public class TransformStringToAST {
 		}
 	}
 	
+	private class LocalDefinition extends State {
+		@Override
+		public void process(ASTNode node, Stream stream) {
+			StatementContainingNode fnode = (StatementContainingNode) node;
+
+			stream.consumeLocalStart();
+			fnode.addLocal(new SymbolNode(stream.consumeIdentifier()));
+			stream.consumeRightBracket();
+			stream.consumeNewLine();
+		}
+	}
+	
 	private class FunctionBody extends State {
 		@Override
 		public void process(ASTNode node, Stream stream) {
 			while(!stream.matchesRightBracket()) {
 				if(stream.matchesIdentifier()) {
 					new ContextFunctionCall().process(node, stream);
+				}
+				if(stream.matchesLocalStart()) {
+					new LocalDefinition().process(node, stream);
 				}
 			}
 		}
@@ -147,6 +162,14 @@ public class TransformStringToAST {
 		Stream(String program, int index) {
 			this.program = program;
 			this.index = index;
+		}
+		
+		public void consumeLocalStart() {
+			consumeMatchWithPreceedingWhitespace("local start", "\\(local ");
+		}
+		
+		public boolean matchesLocalStart() {
+			return testMatch("\\(local ");
 		}
 		
 		public void consumeFunctionStart() {

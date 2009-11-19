@@ -1,5 +1,7 @@
 package org.dynamos.compiler;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -74,5 +76,18 @@ public class TransformStringToASTTest {
 		assertThat(call.getChain().getChain().getName(), is("function1:"));
 		assertThat( ((FunctionCallNode) call.getChain().getChain().getArguments().get(0)).getName(), is("function2:"));
 		assertThat( ((SymbolNode) ((FunctionCallNode) call.getChain().getChain().getArguments().get(0)).getArguments().get(0)).getName(), is("param1"));
+	}
+	
+	@Test
+	public void shouldAddLocalToContext() {
+		ASTNode root = transformer.transform(
+			"(function test\n" +
+			"  (local aLocal)\n" +
+			")"
+		);
+		
+		List<SymbolNode> locals = ((FunctionNode) root).getLocals();
+		
+		assertThat(locals.get(0).getName(), is("aLocal"));
 	}
 }
