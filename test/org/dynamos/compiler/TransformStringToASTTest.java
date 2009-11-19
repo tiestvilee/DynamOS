@@ -22,7 +22,7 @@ public class TransformStringToASTTest {
 	public void shouldCreateFunctionNode() {
 		ASTNode root = transformer.transform(
 			"(function function-WithParam: param1 andParam?: param2 \n " +
-			")"
+			") \n "
 		);
 		
 		assertThat(((FunctionNode) root).getName(), is("function-WithParam:andParam?:"));
@@ -89,5 +89,20 @@ public class TransformStringToASTTest {
 		List<SymbolNode> locals = ((FunctionNode) root).getLocals();
 		
 		assertThat(locals.get(0).getName(), is("aLocal"));
+	}
+	
+	@Test
+	public void shouldCreateNestedFunction() {
+		ASTNode root = transformer.transform(
+			"(function test\n" +
+			"  (function nestedFunction: param1\n" +
+			"  )\n" +
+			")"
+		);
+		
+		FunctionNode nested = ((FunctionNode) ((StatementContainingNode) root).getStatements().get(0));
+
+		assertThat(nested.getName(), is("nestedFunction:"));
+		assertThat(nested.getArguments().get(0), is("param1"));
 	}
 }

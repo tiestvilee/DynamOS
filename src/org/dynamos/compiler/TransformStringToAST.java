@@ -135,19 +135,31 @@ public class TransformStringToAST {
 			stream.consumeLocalStart();
 			fnode.addLocal(new SymbolNode(stream.consumeIdentifier()));
 			stream.consumeRightBracket();
-			stream.consumeNewLine();
 		}
 	}
 	
 	private class FunctionBody extends State {
 		@Override
 		public void process(ASTNode node, Stream stream) {
-			while(!stream.matchesRightBracket()) {
+			while(true) {
 				if(stream.matchesIdentifier()) {
 					new ContextFunctionCall().process(node, stream);
 				}
-				if(stream.matchesLocalStart()) {
+				else if(stream.matchesLocalStart()) {
 					new LocalDefinition().process(node, stream);
+					stream.consumeNewLine();
+				}
+				else if(stream.matchesFunctionStart()) {
+					// yuck, should do this elsewhere
+					ASTNode function = new FunctionNode();
+					((StatementContainingNode) node).addStatement(function);
+					new FunctionDefinition().process(function, stream);
+					stream.consumeNewLine();
+				}
+				else if(stream.matchesRightBracket()) {
+					return;
+				} else {
+					throw new RuntimeException("don't understand from [" + stream.getRemainder());
 				}
 			}
 		}
@@ -172,6 +184,10 @@ public class TransformStringToAST {
 			return testMatch("\\(local ");
 		}
 		
+		public boolean matchesFunctionStart() {
+			return testMatch("\\(function ");
+		}
+
 		public void consumeFunctionStart() {
 			consumeMatchWithPreceedingWhitespace("Function start", "\\(function ");
 		}
