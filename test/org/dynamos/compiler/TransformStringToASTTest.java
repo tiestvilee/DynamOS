@@ -96,6 +96,7 @@ public class TransformStringToASTTest {
 		ASTNode root = transformer.transform(
 			"(function test\n" +
 			"  (function nestedFunction: param1\n" +
+			"    result: param1\n" +
 			"  )\n" +
 			")"
 		);
@@ -104,5 +105,68 @@ public class TransformStringToASTTest {
 
 		assertThat(nested.getName(), is("nestedFunction:"));
 		assertThat(nested.getArguments().get(0), is("param1"));
+		
+		FunctionCallNode call = (FunctionCallNode) nested.getStatements().get(0);
+		assertThat(call.getName(), is("result:"));
+		assertThat( ((SymbolNode) call.getArguments().get(0)).getName(), is("param1"));
+	}
+	
+	@Test
+	public void shouldOpenObjectForModifying() {
+		ASTNode root = transformer.transform(
+				"(function test\n" +
+				"  (local aLocal)\n" +
+				"  (open aLocal\n" +
+				"    (function afunc: theParam\n" +
+				"      result: theParam\n" +
+				"    )\n" +
+				"  )\n" +
+				")"
+			);
+			
+			OpenObjectNode open = (OpenObjectNode) ((FunctionNode) root).getStatements().get(0);
+			assertThat(open.getName(), is("aLocal"));
+			
+			FunctionNode fnode = (FunctionNode) open.getStatements().get(0);
+			assertThat(fnode.getName(), is("afunc:"));
+			assertThat(fnode.getArguments().get(0), is("theParam"));
+			
+			FunctionCallNode call = (FunctionCallNode) fnode.getStatements().get(0);
+			assertThat(call.getName(), is("result:"));
+			assertThat(((SymbolNode) call.getArguments().get(0)).getName(), is("theParam"));
+	}
+	
+	public void shouldTranslateNumberLibrarySuccessfully() {
+		transformer.transform(
+				"(function numberFactory: vm\n" + 
+				"  (local numberPrototype)\n" + 
+				"  (local factory)\n" + 
+				"\n" + 
+				"  numberPrototype: newObject\n" + 
+				"  \n" + 
+				"  (open numberPrototype\n" + 
+				"    (function plus: number\n" + 
+				"      result: (vm add: number to: this)\n" + 
+				"    )\n" + 
+				"\n" + 
+				"    (function minus: number\n" + 
+				"      result: (vm subtract: number from: this)\n" + 
+				"    )\n" + 
+				"\n" + 
+				"    (function isLessThan: number\n" + 
+				"      result: (vm value: this isLessThan: number)\n" + 
+				"    )\n" + 
+				"  )\n" + 
+				"\n" + 
+				"  factory: newObject\n" + 
+				"  (open factory\n" + 
+				"    (function numberFrom: value\n" + 
+				"       value parent: numberPrototype\n" + 
+				"    )\n" + 
+				"  )\n" + 
+				"\n" + 
+				"  result: factory\n" + 
+				") \n "
+			);
 	}
 }

@@ -29,16 +29,16 @@ public class TransformStringToAST {
 			FunctionNode fnode = (FunctionNode) node;
 			
 			String id = stream.consumeIdentifier();
-			fnode.appendToFunctionName(id);
+			fnode.appendToName(id);
 			
 			if(stream.matchesColon()) {
 				do {
-					fnode.appendToFunctionName(stream.consumeColon());
+					fnode.appendToName(stream.consumeColon());
 					fnode.addParameter(stream.consumeIdentifier());
 					if(!stream.matchesIdentifier()) {
 						break;
 					}
-					fnode.appendToFunctionName(stream.consumeIdentifier());
+					fnode.appendToName(stream.consumeIdentifier());
 				} while (true);
 			}
 			
@@ -98,11 +98,11 @@ public class TransformStringToAST {
 			FunctionCallNode call = (FunctionCallNode) node;
 
 			String id = stream.consumeIdentifier();
-			call.appendToFunctionName(id);
+			call.appendToName(id);
 			
 			if(stream.matchesColon()) {
 				do {
-					call.appendToFunctionName(stream.consumeColon());
+					call.appendToName(stream.consumeColon());
 					
 					if (stream.matchesLeftBracket()) {
 						stream.consumeLeftBracket();
@@ -113,7 +113,7 @@ public class TransformStringToAST {
 					}
 					
 					if(stream.matchesIdentifier()) {
-						call.appendToFunctionName(stream.consumeIdentifier());
+						call.appendToName(stream.consumeIdentifier());
 					} else if (stream.matchesRightBracket()) {
 						return;
 					} else {
@@ -138,6 +138,22 @@ public class TransformStringToAST {
 		}
 	}
 	
+	private class OpenObject extends State {
+		@Override
+		public void process(ASTNode node, Stream stream) {
+			OpenObjectNode openObject = new OpenObjectNode();
+			
+			StatementContainingNode fnode = (StatementContainingNode) node;
+			fnode.addStatement(openObject);
+
+			stream.consumeOpenObjectStart();
+			openObject.appendToName(stream.consumeIdentifier());
+			stream.consumeNewLine();
+			
+			new FunctionBody().process(openObject, stream);
+		}
+	}
+	
 	private class FunctionBody extends State {
 		@Override
 		public void process(ASTNode node, Stream stream) {
@@ -155,8 +171,10 @@ public class TransformStringToAST {
 					((StatementContainingNode) node).addStatement(function);
 					new FunctionDefinition().process(function, stream);
 					stream.consumeNewLine();
-				}
-				else if(stream.matchesRightBracket()) {
+				} else if(stream.matchesOpenObjectStart()) {
+					new OpenObject().process(node, stream);
+					return;
+				} else if(stream.matchesRightBracket()) {
 					return;
 				} else {
 					throw new RuntimeException("don't understand from [" + stream.getRemainder());
@@ -190,6 +208,14 @@ public class TransformStringToAST {
 
 		public void consumeFunctionStart() {
 			consumeMatchWithPreceedingWhitespace("Function start", "\\(function ");
+		}
+
+		public boolean matchesOpenObjectStart() {
+			return testMatch("\\(open ");
+		}
+
+		public void consumeOpenObjectStart() {
+			consumeMatchWithPreceedingWhitespace("Open object start", "\\(open ");
 		}
 
 		public boolean matchesLeftBracket() {
