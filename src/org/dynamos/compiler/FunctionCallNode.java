@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class FunctionCallNode extends ASTNode {
+public class FunctionCallNode extends NamedNode {
 	
 	private List<ASTNode> arguments = new ArrayList<ASTNode>();
 	private FunctionCallNode chain;

@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class StatementContainingNode extends ASTNode {
+public class StatementContainingNode extends NamedNode {
+	
 	List<ASTNode> statements = new ArrayList<ASTNode>();
 	private List<SymbolNode> locals = new ArrayList<SymbolNode>();
 	

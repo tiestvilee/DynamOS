@@ -110,6 +110,11 @@ public class TransformStringToAST {
 						stream.consumeRightBracket();
 					} else if(stream.matchesIdentifier()) {
 						call.addParameter(new SymbolNode(stream.consumeIdentifier()));
+					} else if(stream.matchesHash()) {
+						stream.consumeHash();
+						call.addParameter(new NumberNode(stream.consumeDigits()));
+					} else if(stream.matchesString()) {
+						call.addParameter(new StringNode(stream.consumeString()));
 					}
 					
 					if(stream.matchesIdentifier()) {
@@ -173,7 +178,8 @@ public class TransformStringToAST {
 					stream.consumeNewLine();
 				} else if(stream.matchesOpenObjectStart()) {
 					new OpenObject().process(node, stream);
-					return;
+				} else if(stream.matchesNewLine()) {
+					stream.consumeNewLine();
 				} else if(stream.matchesRightBracket()) {
 					return;
 				} else {
@@ -218,6 +224,14 @@ public class TransformStringToAST {
 			consumeMatchWithPreceedingWhitespace("Open object start", "\\(open ");
 		}
 
+		public boolean matchesHash() {
+			return testMatch("#");
+		}
+
+		public void consumeHash() {
+			consumeMatchWithPreceedingWhitespace("Hash", "#");
+		}
+		
 		public boolean matchesLeftBracket() {
 			return testMatch("\\(");
 		}
@@ -233,9 +247,13 @@ public class TransformStringToAST {
 		public void consumeRightBracket() {
 			consumeMatchWithPreceedingWhitespace("Bracket", "\\)");
 		}
+		
+		public boolean matchesNewLine() {
+			return testMatch("(//.*)?\n");
+		}
 
 		public void consumeNewLine() {
-			consumeMatchWithPreceedingWhitespace("Newline", "\n");
+			consumeMatchWithPreceedingWhitespace("Newline", "(//.*)?\n");
 		}
 
 		public String consumeWhiteSpace() {
@@ -260,6 +278,18 @@ public class TransformStringToAST {
 
 		public String consumeIdentifier() {
 			return consumeMatchWithPreceedingWhitespace("Identifier", "[a-zA-Z_\\-0-9?]+");
+		}
+		
+		public boolean matchesString() {
+			return testMatch("'(.*)'");
+		}
+
+		public String consumeString() {
+			return consumeMatch("String", WHITESPACE + "*'(.*)'");
+		}
+
+		public String consumeDigits() {
+			return consumeMatch("Digits", "([0-9]+)");
 		}
 
 		private boolean testMatch(String match) {

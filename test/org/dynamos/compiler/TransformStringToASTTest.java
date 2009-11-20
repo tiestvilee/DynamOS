@@ -31,6 +31,17 @@ public class TransformStringToASTTest {
 	}
 	
 	@Test
+	public void shouldIgnoreComments() {
+		ASTNode root = transformer.transform(
+			"(function function-WithParam: param1 andParam?: param2 // comment 1\n" +
+			"  // comment 2\n" +
+			") \n "
+		);
+		
+		assertThat(((FunctionNode) root).getStatements().size(), is(0));
+	}
+	
+	@Test
 	public void shouldCreateFunctionCall() {
 		ASTNode root = transformer.transform(
 			"(function test\n" +
@@ -65,7 +76,7 @@ public class TransformStringToASTTest {
 	public void shouldChainParameterlessCalls() {
 		ASTNode root = transformer.transform(
 			"(function test\n" +
-			"  accessor1 accessor2 function1: (function2: param1)\n" +
+			"  accessor1 accessor2 function1: (function2: param1) // a comment, just to see\n" +
 			")"
 		);
 		
@@ -76,6 +87,32 @@ public class TransformStringToASTTest {
 		assertThat(call.getChain().getChain().getName(), is("function1:"));
 		assertThat( ((FunctionCallNode) call.getChain().getChain().getArguments().get(0)).getName(), is("function2:"));
 		assertThat( ((SymbolNode) ((FunctionCallNode) call.getChain().getChain().getArguments().get(0)).getArguments().get(0)).getName(), is("param1"));
+	}
+	
+	@Test
+	public void shouldDefineNumberConstant() {
+		ASTNode root = transformer.transform(
+			"(function test\n" +
+			"  function-WithParam: #1234\n" +
+			")"
+		);
+		
+		FunctionCallNode call = ((FunctionCallNode) ((StatementContainingNode) root).getStatements().get(0));
+
+		assertThat(((NumberNode) call.getArguments().get(0)).getValue(), is(1234));
+	}
+	
+	@Test
+	public void shouldDefineStringConstant() {
+		ASTNode root = transformer.transform(
+			"(function test\n" +
+			"  function-WithParam: 'a string'\n" +
+			")"
+		);
+		
+		FunctionCallNode call = ((FunctionCallNode) ((StatementContainingNode) root).getStatements().get(0));
+
+		assertThat(((StringNode) call.getArguments().get(0)).getValue(), is("a string"));
 	}
 	
 	@Test
