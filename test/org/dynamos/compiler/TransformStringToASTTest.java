@@ -90,6 +90,38 @@ public class TransformStringToASTTest {
 	}
 	
 	@Test
+	public void shouldCreateClosure() {
+		ASTNode root = transformer.transform(
+			"(function test\n" +
+			"  functionWithClosure: [param1, param2| ]\n" +
+			")"
+		);
+		
+		FunctionCallNode call = ((FunctionCallNode) ((StatementContainingNode) root).getStatements().get(0));
+		ClosureNode closure = ((ClosureNode) call.getArguments().get(0));
+
+		assertThat( closure.getArguments().get(0), is("param1"));
+		assertThat( closure.getArguments().get(1), is("param2"));
+	}
+	
+	@Test
+	public void shouldCreateClosureWithStatement() {
+		ASTNode root = transformer.transform(
+			"(function test\n" +
+			"  functionWithClosure: [param1, param2| functioncall1: param1\n" +
+			"    functionCall2\n" +
+			"    functionCall3: param1 anotherParam: param2\n" +
+			"  ]\n" +
+			")"
+		);
+		
+		FunctionCallNode call = ((FunctionCallNode) ((StatementContainingNode) root).getStatements().get(0));
+		ClosureNode closure = ((ClosureNode) call.getArguments().get(0));
+
+		assertThat( closure.getStatements().size(), is(3));
+	}
+	
+	@Test
 	public void shouldDefineNumberConstant() {
 		ASTNode root = transformer.transform(
 			"(function test\n" +
@@ -173,6 +205,13 @@ public class TransformStringToASTTest {
 			assertThat(((SymbolNode) call.getArguments().get(0)).getName(), is("theParam"));
 	}
 	
+	
+//	public void shouldTranslateFibonacciSuccessfully() {
+//		transformer.transform(
+//				"(function mathFactory: vm\n"
+//		);
+//	}
+//	
 	public void shouldTranslateNumberLibrarySuccessfully() {
 		transformer.transform(
 				"(function numberFactory: vm\n" + 

@@ -104,18 +104,7 @@ public class TransformStringToAST {
 				do {
 					call.appendToName(stream.consumeColon());
 					
-					if (stream.matchesLeftBracket()) {
-						stream.consumeLeftBracket();
-						new ParameterFunctionCall().process(call, stream);
-						stream.consumeRightBracket();
-					} else if(stream.matchesIdentifier()) {
-						call.addParameter(new SymbolNode(stream.consumeIdentifier()));
-					} else if(stream.matchesHash()) {
-						stream.consumeHash();
-						call.addParameter(new NumberNode(stream.consumeDigits()));
-					} else if(stream.matchesString()) {
-						call.addParameter(new StringNode(stream.consumeString()));
-					}
+					consumeParameter(stream, call);
 					
 					if(stream.matchesIdentifier()) {
 						call.appendToName(stream.consumeIdentifier());
@@ -130,6 +119,49 @@ public class TransformStringToAST {
 				new ChainedFunctionCall().process(call, stream);
 			}
 		}
+
+		private void consumeParameter(Stream stream, FunctionCallNode call) {
+			if (stream.matchesLeftBracket()) {
+				stream.consumeLeftBracket();
+				new ParameterFunctionCall().process(call, stream);
+				stream.consumeRightBracket();
+			} else if(stream.matchesIdentifier()) {
+				call.addParameter(new SymbolNode(stream.consumeIdentifier()));
+			} else if(stream.matchesHash()) {
+				stream.consumeHash();
+				call.addParameter(new NumberNode(stream.consumeDigits()));
+			} else if(stream.matchesString()) {
+				call.addParameter(new StringNode(stream.consumeString()));
+			} else if(stream.matchesLeftBrace()) {
+				new Closure().process(call, stream);
+			}
+		}
+	}
+	
+	private class Closure extends State {
+
+		@Override
+		public void process(ASTNode node, Stream stream) {
+			ClosureNode closure = new ClosureNode();
+			((FunctionCallNode) node).addParameter(closure);
+			
+			stream.consumeLeftBrace();
+			consumeParameters(stream, closure);
+			stream.consumePipe();
+			new FunctionBody().process(closure, stream);
+			stream.consumeRightBrace();
+		}
+
+		private void consumeParameters(Stream stream, ClosureNode closure) {
+			if(stream.matchesIdentifier()) {
+				closure.addParameter(stream.consumeIdentifier());
+				while(stream.matchesComma()) {
+					stream.consumeComma();
+					closure.addParameter(stream.consumeIdentifier());
+				}
+			}
+		}
+		
 	}
 	
 	private class LocalDefinition extends State {
@@ -180,7 +212,7 @@ public class TransformStringToAST {
 					new OpenObject().process(node, stream);
 				} else if(stream.matchesNewLine()) {
 					stream.consumeNewLine();
-				} else if(stream.matchesRightBracket()) {
+				} else if(stream.matchesRightBracket() || stream.matchesRightBrace()) {
 					return;
 				} else {
 					throw new RuntimeException("don't understand from [" + stream.getRemainder());
@@ -230,6 +262,38 @@ public class TransformStringToAST {
 
 		public void consumeHash() {
 			consumeMatchWithPreceedingWhitespace("Hash", "#");
+		}
+		
+		public boolean matchesPipe() {
+			return testMatch("\\|");
+		}
+
+		public void consumePipe() {
+			consumeMatchWithPreceedingWhitespace("Pipe", "\\|");
+		}
+		
+		public boolean matchesComma() {
+			return testMatch(",");
+		}
+
+		public void consumeComma() {
+			consumeMatchWithPreceedingWhitespace("Comma", ",");
+		}
+		
+		public boolean matchesLeftBrace() {
+			return testMatch("\\[");
+		}
+
+		public void consumeLeftBrace() {
+			consumeMatchWithPreceedingWhitespace("Brace", "\\[");
+		}
+		
+		public boolean matchesRightBrace() {
+			return testMatch("\\]");
+		}
+
+		public void consumeRightBrace() {
+			consumeMatchWithPreceedingWhitespace("Brace", "\\]");
 		}
 		
 		public boolean matchesLeftBracket() {
