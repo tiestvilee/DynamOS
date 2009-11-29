@@ -17,7 +17,7 @@ public class ObjectDOS {
 	
 	/* Compile time definition of Object */
 	private static ObjectDOS UNDEFINED;
-	private static FunctionLookupStrategy FUNCTION_LOOKUP;
+	protected static FunctionLookupStrategy FUNCTION_LOOKUP;
 	
     private HashMap<Symbol, ObjectDOS> slots;
     private HashMap<Symbol, ExecutableDOS> functions;

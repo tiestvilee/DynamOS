@@ -8,10 +8,11 @@ package org.dynamos.structures;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import org.dynamos.Environment;
 import org.dynamos.OpCodeInterpreter;
-import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -77,7 +78,7 @@ public class ObjectDOSTest {
     }
 
     @Test
-    public void shouldReturnNullIfNoSlot() {
+    public void shouldReturnUndefinedIfNoSlot() {
     	theObject = environment.createNewObject(); // TODO again, this sux the big time
     	Environment env = new Environment(new OpCodeInterpreter());
 		ObjectDOS.initialiseRootObject(env, theObject);
@@ -85,24 +86,11 @@ public class ObjectDOSTest {
     }
 
     @Test
-    public void shouldReturnFunction() {
-        theObject.setFunction(symbol, function);
-        assertThat(theObject.getFunction(symbol), is((ExecutableDOS)function));
-    }
-    
-    @Test
-    public void shouldReturnGetterFunctionByDefault() {
-    	theObject.setSlot(symbol, value);
-    	ExecutableDOS function = theObject.getFunction(symbol);
-    	assertThat(function, CoreMatchers.instanceOf(StandardFunctions.Getter.class));
-    	assertThat(((StandardFunctions.Getter) function).forSlot(), is(symbol));
-    }
-    
-    @Test
-    public void shouldReturnSetterFunctionByDefault() {
-    	theObject.setSlot(symbol, value);
-    	ExecutableDOS function = theObject.getFunction(symbol.toSetterSymbol());
-    	assertThat(function, CoreMatchers.instanceOf(StandardFunctions.Setter.class));
-    	assertThat(((StandardFunctions.Setter) function).forSlot(), is(symbol));
+    public void shouldUseFunctionLookupToFindFunction() {
+    	ObjectDOS.FUNCTION_LOOKUP = mock(FunctionLookupStrategy.class);
+    	
+        theObject.getFunction(symbol);
+        
+        verify(ObjectDOS.FUNCTION_LOOKUP).lookupFunction(theObject, symbol);
     }
 }
