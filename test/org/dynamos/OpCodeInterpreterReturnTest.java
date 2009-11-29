@@ -40,7 +40,6 @@ public class OpCodeInterpreterReturnTest {
         interpreter = new OpCodeInterpreter();
         context = interpreter.newContext();
         theObject = interpreter.getEnvironment().createNewObject();
-;
     }
 
     @Test

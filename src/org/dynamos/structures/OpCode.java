@@ -20,14 +20,7 @@ public class OpCode {
         return false;
     }
    
-    protected ObjectDOS findFunctionInObjectAndExecute(ObjectDOS object, Symbol symbol, StackFrame stackFrame) {
-    	System.out.println("find and execute " + symbol + " on " + object);
-    	ExecutableDOS function = (ExecutableDOS) object.getFunction(symbol);
-	    
-	    return function.execute(object, stackFrame.getArguments());
-	}
-
-	public static final OpCode NOOP = new OpCode();
+    public static final OpCode NOOP = new OpCode();
 
     public static class FunctionCall extends OpCode {
         private Symbol symbol;
@@ -41,7 +34,9 @@ public class OpCode {
         	if(stackFrame.getObject() != null) {
         		target = stackFrame.getObject();
         	}
-        	ObjectDOS result = findFunctionInObjectAndExecute(target, symbol, stackFrame);
+			System.out.println("find and execute " + symbol + " on " + target);
+			ExecutableDOS function = (ExecutableDOS) target.getFunction(symbol);
+        	ObjectDOS result = function.execute(target, stackFrame.getArguments());
 
         	context.setSlot(Symbol.RESULT, result);
             return true;
@@ -127,11 +122,9 @@ public class OpCode {
     }
     
 	public static class StartOpCodeList extends OpCode {
-
 	}
     
 	public static class EndOpCodeList extends OpCode {
-
 	}
 
 }

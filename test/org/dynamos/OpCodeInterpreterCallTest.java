@@ -115,6 +115,26 @@ public class OpCodeInterpreterCallTest {
     }
 
     @Test
+    public void shouldCallAMethodOnSuperObject() {
+        ObjectDOS superObject = interpreter.getEnvironment().createNewObject();
+    	superObject.setFunction(functionName, function);
+        theObject.setParent(superObject);
+        context.setSlot(localObjectName, theObject);
+
+        OpCode[] opCodes = new OpCode[] {
+            new OpCode.SetObject(localObjectName),
+            new OpCode.FunctionCall(functionName)
+        };
+
+        interpreter.interpret(context, opCodes);
+
+        verify(function).execute(argThat(is(theObject)), argThat(matchArgumentListTo(expectedArgumentList)));
+    }
+
+    /*
+     * TODO do we really need THIS?
+     */
+    @Test
     public void shouldCallAMethodOnThis() {
         theObject.setFunction(functionName, function);
         context.setObject(theObject);

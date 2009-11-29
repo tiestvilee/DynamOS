@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/home/tiestvilee/NetBeansProjects/mockito-all-1.8.0.jar"/>
-	<classpathentry kind="lib" path="/home/tiestvilee/NetBeansProjects/junit-4.7.jar"/>
+	<classpathentry kind="lib" path="lib/junit-4.7.jar"/>
+	<classpathentry kind="lib" path="lib/mockito-all-1.8.1.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
