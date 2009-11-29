@@ -34,7 +34,7 @@ public class OpCode {
         	if(stackFrame.getObject() != null) {
         		target = stackFrame.getObject();
         	}
-			System.out.println("find and execute " + symbol + " on " + target);
+			System.out.println("find and execute " + symbol + " on " + target + " with " + ((ListDOS) stackFrame.getArguments()).getRawList());
 			ExecutableDOS function = (ExecutableDOS) target.getFunction(symbol);
         	ObjectDOS result = function.execute(target, stackFrame.getArguments());
 

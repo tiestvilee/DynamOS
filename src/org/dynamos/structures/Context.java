@@ -75,7 +75,7 @@ public class Context extends ObjectDOS {
 		
 		public Context createContext() {
 			Context result = new Context();
-			result.setParent(contextPrototype);
+			result.setContext(contextPrototype);
 			return result;
 		}
 		

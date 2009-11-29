@@ -40,10 +40,10 @@ public class FunctionDefinitionDOS extends ObjectDOS {
         interpreter.interpret(context, opCodes);
     }
 
-	public Context newContext(Context context, ListDOS arguments, ObjectDOS theObject) {
+	public Context newContext(ObjectDOS context, ListDOS arguments, ObjectDOS theObject) {
 		// TODO where should this stuff be set?  in the interpreter?
 		Context newContext = interpreter.newContext();
-        newContext.setParent(context);
+        newContext.setContext(context);
         newContext.setArguments(arguments);
         newContext.setObject(theObject);
 		return newContext;

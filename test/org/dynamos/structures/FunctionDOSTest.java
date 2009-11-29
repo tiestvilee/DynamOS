@@ -149,7 +149,7 @@ public class FunctionDOSTest {
                 message += "object doesn't match [" + context.getObject() + "] <> [" + object + "]\n";
                 return false;
             }
-            if (context.getParent() != functionContext) {
+            if (context.getContext() != functionContext) {
                 message += "context doesn't match\n";
                 return false;
             }

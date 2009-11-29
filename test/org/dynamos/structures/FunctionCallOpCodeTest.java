@@ -10,6 +10,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import org.dynamos.Environment;
 import org.dynamos.OpCodeInterpreter;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,16 +31,18 @@ public class FunctionCallOpCodeTest {
     OpCodeInterpreter interpreter;
 	Symbol symbol;
 	StackFrame stackFrame;
+	Environment environment;
 
     @Before
     public void setup() {
     	interpreter = new OpCodeInterpreter();
+    	environment = interpreter.getEnvironment();
     	context = interpreter.newContext();
     	symbol = Symbol.get("symbol");
     	stackFrame = new StackFrame();
     	aFunction = mock(ExecutableDOS.class);
     	anotherFunction = mock(ExecutableDOS.class);
-    	object = new ObjectDOS();
+    	object = environment.createNewObject();
     }
 
     /* first the easy ones */
@@ -88,7 +91,7 @@ public class FunctionCallOpCodeTest {
 
     @Test
     public void shouldCallFunctionOnSuperObject() {
-    	ObjectDOS superObject = new ObjectDOS();
+    	ObjectDOS superObject = environment.createNewObject();
     	superObject.setFunction(symbol, aFunction);
     	
     	object.setParent(superObject);
@@ -109,6 +112,7 @@ public class FunctionCallOpCodeTest {
     @Test
     public void shouldCallFunctionInNestingContextOfObjectContext() {
     	context.setFunction(symbol, aFunction);
+    	
     	object.setContext(context);
     	
     	new OpCode.FunctionCall(symbol).execute(object, stackFrame);
@@ -119,8 +123,9 @@ public class FunctionCallOpCodeTest {
     /* Inside an object context, making a call to a super function */
     @Test
     public void shouldCallFunctionInSuperObjectOfObjectContext() {
-    	ObjectDOS parent = new ObjectDOS();
+    	ObjectDOS parent = environment.createNewObject();
     	parent.setFunction(symbol, aFunction);
+    	
     	object.setParent(parent);
     	
     	new OpCode.FunctionCall(symbol).execute(object, stackFrame);
@@ -131,8 +136,9 @@ public class FunctionCallOpCodeTest {
     /* For good luck; inside an object context, making a call to a nesting object context function */
     @Test
     public void shouldCallFunctionInNestingObjectOfObjectContext() {
-    	ObjectDOS nesting = new ObjectDOS();
+    	ObjectDOS nesting = environment.createNewObject();
     	nesting.setFunction(symbol, aFunction);
+    	
     	object.setContext(nesting);
     	
     	new OpCode.FunctionCall(symbol).execute(object, stackFrame);
@@ -148,8 +154,9 @@ public class FunctionCallOpCodeTest {
      */
     @Test
     public void shouldCallFunctionInNestingObjectOfFunctionContext() {
-    	ObjectDOS nesting = new ObjectDOS();
+    	ObjectDOS nesting = environment.createNewObject();
     	nesting.setFunction(symbol, aFunction);
+    	
     	context.setContext(nesting);
     	
     	new OpCode.FunctionCall(symbol).execute(context, stackFrame);
@@ -162,10 +169,12 @@ public class FunctionCallOpCodeTest {
      */
     @Test
     public void shouldCallFunctionInFunctionContextHisNestingObjectHisSuperObject() {
-    	ObjectDOS parent = new ObjectDOS();
+    	ObjectDOS parent = environment.createNewObject();
     	parent.setFunction(symbol, aFunction);
-    	ObjectDOS nesting = new ObjectDOS();
+    	
+    	ObjectDOS nesting = environment.createNewObject();
     	nesting.setParent(parent);
+    	
     	context.setContext(nesting);
     	
     	new OpCode.FunctionCall(symbol).execute(context, stackFrame);
@@ -178,10 +187,12 @@ public class FunctionCallOpCodeTest {
      */
     @Test
     public void shouldCallFunctionInFunctionContextHisNestingObjectHisNestingObject() {
-    	ObjectDOS outside = new ObjectDOS();
+    	ObjectDOS outside = environment.createNewObject();
     	outside.setFunction(symbol, aFunction);
-    	ObjectDOS nesting = new ObjectDOS();
+    	
+    	ObjectDOS nesting = environment.createNewObject();
     	nesting.setContext(outside);
+    	
     	context.setContext(nesting);
     	
     	new OpCode.FunctionCall(symbol).execute(context, stackFrame);
@@ -193,13 +204,13 @@ public class FunctionCallOpCodeTest {
      */
     @Test
     public void shouldCallFunctionInNestingContextBeforeSuperObject() {
-    	ObjectDOS outside = new ObjectDOS();
+    	ObjectDOS outside = environment.createNewObject();
     	outside.setFunction(symbol, aFunction);
     	
-    	ObjectDOS parent = new ObjectDOS();
+    	ObjectDOS parent = environment.createNewObject();
     	parent.setFunction(symbol, anotherFunction);
     	
-    	ObjectDOS nesting = new ObjectDOS();
+    	ObjectDOS nesting = environment.createNewObject();
     	nesting.setContext(outside);
     	nesting.setParent(parent);
     	
@@ -214,16 +225,16 @@ public class FunctionCallOpCodeTest {
      */
     @Test
     public void shouldCallFunctionInSuperObjectBeforeNestingObjectHisSuperObject() {
-    	ObjectDOS outsideParent = new ObjectDOS();
+    	ObjectDOS outsideParent = environment.createNewObject();
     	outsideParent.setFunction(symbol, anotherFunction);
     	
-    	ObjectDOS outside = new ObjectDOS();
+    	ObjectDOS outside = environment.createNewObject();
     	outside.setParent(outsideParent);
     	
-    	ObjectDOS parent = new ObjectDOS();
+    	ObjectDOS parent = environment.createNewObject();
     	parent.setFunction(symbol, aFunction);
     	
-    	ObjectDOS nesting = new ObjectDOS();
+    	ObjectDOS nesting = environment.createNewObject();
     	nesting.setContext(outside);
     	nesting.setParent(parent);
     	

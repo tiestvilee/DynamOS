@@ -5,18 +5,17 @@ package org.dynamos.structures;
 
 public class FunctionDOS extends ExecutableDOS {
     protected FunctionDefinitionDOS function;
-    protected Context context;
 
     public FunctionDOS(FunctionDefinitionDOS function, Context context) {
         this.function = function;
-        this.context = context;
+        setContext(context);
         
         // TODO should move this into prototype
         setFunction(Symbol.EXECUTE, new ExecuteFunction());
     }
 
     public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
-        Context newContext = function.newContext(context, arguments, theObject);
+        Context newContext = function.newContext(getContext(), arguments, theObject);
         function.execute(newContext);
         return newContext.getSlot(Symbol.RESULT);
     }

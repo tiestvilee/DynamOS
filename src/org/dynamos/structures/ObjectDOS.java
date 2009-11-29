@@ -16,12 +16,13 @@ import org.dynamos.Environment;
 public class ObjectDOS {
 	
 	/* Compile time definition of Object */
+	private static ObjectDOS UNDEFINED;
+	private static FunctionLookupStrategy FUNCTION_LOOKUP;
 	
     private HashMap<Symbol, ObjectDOS> slots;
     private HashMap<Symbol, ExecutableDOS> functions;
     private ObjectDOS parent;
     private ObjectDOS context;
-	private ObjectDOS undefined;
 	
     public ObjectDOS() {
 		slots = new HashMap<Symbol, ObjectDOS>();
@@ -39,10 +40,10 @@ public class ObjectDOS {
     public ObjectDOS getSlot(Symbol symbol) {
         final ObjectDOS slot = slots.get(symbol);
         if(slot == null) {
-            if(parent == null) {
-                return undefined;
+            if(context == null) {
+                return UNDEFINED;
             }
-            return parent.getSlot(symbol);
+            return context.getSlot(symbol);
         }
         return slot;
     }
@@ -76,31 +77,11 @@ public class ObjectDOS {
     }
 
     public ExecutableDOS getFunction(Symbol symbol) {
-        return getContextFunction(false, symbol);
+        return FUNCTION_LOOKUP.lookupFunction(this, symbol);
     }
-    
-    private ExecutableDOS getContextFunction(boolean foundEnclosingObject, Symbol symbol) {
-    	
-        ExecutableDOS function = functions.get(symbol);
-        if(function == null) {
-        	boolean isEnclosingObject = !(foundEnclosingObject || this instanceof Context);
-        	
-        	if(context != null) {
-        		function = context.getContextFunction(isEnclosingObject, symbol);
-        	}
-        	if(function == null && isEnclosingObject && parent != null) {
-	            function = parent.getParentFunction(symbol);
-        	}
-        }
-        return function;
-    }
-    
-    private ExecutableDOS getParentFunction(Symbol symbol) {
-        ExecutableDOS function = functions.get(symbol);
-        if(function == null && parent != null) {
-        	function = parent.getParentFunction(symbol);
-        }
-        return function;
+
+    public HashMap<Symbol, ExecutableDOS> getFunctions() {
+        return functions;
     }
     
     private static ExecutableDOS SET_PARENT_EXEC = new ExecutableDOS() {
@@ -122,7 +103,9 @@ public class ObjectDOS {
 	/* Runtime Definition of Object */
     
 	public static void initialiseRootObject(Environment environment, ObjectDOS rootObject) {
-		rootObject.undefined = environment.getUndefined();
+		UNDEFINED = environment.getUndefined();
+		FUNCTION_LOOKUP = new NewspeakLookupStrategy();
+		
 		rootObject.setFunction(Symbol.SET_PARENT_$, SET_PARENT_EXEC);
 		rootObject.setFunction(Symbol.SET_FUNCTION_$_TO_$, SET_FUNCTION_$_TO_$_EXEC);
 	}

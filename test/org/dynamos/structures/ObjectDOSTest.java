@@ -22,45 +22,63 @@ import org.junit.Test;
 public class ObjectDOSTest {
 
     ObjectDOS theObject;
-    Symbol symbol = Symbol.get("Symbol");
-    ObjectDOS value = new ObjectDOS();
-    ObjectDOS nullDOS = new StandardObjects.NullDOS();
+    Symbol symbol = Symbol.get("MySymbol");
+    ObjectDOS value;
+    ObjectDOS nullDOS;
     FunctionDOS function = new FunctionDOS(null, null);
+	private OpCodeInterpreter interpreter;
+	private Environment environment;
 
     @Before
     public void setUp() {
-        theObject = new ObjectDOS();
+    	interpreter = new OpCodeInterpreter();
+    	environment = interpreter.getEnvironment();
+    	nullDOS = environment.getNull();
+    	value = environment.createNewObject();
+    	theObject = environment.createNewObject();
     }
 
     @Test
     public void shouldAddAndReturnSlot() {
         theObject.setSlot(symbol, value);
-        assertSame(value, theObject.getSlot(symbol));
+        assertThat(theObject.getSlot(symbol), is(value));
     }
 
     @Test
-    public void shouldUseParentSlotIfNotOnChild() {
-        ObjectDOS parent = new ObjectDOS();
-        parent.setSlot(symbol, value);
-        theObject.setParent(parent);
+    public void shouldUseContextSlotIfNotOnObject() {
+        ObjectDOS context = environment.createNewObject();
+        context.setSlot(symbol, value);
+        theObject.setContext(context);
 
-        assertSame(value, theObject.getSlot(symbol));
+        assertThat(theObject.getSlot(symbol), is(value));
     }
 
     @Test
-    public void shouldOverideParentSlotWithChildSlot() {
-        ObjectDOS parent = new ObjectDOS();
-        ObjectDOS oldValue = new ObjectDOS();
-        parent.setSlot(symbol, oldValue);
-        theObject.setParent(parent);
-        parent.setSlot(symbol, value);
+    public void shouldOverideContextSlotWithCurrentSlot() {
+        ObjectDOS context = environment.createNewObject();
 
-        assertSame(value, theObject.getSlot(symbol));
+        ObjectDOS oldValue = environment.createNewObject();
+        context.setSlot(symbol, oldValue);
+        
+        theObject.setContext(context);
+        theObject.setSlot(symbol, value);
+
+        assertThat(theObject.getSlot(symbol), is(value));
+    }
+
+    @Test
+    public void shouldNotAccessSlotsOnParent() {
+        ObjectDOS parent = environment.createNewObject();
+        parent.setSlot(symbol, value);
+        
+        theObject.setParent(parent);
+
+        assertThat(theObject.getSlot(symbol), is(environment.getUndefined()));
     }
 
     @Test
     public void shouldReturnNullIfNoSlot() {
-    	theObject = new ObjectDOS(); // TODO again, this sux the big time
+    	theObject = environment.createNewObject(); // TODO again, this sux the big time
     	Environment env = new Environment(new OpCodeInterpreter());
 		ObjectDOS.initialiseRootObject(env, theObject);
         assertSame(env.getUndefined(), theObject.getSlot(symbol));
