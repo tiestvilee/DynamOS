@@ -78,16 +78,31 @@ public class ObjectDOS {
     public ExecutableDOS getFunction(Symbol symbol) {
         ExecutableDOS function = functions.get(symbol);
         if(function == null) {
+    		function = getContextFunction(false, symbol);
+        }
+        return function;
+    }
+    
+    private ExecutableDOS getContextFunction(boolean foundEnclosingObject, Symbol symbol) {
+    	
+        ExecutableDOS function = functions.get(symbol);
+        if(function == null) {
+        	boolean isEnclosingObject = !(foundEnclosingObject || this instanceof Context);
+        	
         	if(context != null) {
-        		function = context.getFunction(symbol);
+        		function = context.getContextFunction(isEnclosingObject, symbol);
         	}
-        	if(function == null) {
-	            if(parent == null) {
-	                // return StandardObjects.NULL;
-	                throw new RuntimeException("message not understood " + symbol);
-	            }
-	            function = parent.getFunction(symbol);
+        	if(function == null && isEnclosingObject && parent != null) {
+	            function = parent.getParentFunction(symbol);
         	}
+        }
+        return function;
+    }
+    
+    private ExecutableDOS getParentFunction(Symbol symbol) {
+        ExecutableDOS function = functions.get(symbol);
+        if(function == null && parent != null) {
+        	function = parent.getParentFunction(symbol);
         }
         return function;
     }

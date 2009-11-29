@@ -22,6 +22,7 @@ import org.junit.Test;
 public class FunctionCallOpCodeTest {
 
     ExecutableDOS aFunction;
+    ExecutableDOS anotherFunction;
 	
     Context context;
     ListDOS arguments;
@@ -37,6 +38,7 @@ public class FunctionCallOpCodeTest {
     	symbol = Symbol.get("symbol");
     	stackFrame = new StackFrame();
     	aFunction = mock(ExecutableDOS.class);
+    	anotherFunction = mock(ExecutableDOS.class);
     	object = new ObjectDOS();
     }
 
@@ -67,7 +69,7 @@ public class FunctionCallOpCodeTest {
     	Context nestingContext = new Context();
     	nestingContext.setFunction(symbol, aFunction);
     	
-    	context.setParent(nestingContext);
+    	context.setContext(nestingContext);
     	
     	new OpCode.FunctionCall(symbol).execute(context, stackFrame);
     	
@@ -144,16 +146,91 @@ public class FunctionCallOpCodeTest {
     /* Inside a function context making a call to nesting object context
      * ie this is an instance function calling another instance function 
      */
+    @Test
+    public void shouldCallFunctionInNestingObjectOfFunctionContext() {
+    	ObjectDOS nesting = new ObjectDOS();
+    	nesting.setFunction(symbol, aFunction);
+    	context.setContext(nesting);
+    	
+    	new OpCode.FunctionCall(symbol).execute(context, stackFrame);
+    	
+    	verify(aFunction).execute(context, stackFrame.getArguments());
+    }
 
     /* Inside a function context making a call to nesting object context's super
      * ie this is an instance function calling super function 
      */
+    @Test
+    public void shouldCallFunctionInFunctionContextHisNestingObjectHisSuperObject() {
+    	ObjectDOS parent = new ObjectDOS();
+    	parent.setFunction(symbol, aFunction);
+    	ObjectDOS nesting = new ObjectDOS();
+    	nesting.setParent(parent);
+    	context.setContext(nesting);
+    	
+    	new OpCode.FunctionCall(symbol).execute(context, stackFrame);
+    	
+    	verify(aFunction).execute(context, stackFrame.getArguments());
+    }
 
     /* Inside a function context making a call to nesting object's nesting object
      * ie this is an instance function calling a function on the current classes containing object 
      */
+    @Test
+    public void shouldCallFunctionInFunctionContextHisNestingObjectHisNestingObject() {
+    	ObjectDOS outside = new ObjectDOS();
+    	outside.setFunction(symbol, aFunction);
+    	ObjectDOS nesting = new ObjectDOS();
+    	nesting.setContext(outside);
+    	context.setContext(nesting);
+    	
+    	new OpCode.FunctionCall(symbol).execute(context, stackFrame);
+    	
+    	verify(aFunction).execute(context, stackFrame.getArguments());
+    }
     
-    /* TODO precedence tests
-     * TODO doesn't do comb tests
+    /* Should work its way up context before looking at super objects
      */
+    @Test
+    public void shouldCallFunctionInNestingContextBeforeSuperObject() {
+    	ObjectDOS outside = new ObjectDOS();
+    	outside.setFunction(symbol, aFunction);
+    	
+    	ObjectDOS parent = new ObjectDOS();
+    	parent.setFunction(symbol, anotherFunction);
+    	
+    	ObjectDOS nesting = new ObjectDOS();
+    	nesting.setContext(outside);
+    	nesting.setParent(parent);
+    	
+    	context.setContext(nesting);
+    	
+    	new OpCode.FunctionCall(symbol).execute(context, stackFrame);
+    	
+    	verify(aFunction).execute(context, stackFrame.getArguments());
+    }
+    
+    /* Shouldn't look at the super objects of nesting object contexts...
+     */
+    @Test
+    public void shouldCallFunctionInSuperObjectBeforeNestingObjectHisSuperObject() {
+    	ObjectDOS outsideParent = new ObjectDOS();
+    	outsideParent.setFunction(symbol, anotherFunction);
+    	
+    	ObjectDOS outside = new ObjectDOS();
+    	outside.setParent(outsideParent);
+    	
+    	ObjectDOS parent = new ObjectDOS();
+    	parent.setFunction(symbol, aFunction);
+    	
+    	ObjectDOS nesting = new ObjectDOS();
+    	nesting.setContext(outside);
+    	nesting.setParent(parent);
+    	
+    	context.setContext(nesting);
+    	
+    	new OpCode.FunctionCall(symbol).execute(context, stackFrame);
+    	
+    	verify(aFunction).execute(context, stackFrame.getArguments());
+    }
 }
