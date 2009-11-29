@@ -41,7 +41,7 @@ public class OpCodeInterpreterParameterTest {
 	private Symbol local1Symbol = Symbol.get("local1");
 	private Symbol local2Symbol = Symbol.get("local2");
 	private Symbol local3Symbol = Symbol.get("local3");
-	private Symbol functionName2 = Symbol.get("functionName");
+	private Symbol functionName2 = Symbol.get("functionName2");
 
     @Before
     public void setUp() {
@@ -71,9 +71,8 @@ public class OpCodeInterpreterParameterTest {
 
 	private void shouldReturnNamedArgument(Symbol argumentSymbol, ObjectDOS agumentValue) {
 		OpCode[] receiverOpCodes = new OpCode[] {
-        	new OpCode.FunctionCall(argumentSymbol),
-         	new OpCode.Push(Symbol.RESULT),
-        	new OpCode.FunctionCall(Symbol.RESULT_$)
+         	new OpCode.Push(argumentSymbol),
+        	new OpCode.SetSlot(Symbol.RESULT)
         };
 		Symbol[] argumentSymbols = new Symbol[] {argumentSymbol, argument2Symbol};
 		
@@ -94,9 +93,8 @@ public class OpCodeInterpreterParameterTest {
 	@Test
 	public void shouldReturnUndefinedIfArgumentNotProvided() {
 		OpCode[] receiverOpCodes = new OpCode[] {
-        	new OpCode.FunctionCall(argument2Symbol),
-         	new OpCode.Push(Symbol.RESULT),
-        	new OpCode.FunctionCall(Symbol.RESULT_$)
+         	new OpCode.Push(argument2Symbol),
+        	new OpCode.SetSlot(Symbol.RESULT)
         };
 		Symbol[] argumentSymbols = new Symbol[] {argument1Symbol, argument2Symbol};
 		
@@ -116,9 +114,8 @@ public class OpCodeInterpreterParameterTest {
 	@Test
 	public void shouldIgnoreExtraArguments() {
 		OpCode[] receiverOpCodes = new OpCode[] {
-        	new OpCode.FunctionCall(argument2Symbol),
-         	new OpCode.Push(Symbol.RESULT),
-        	new OpCode.FunctionCall(Symbol.RESULT_$)
+         	new OpCode.Push(argument2Symbol),
+        	new OpCode.SetSlot(Symbol.RESULT)
         };
 		Symbol[] argumentSymbols = new Symbol[] {argument1Symbol, argument2Symbol};
 		
@@ -151,12 +148,9 @@ public class OpCodeInterpreterParameterTest {
     @Test
     public void shouldHaveArgumentsListAvailable() {
 		OpCode[] receiverOpCodes = new OpCode[] {
-        	new OpCode.FunctionCall(Symbol.ARGUMENTS),
          	new OpCode.Push(zeroSymbol),
-         	new OpCode.SetObject(Symbol.RESULT),
+         	new OpCode.SetObject(Symbol.ARGUMENTS),
         	new OpCode.FunctionCall(Symbol.get("at:")),
-         	new OpCode.Push(Symbol.RESULT),
-        	new OpCode.FunctionCall(Symbol.RESULT_$)
         };
 		Symbol[] argumentSymbols = new Symbol[] {argument1Symbol, argument2Symbol};
 		

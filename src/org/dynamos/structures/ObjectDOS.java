@@ -30,10 +30,6 @@ public class ObjectDOS {
     }
 
     public void setSlot(Symbol symbol, ObjectDOS value) {
-    	if(slots.get(symbol) == null) {
-    		setFunction(symbol, new StandardFunctions.Getter(symbol));
-    		setFunction(symbol.toSetterSymbol(), new StandardFunctions.Setter(symbol.toSetterSymbol()));
-    	}
         slots.put(symbol, value);
     }
     

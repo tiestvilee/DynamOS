@@ -113,7 +113,7 @@ public class OpCode {
         public boolean execute(ObjectDOS context, StackFrame stackFrame) {
             ObjectDOS argument = (ObjectDOS) context.getSlot(symbol);
             if(argument instanceof ValueObject) {
-            	System.out.println(message + " " + ((ValueObject) argument).getValue() + "@" + argument);
+            	System.out.println(message + " " + ((ValueObject) argument).getValue() + "@" + argument + " parent " + argument.getParent());
             } else  {
             	System.out.println(message + " " + argument);
             }
@@ -125,6 +125,19 @@ public class OpCode {
 	}
     
 	public static class EndOpCodeList extends OpCode {
+	}
+
+	public static class SetSlot extends OpCode {
+        private Symbol symbol;
+        public SetSlot(Symbol symbol) {
+            this.symbol = symbol;
+        }
+
+        @Override
+        public boolean execute(ObjectDOS context, StackFrame stackFrame) {
+            context.setSlot(symbol, stackFrame.getArguments().getRawList().get(0));
+            return true;
+        }
 	}
 
 }

@@ -35,7 +35,6 @@ public class Symbol {
     public static final Symbol ARGUMENTS = Symbol.get("arguments");
     public static final Symbol RESULT = Symbol.get("result");
     public static final Symbol THIS = Symbol.get("this");
-	public static final Symbol RESULT_$ = Symbol.get("result:");
 	public static final Symbol CURRENT_CONTEXT = Symbol.get("currentContext");
 	public static final Symbol ADD_SLOT_$ = Symbol.get("addSlot:");
 	public static final Symbol ADD_SLOT_$_WITH_VALUE_$ = Symbol.get("addSlot:withValue:");
@@ -45,12 +44,4 @@ public class Symbol {
 	public static final Symbol SET_FUNCTION_$_TO_$ = Symbol.get("setFunction:to:");
 	public static final Symbol NEW_OBJECT = VMObjectDOS.NEW_OBJECT;
 	public static final Symbol CREATE_FUNCTION_WITH_ARGUMENTS_$_LOCALS_$_OPCODES_$ = VMObjectDOS.CREATE_FUNCTION_WITH_ARGUMENTS_$_LOCALS_$_OPCODES_$;
-
-	public Symbol toSetterSymbol() {
-		return Symbol.get(symbol + ":");
-	}
-
-	public Symbol fromSetterSymbol() {
-		return Symbol.get(symbol.substring(0, symbol.length() - 1));
-	}
 }

@@ -12,9 +12,9 @@ import static org.junit.Assert.assertThat;
 import org.dynamos.structures.Context;
 import org.dynamos.structures.FunctionDOS;
 import org.dynamos.structures.FunctionDefinitionDOS;
-import org.dynamos.structures.ListDOS;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
+import org.dynamos.structures.StackFrame;
 import org.dynamos.structures.Symbol;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,7 +50,7 @@ public class OpCodeInterpreterReturnTest {
 
         OpCode[] opCodes = new OpCode[] {
         	new OpCode.Push(resultSymbol),
-        	new OpCode.FunctionCall(Symbol.RESULT_$)
+        	new OpCode.SetSlot(Symbol.RESULT)
         };
 
         interpreter.interpret(context, opCodes);
@@ -61,17 +61,15 @@ public class OpCodeInterpreterReturnTest {
     @Test
     public void shouldReturnAValueIntoDefaultSlot() {
         final ObjectDOS result = interpreter.getEnvironment().createNewObject();
-        FunctionDefinitionDOS function = new FunctionDefinitionDOS(interpreter, null, new Symbol[] {}, null) {
-
-            @Override
+        
+        FunctionDefinitionDOS functionThatSetsupReturnSlot = new FunctionDefinitionDOS(interpreter, null, new Symbol[] {}, null) {
             public void execute(Context context) {
-            	ListDOS list = new ListDOS();
-            	list.add(result);
-                context.getFunction(Symbol.RESULT_$).execute(context, list);
+            	StackFrame stackFrame = new StackFrame();
+            	stackFrame.pushArgument(result);
+				new OpCode.SetSlot(Symbol.RESULT).execute(context, stackFrame);
             }
-
         };
-        context.setFunction(functionName, new FunctionDOS(function, context));
+        context.setFunction(functionName, new FunctionDOS(functionThatSetsupReturnSlot, context));
 
         OpCode[] opCodes = new OpCode[] {
             new OpCode.FunctionCall(functionName)

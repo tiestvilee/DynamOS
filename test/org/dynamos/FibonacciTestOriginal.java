@@ -46,7 +46,6 @@ public class FibonacciTestOriginal {
     Symbol anon2 = Symbol.get("anon2");
 
     Symbol temp1 = Symbol.get("temp1");
-    Symbol temp1Setter = Symbol.get("temp1:");
     Symbol temp2 = Symbol.get("temp2");
 	Symbol numberFactory = Symbol.get("numberFactory");;
 
@@ -85,6 +84,13 @@ public class FibonacciTestOriginal {
         
     }
 
+    @Test
+    public void shouldCalculateFibonacciAt5() {
+    	
+        assetFibonacciAt(5, 8);
+        
+    }
+
 	private void assetFibonacciAt(int sequenceIndex, int expectedResult) {
         
         System.out.println("******************************************************\n");
@@ -95,7 +101,7 @@ public class FibonacciTestOriginal {
 
         FunctionDefinitionDOS anon1Function = new FunctionDefinitionDOS(interpreter, new Symbol[] {}, new Symbol[] {}, new OpCode[] {
                 new OpCode.Push(one),
-                new OpCode.FunctionCall(Symbol.RESULT_$),
+                new OpCode.SetSlot(Symbol.RESULT),
 	            new OpCode.Debug("returning (1) ", Symbol.RESULT)
         });
 
@@ -108,7 +114,7 @@ public class FibonacciTestOriginal {
             new OpCode.FunctionCall(fibonacci$),
 
             new OpCode.Push(Symbol.RESULT),  // temp1 = result
-            new OpCode.FunctionCall(temp1Setter),  // temp1 = result
+            new OpCode.SetSlot(temp1),  // temp1 = result
 
             new OpCode.Push(two),  // result = index - 2
             new OpCode.SetObject(index),

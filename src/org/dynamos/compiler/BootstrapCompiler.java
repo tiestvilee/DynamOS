@@ -33,7 +33,7 @@ public class BootstrapCompiler {
 		arguments.add(Symbol.get("p"));
 		
 		opcodes.add(new OpCode.Push(Symbol.get("p")));
-		opcodes.add(new OpCode.FunctionCall(Symbol.RESULT_$));
+		opcodes.add(new OpCode.SetSlot(Symbol.RESULT));
 		
 		return constructFunctionDefinition(interpreter, arguments, locals, opcodes);
 	}

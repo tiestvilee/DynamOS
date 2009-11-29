@@ -44,7 +44,7 @@ public class StandardObjects {
 				new Symbol[] {trueResult, falseResult },
 				new Symbol[] {},
 				new OpCode[] {new OpCode.Push(trueResult),
-				new OpCode.FunctionCall(Symbol.RESULT_$) },
+				new OpCode.SetSlot(Symbol.RESULT) },
 				booleanContext));
 
 		FalseDOS falseObject = new FalseDOS();
@@ -53,7 +53,7 @@ public class StandardObjects {
 				new Symbol[] {trueResult, falseResult },
 				new Symbol[] {},
 				new OpCode[] {new OpCode.Push(falseResult),
-				new OpCode.FunctionCall(Symbol.RESULT_$) },
+				new OpCode.SetSlot(Symbol.RESULT) },
 				booleanContext));
 
 		ObjectDOS booleanContainer = environment.createNewObject();

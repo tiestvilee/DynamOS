@@ -34,6 +34,7 @@ public class BasicOpCodeTest {
     	context = interpreter.newContext();
     	local = Symbol.get("local");
     	stackFrame = new StackFrame();
+    	object = interpreter.getEnvironment().createNewObject();
     }
 
     @Test
@@ -87,5 +88,14 @@ public class BasicOpCodeTest {
     public void shouldDoNothingWhenEndingOpcodeList() {
     	boolean newStackFrame = new OpCode.EndOpCodeList().execute(null, null);
     	assertThat(newStackFrame, is(false));
+    }
+    
+    @Test
+    public void shouldSetSlot() {
+    	stackFrame.pushArgument(object);
+    	boolean newStackFrame = new OpCode.SetSlot(local).execute(context, stackFrame);
+    	
+    	assertThat(context.getSlot(local), is(object));
+    	assertThat(newStackFrame, is(true));
     }
 }

@@ -24,7 +24,7 @@ public class StandardFunctions {
 		private Symbol symbol;
 		
 		public Setter(Symbol symbol) {
-			this.symbol = symbol.fromSetterSymbol();
+			this.symbol = Symbol.get(symbol.toString().substring(0, symbol.toString().length() - 1));
 		}
 		
 		@Override
@@ -40,6 +40,7 @@ public class StandardFunctions {
 		public String toString() {
 			return "setter:" + symbol;
 		}
+
 	}
 	
 }
