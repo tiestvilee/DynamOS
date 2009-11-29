@@ -117,11 +117,25 @@ public class FunctionCallOpCodeTest {
     /* Inside an object context, making a call to a super function */
     @Test
     public void shouldCallFunctionInSuperObjectOfObjectContext() {
+    	ObjectDOS parent = new ObjectDOS();
+    	parent.setFunction(symbol, aFunction);
+    	object.setParent(parent);
+    	
+    	new OpCode.FunctionCall(symbol).execute(object, stackFrame);
+    	
+    	verify(aFunction).execute(object, stackFrame.getArguments());
     }
 
     /* For good luck; inside an object context, making a call to a nesting object context function */
     @Test
     public void shouldCallFunctionInNestingObjectOfObjectContext() {
+    	ObjectDOS nesting = new ObjectDOS();
+    	nesting.setFunction(symbol, aFunction);
+    	object.setContext(nesting);
+    	
+    	new OpCode.FunctionCall(symbol).execute(object, stackFrame);
+    	
+    	verify(aFunction).execute(object, stackFrame.getArguments());
     }
     
     /* These are inside functions that are defined within an object context,
