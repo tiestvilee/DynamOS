@@ -76,11 +76,7 @@ public class ObjectDOS {
     }
 
     public ExecutableDOS getFunction(Symbol symbol) {
-        ExecutableDOS function = functions.get(symbol);
-        if(function == null) {
-    		function = getContextFunction(false, symbol);
-        }
-        return function;
+        return getContextFunction(false, symbol);
     }
     
     private ExecutableDOS getContextFunction(boolean foundEnclosingObject, Symbol symbol) {
