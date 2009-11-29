@@ -20,6 +20,7 @@ public class ObjectDOS {
     private HashMap<Symbol, ObjectDOS> slots;
     private HashMap<Symbol, ExecutableDOS> functions;
     private ObjectDOS parent;
+    private ObjectDOS context;
 	private ObjectDOS undefined;
 	
     public ObjectDOS() {
@@ -57,6 +58,14 @@ public class ObjectDOS {
         return parent;
     }
 
+	public void setContext(ObjectDOS context) {
+		this.context = context;
+	}
+
+	public ObjectDOS getContext() {
+		return context;
+	}
+
     public String toString() {
         return getClass().getSimpleName() + functions.keySet();
     }
@@ -67,13 +76,18 @@ public class ObjectDOS {
     }
 
     public ExecutableDOS getFunction(Symbol symbol) {
-        final ExecutableDOS function = functions.get(symbol);
+        ExecutableDOS function = functions.get(symbol);
         if(function == null) {
-            if(parent == null) {
-                // return StandardObjects.NULL;
-                throw new RuntimeException("message not understood " + symbol);
-            }
-            return parent.getFunction(symbol);
+        	if(context != null) {
+        		function = context.getFunction(symbol);
+        	}
+        	if(function == null) {
+	            if(parent == null) {
+	                // return StandardObjects.NULL;
+	                throw new RuntimeException("message not understood " + symbol);
+	            }
+	            function = parent.getFunction(symbol);
+        	}
         }
         return function;
     }

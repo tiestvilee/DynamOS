@@ -99,9 +99,19 @@ public class FunctionCallOpCodeTest {
     
     /* now the harder ones... */
 
+    /* these first few tests are executed as if doing stuff within the actual 
+     * object context, as opposed to within a function within the object context.
+     * Essentially these are constructor calls.
+     */
     /* Inside an object context, making a call to a nesting context function */
     @Test
     public void shouldCallFunctionInNestingContextOfObjectContext() {
+    	context.setFunction(symbol, aFunction);
+    	object.setContext(context);
+    	
+    	new OpCode.FunctionCall(symbol).execute(object, stackFrame);
+    	
+    	verify(aFunction).execute(object, stackFrame.getArguments());
     }
     
     /* Inside an object context, making a call to a super function */
@@ -114,6 +124,9 @@ public class FunctionCallOpCodeTest {
     public void shouldCallFunctionInNestingObjectOfObjectContext() {
     }
     
+    /* These are inside functions that are defined within an object context,
+     * essentially these are instance functions
+     */
     /* Inside a function context making a call to nesting object context
      * ie this is an instance function calling another instance function 
      */

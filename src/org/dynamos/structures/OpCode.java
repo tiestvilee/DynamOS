@@ -15,7 +15,7 @@ import org.dynamos.structures.StandardObjects.ValueObject;
 public class OpCode {
 
 
-	public boolean execute(Context context, StackFrame stackFrame) {
+	public boolean execute(ObjectDOS context, StackFrame stackFrame) {
         // NOOP
         return false;
     }
@@ -29,7 +29,7 @@ public class OpCode {
         }
 
         @Override
-        public boolean execute(Context context, StackFrame stackFrame) {
+        public boolean execute(ObjectDOS context, StackFrame stackFrame) {
         	ObjectDOS target = context;
         	if(stackFrame.getObject() != null) {
         		target = stackFrame.getObject();
@@ -50,7 +50,7 @@ public class OpCode {
         }
 
         @Override
-        public boolean execute(Context context, StackFrame stackFrame) {
+        public boolean execute(ObjectDOS context, StackFrame stackFrame) {
             ObjectDOS object = (ObjectDOS) context.getSlot(symbol);
             stackFrame.setObject(object);
             return false;
@@ -64,7 +64,7 @@ public class OpCode {
         }
 
         @Override
-        public boolean execute(Context context, StackFrame stackFrame) {
+        public boolean execute(ObjectDOS context, StackFrame stackFrame) {
             ObjectDOS argument = (ObjectDOS) context.getSlot(symbol);
             stackFrame.pushArgument(argument);
             return false;
@@ -78,7 +78,7 @@ public class OpCode {
         }
 
         @Override
-        public boolean execute(Context context, StackFrame stackFrame) {
+        public boolean execute(ObjectDOS context, StackFrame stackFrame) {
             stackFrame.pushArgument(new SymbolWrapper(symbol));
             return false;
         }
@@ -95,7 +95,7 @@ public class OpCode {
 		}
 
         @Override
-        public boolean execute(Context context, StackFrame stackFrame) {
+        public boolean execute(ObjectDOS context, StackFrame stackFrame) {
         	context.setSlot(Symbol.RESULT, interpreter.getEnvironment().createNewValueObject(value));
             return false;
         }
@@ -110,7 +110,7 @@ public class OpCode {
         }
 
         @Override
-        public boolean execute(Context context, StackFrame stackFrame) {
+        public boolean execute(ObjectDOS context, StackFrame stackFrame) {
             ObjectDOS argument = (ObjectDOS) context.getSlot(symbol);
             if(argument instanceof ValueObject) {
             	System.out.println(message + " " + ((ValueObject) argument).getValue() + "@" + argument);
