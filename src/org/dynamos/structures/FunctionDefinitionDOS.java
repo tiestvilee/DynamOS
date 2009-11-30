@@ -37,6 +37,8 @@ public class FunctionDefinitionDOS extends ObjectDOS {
     	for(index=0;index < locals.length; index++) {
     		context.setSlot(locals[index], interpreter.getEnvironment().getNull());
     	}
+    	context.setSlot(Symbol.RESULT, context);
+    	
         interpreter.interpret(context, opCodes);
     }
 

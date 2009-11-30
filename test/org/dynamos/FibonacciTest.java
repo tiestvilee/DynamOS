@@ -108,26 +108,30 @@ public class FibonacciTest {
             	new OpCode.Push(Symbol.RESULT),
             	new OpCode.SetObject(numberFactory),
             	new OpCode.FunctionCall(Symbol.get("numberFrom:")),
+            	new OpCode.PushSymbol(Symbol.get("one")),
             	new OpCode.Push(Symbol.RESULT),
-            	new OpCode.SetSlot(Symbol.get("one")),
+            	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
 
             	new OpCode.CreateValueObject(interpreter, 2),  // create constant for '2'
             	new OpCode.Push(Symbol.RESULT),
             	new OpCode.SetObject(numberFactory),
             	new OpCode.FunctionCall(Symbol.get("numberFrom:")),
+            	new OpCode.PushSymbol(Symbol.get("two")),
             	new OpCode.Push(Symbol.RESULT),
-            	new OpCode.SetSlot(Symbol.get("two")),
+            	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
 
             	// create second anonymous function
             	new OpCode.SetObject(listFactory), // empty symbol list
             	new OpCode.FunctionCall(Symbol.get("newList")),
+            	new OpCode.PushSymbol(argumentList),
             	new OpCode.Push(Symbol.RESULT), // copy into arguments
-            	new OpCode.SetSlot(argumentList),
+            	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
             	
             	new OpCode.SetObject(listFactory), // empty symbol list
             	new OpCode.FunctionCall(Symbol.get("newList")),
+            	new OpCode.PushSymbol(locals),
             	new OpCode.Push(Symbol.RESULT), // copy into locals
-            	new OpCode.SetSlot(locals),
+            	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
             	new OpCode.PushSymbol(temp1), // add 'temp1' local
             	new OpCode.SetObject(argumentList),
             	new OpCode.FunctionCall(Symbol.get("add:")),
@@ -140,8 +144,9 @@ public class FibonacciTest {
 		            new OpCode.Push(Symbol.RESULT), // result = fibonacci( result )
 		            new OpCode.FunctionCall(fibonacci$),
 		
+	            	new OpCode.PushSymbol(temp1),
 		            new OpCode.Push(Symbol.RESULT),  // temp1 = result
-		            new OpCode.SetSlot(temp1),
+		        	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
 		
 		            new OpCode.Push(two),  // result = index - 2
 		            new OpCode.SetObject(index),
@@ -164,39 +169,44 @@ public class FibonacciTest {
             	new OpCode.FunctionCall(Symbol.CREATE_FUNCTION_WITH_ARGUMENTS_$_LOCALS_$_OPCODES_$),
 	            new OpCode.Debug("created", Symbol.RESULT),
 	            
+            	new OpCode.PushSymbol(anon2),
 	            new OpCode.Push(Symbol.RESULT),
-	            new OpCode.SetSlot(anon2),
+	        	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
 
             	// Create fibonacci function
             	new OpCode.SetObject(listFactory), // empty symbol list
             	new OpCode.FunctionCall(Symbol.get("newList")),
+            	new OpCode.PushSymbol(argumentList),
             	new OpCode.Push(Symbol.RESULT), // copy into arguments
-            	new OpCode.SetSlot(argumentList),
+            	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
             	new OpCode.PushSymbol(index), // add 'index' parameter
             	new OpCode.SetObject(argumentList),
             	new OpCode.FunctionCall(Symbol.get("add:")),
             	
             	new OpCode.SetObject(listFactory), // empty symbol list
             	new OpCode.FunctionCall(Symbol.get("newList")),
+            	new OpCode.PushSymbol(locals),
             	new OpCode.Push(Symbol.RESULT), // copy into locals
-            	new OpCode.SetSlot(locals),
+            	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
             	
             	new OpCode.StartOpCodeList(),
 	            	// create first anonymous function
             		// mainly here to make sure the nesting of op code lists works, otherwise would be in top context
 	            	new OpCode.SetObject(listFactory), // empty symbol list
 	            	new OpCode.FunctionCall(Symbol.get("newList")),
+	            	new OpCode.PushSymbol(argumentList),
 	            	new OpCode.Push(Symbol.RESULT), // copy into arguments
-	            	new OpCode.SetSlot(argumentList),
+	            	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
 	            	
 	            	new OpCode.SetObject(listFactory), // empty symbol list
 	            	new OpCode.FunctionCall(Symbol.get("newList")),
+	            	new OpCode.PushSymbol(locals),
 	            	new OpCode.Push(Symbol.RESULT), // copy into locals
-	            	new OpCode.SetSlot(locals),
+	            	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
 	            	
 	            	new OpCode.StartOpCodeList(),
-		                new OpCode.Push(one),
-		                new OpCode.SetSlot(Symbol.RESULT),
+	            		new OpCode.PushSymbol(one),
+		                new OpCode.FunctionCall(Symbol.GET_SLOT_$),
 			            new OpCode.Debug("returning (1) ", Symbol.RESULT),
 	            	new OpCode.EndOpCodeList(),
 		            new OpCode.Debug("got opcodes", Symbol.RESULT), 
@@ -207,8 +217,9 @@ public class FibonacciTest {
 	            	new OpCode.FunctionCall(Symbol.CREATE_FUNCTION_WITH_ARGUMENTS_$_LOCALS_$_OPCODES_$),
 		            new OpCode.Debug("created", Symbol.RESULT),
 		            
+	            	new OpCode.PushSymbol(anon1),
 		            new OpCode.Push(Symbol.RESULT),
-		            new OpCode.SetSlot(anon1),
+		        	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
 
 		            // actual fibonacci function code
 		            new OpCode.Debug("in fibonacci with argument", index),
@@ -245,16 +256,18 @@ public class FibonacciTest {
             	new OpCode.FunctionCall(Symbol.CONTEXTUALIZE_FUNCTION_$_IN_$),	  
 	            new OpCode.Debug("contextualized", Symbol.RESULT), 
             	
+            	new OpCode.PushSymbol(temp1),
 	            new OpCode.Push(Symbol.RESULT),  // store fibonacci function temp
-	            new OpCode.SetSlot(temp1),
+	        	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
 	            
 	            new OpCode.PushSymbol(fibonacci$),  // save fibonacci to context
 	            new OpCode.Push(temp1),
 	            new OpCode.FunctionCall(Symbol.SET_FUNCTION_$_TO_$),
             	
             	new OpCode.FunctionCall(Symbol.NEW_OBJECT), // create a new, empy object, move into fibonacciLibrarySlot
+            	new OpCode.PushSymbol(fibonacciLibrarySlot),
             	new OpCode.Push(Symbol.RESULT),
-            	new OpCode.SetSlot(fibonacciLibrarySlot),
+            	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
             	
             	new OpCode.PushSymbol(fibonacci$),  // and add to the fibonacci library
             	new OpCode.Push(temp1),
@@ -262,8 +275,8 @@ public class FibonacciTest {
             	new OpCode.FunctionCall(Symbol.SET_FUNCTION_$_TO_$),
 	            new OpCode.Debug("created fibonacci library", fibonacciLibrarySlot),
             	
-            	new OpCode.Push(fibonacciLibrarySlot),  // return the library
-            	new OpCode.SetSlot(Symbol.RESULT)
+            	new OpCode.PushSymbol(fibonacciLibrarySlot),  // return the library
+            	new OpCode.FunctionCall(Symbol.GET_SLOT_$)
     	}),
     	fibonacciLibraryContext);
 
@@ -280,16 +293,18 @@ public class FibonacciTest {
         	new OpCode.Push(Symbol.RESULT),
         	new OpCode.SetObject(numberFactory),
         	new OpCode.FunctionCall(Symbol.get("numberFrom:")),
+        	new OpCode.PushSymbol(Symbol.get("sequenceIndex")),
         	new OpCode.Push(Symbol.RESULT),
-        	new OpCode.SetSlot(Symbol.get("sequenceIndex")),
+        	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
         	
         	new OpCode.Debug("about to create fibonacci library", fibonacciLibraryDefinition),
         	new OpCode.Push(numberFactory),  // initialise the fibonacciLibrary
         	new OpCode.Push(listFactory),
         	new OpCode.FunctionCall(fibonacciLibraryDefinition),
         	
+        	new OpCode.PushSymbol(fibonacciLibrarySlot),
         	new OpCode.Push(Symbol.RESULT),  // and store it in a slot
-        	new OpCode.SetSlot(fibonacciLibrarySlot),
+        	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
 
         	new OpCode.Push(sequenceIndexSymbol),  // now call fibonacci function
         	new OpCode.SetObject(fibonacciLibrarySlot),

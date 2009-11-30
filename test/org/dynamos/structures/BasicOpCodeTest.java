@@ -89,26 +89,4 @@ public class BasicOpCodeTest {
     	boolean newStackFrame = new OpCode.EndOpCodeList().execute(null, null);
     	assertThat(newStackFrame, is(false));
     }
-    
-    @Test
-    public void shouldSetSlot() {
-    	stackFrame.pushArgument(object);
-    	boolean newStackFrame = new OpCode.SetSlot(local).execute(context, stackFrame);
-    	
-    	assertThat(context.getSlot(local), is(object));
-    	assertThat(newStackFrame, is(true));
-    }
-    
-    @Test
-    public void shouldSetSlotInParentContextIfDefinedThere() {
-    	Context parentContext = interpreter.newContext();
-    	parentContext.setSlot(local, interpreter.getEnvironment().createNewObject());
-    	
-    	context.setContext(parentContext);
-    	stackFrame.pushArgument(object);
-    	new OpCode.SetSlot(local).execute(context, stackFrame);
-    	
-    	assertThat(parentContext.getSlot(local), is(object));
-    	assertThat(context.getSlot(local), is(object));  // goes up to parent...
-    }
 }

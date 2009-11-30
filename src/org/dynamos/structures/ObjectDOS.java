@@ -80,6 +80,13 @@ public class ObjectDOS {
         return functions;
     }
     
+    public ObjectDOS getLocalSlot(Symbol symbol) {
+    	return slots.get(symbol);
+    }
+
+    /*
+     * object appropriate functions
+     */
     private static ExecutableDOS SET_PARENT_EXEC = new ExecutableDOS() {
 		@Override
 		public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
@@ -95,8 +102,37 @@ public class ObjectDOS {
 			return theObject;
 		}
     };
-	
-	/* Runtime Definition of Object */
+    
+    private static ExecutableDOS SET_SLOT_$_TO_$_EXEC = new ExecutableDOS() {
+    	@Override
+    	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+    		Symbol symbol = ((SymbolWrapper) arguments.at(0)).getSymbol();
+    		ObjectDOS value = arguments.at(1);
+    		
+        	ObjectDOS cursor = theObject;
+        	while(cursor != null && cursor.getLocalSlot(symbol) == null)
+       		{
+        		cursor = cursor.getContext();
+       		}
+        	if(cursor == null) {
+        		cursor = theObject;
+        	}
+        	cursor.setSlot(symbol, value);
+        	System.out.println("+++ setting slot " + symbol + " on " + cursor + " to " + value);
+    		return cursor;
+    	}
+    };
+    
+    private static ExecutableDOS GET_SLOT_$_EXEC = new ExecutableDOS() {
+		@Override
+		public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+    		Symbol symbol = ((SymbolWrapper) arguments.at(0)).getSymbol();
+			return theObject.getSlot(symbol);
+		}
+    };
+    
+
+    /* Runtime Definition of Object */
     
 	public static void initialiseRootObject(Environment environment, ObjectDOS rootObject) {
 		UNDEFINED = environment.getUndefined();
@@ -104,9 +140,8 @@ public class ObjectDOS {
 		
 		rootObject.setFunction(Symbol.SET_PARENT_$, SET_PARENT_EXEC);
 		rootObject.setFunction(Symbol.SET_FUNCTION_$_TO_$, SET_FUNCTION_$_TO_$_EXEC);
+		rootObject.setFunction(Symbol.SET_SLOT_$_TO_$, SET_SLOT_$_TO_$_EXEC);
+		rootObject.setFunction(Symbol.GET_SLOT_$, GET_SLOT_$_EXEC);
 	}
 
-	public ObjectDOS getLocalSlot(Symbol symbol) {
-		return slots.get(symbol);
-	}
 }

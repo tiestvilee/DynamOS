@@ -71,8 +71,8 @@ public class OpCodeInterpreterParameterTest {
 
 	private void shouldReturnNamedArgument(Symbol argumentSymbol, ObjectDOS agumentValue) {
 		OpCode[] receiverOpCodes = new OpCode[] {
-         	new OpCode.Push(argumentSymbol),
-        	new OpCode.SetSlot(Symbol.RESULT)
+			new OpCode.PushSymbol(argumentSymbol),
+        	new OpCode.FunctionCall(Symbol.GET_SLOT_$)
         };
 		Symbol[] argumentSymbols = new Symbol[] {argumentSymbol, argument2Symbol};
 		
@@ -93,8 +93,8 @@ public class OpCodeInterpreterParameterTest {
 	@Test
 	public void shouldReturnUndefinedIfArgumentNotProvided() {
 		OpCode[] receiverOpCodes = new OpCode[] {
-         	new OpCode.Push(argument2Symbol),
-        	new OpCode.SetSlot(Symbol.RESULT)
+			new OpCode.PushSymbol(argument2Symbol),
+        	new OpCode.FunctionCall(Symbol.GET_SLOT_$)
         };
 		Symbol[] argumentSymbols = new Symbol[] {argument1Symbol, argument2Symbol};
 		
@@ -114,8 +114,8 @@ public class OpCodeInterpreterParameterTest {
 	@Test
 	public void shouldIgnoreExtraArguments() {
 		OpCode[] receiverOpCodes = new OpCode[] {
-         	new OpCode.Push(argument2Symbol),
-        	new OpCode.SetSlot(Symbol.RESULT)
+			new OpCode.PushSymbol(argument2Symbol),
+        	new OpCode.FunctionCall(Symbol.GET_SLOT_$)
         };
 		Symbol[] argumentSymbols = new Symbol[] {argument1Symbol, argument2Symbol};
 		

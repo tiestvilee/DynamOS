@@ -44,4 +44,6 @@ public class Symbol {
 	public static final Symbol SET_FUNCTION_$_TO_$ = Symbol.get("setFunction:to:");
 	public static final Symbol NEW_OBJECT = VMObjectDOS.NEW_OBJECT;
 	public static final Symbol CREATE_FUNCTION_WITH_ARGUMENTS_$_LOCALS_$_OPCODES_$ = VMObjectDOS.CREATE_FUNCTION_WITH_ARGUMENTS_$_LOCALS_$_OPCODES_$;
+	public static final Symbol SET_SLOT_$_TO_$ = Symbol.get("setSlot:to:");
+	public static final Symbol GET_SLOT_$ = Symbol.get("getSlot:");
 }

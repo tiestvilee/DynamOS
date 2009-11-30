@@ -14,7 +14,6 @@ import org.dynamos.structures.FunctionDOS;
 import org.dynamos.structures.FunctionDefinitionDOS;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
-import org.dynamos.structures.StackFrame;
 import org.dynamos.structures.Symbol;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,8 +48,8 @@ public class OpCodeInterpreterReturnTest {
         context.setSlot(resultSymbol, result);
 
         OpCode[] opCodes = new OpCode[] {
-        	new OpCode.Push(resultSymbol),
-        	new OpCode.SetSlot(Symbol.RESULT)
+   			new OpCode.PushSymbol(resultSymbol),
+        	new OpCode.FunctionCall(Symbol.GET_SLOT_$)
         };
 
         interpreter.interpret(context, opCodes);
@@ -64,9 +63,7 @@ public class OpCodeInterpreterReturnTest {
         
         FunctionDefinitionDOS functionThatSetsupReturnSlot = new FunctionDefinitionDOS(interpreter, null, new Symbol[] {}, null) {
             public void execute(Context context) {
-            	StackFrame stackFrame = new StackFrame();
-            	stackFrame.pushArgument(result);
-				new OpCode.SetSlot(Symbol.RESULT).execute(context, stackFrame);
+            	context.setSlot(Symbol.RESULT, result);
             }
         };
         context.setFunction(functionName, new FunctionDOS(functionThatSetsupReturnSlot, context));

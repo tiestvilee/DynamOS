@@ -96,7 +96,7 @@ public class VMObjectDOS {
         		return result;
         	}
         };
-        
+
         ExecutableDOS ADD_EXEC = new ExecutableDOS() {
         	@Override
         	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {

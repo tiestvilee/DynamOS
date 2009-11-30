@@ -32,8 +32,8 @@ public class BootstrapCompiler {
 
 		arguments.add(Symbol.get("p"));
 		
-		opcodes.add(new OpCode.Push(Symbol.get("p")));
-		opcodes.add(new OpCode.SetSlot(Symbol.RESULT));
+		opcodes.add(new OpCode.PushSymbol(Symbol.get("p")));
+		opcodes.add(new OpCode.FunctionCall(Symbol.GET_SLOT_$));
 		
 		return constructFunctionDefinition(interpreter, arguments, locals, opcodes);
 	}

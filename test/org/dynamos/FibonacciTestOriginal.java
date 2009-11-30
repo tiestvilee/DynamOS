@@ -100,8 +100,8 @@ public class FibonacciTestOriginal {
         Context applicationContext = interpreter.newContext();
 
         FunctionDefinitionDOS anon1Function = new FunctionDefinitionDOS(interpreter, new Symbol[] {}, new Symbol[] {}, new OpCode[] {
-                new OpCode.Push(one),
-                new OpCode.SetSlot(Symbol.RESULT),
+                new OpCode.PushSymbol(one),
+                new OpCode.FunctionCall(Symbol.GET_SLOT_$),
 	            new OpCode.Debug("returning (1) ", Symbol.RESULT)
         });
 
@@ -113,8 +113,11 @@ public class FibonacciTestOriginal {
             new OpCode.Push(Symbol.RESULT), // result = fibonacci( result )
             new OpCode.FunctionCall(fibonacci$),
 
-            new OpCode.Push(Symbol.RESULT),  // temp1 = result
-            new OpCode.SetSlot(temp1),  // temp1 = result
+            new OpCode.Debug("result", Symbol.RESULT),
+            new OpCode.PushSymbol(temp1),  // temp1 = result
+            new OpCode.Push(Symbol.RESULT),
+            new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
+            new OpCode.Debug("temp1", temp1),
 
             new OpCode.Push(two),  // result = index - 2
             new OpCode.SetObject(index),

@@ -43,8 +43,10 @@ public class StandardObjects {
 		trueObject.setFunction(Symbol.get("ifTrue:ifFalse:"), environment.createFunction( 
 				new Symbol[] {trueResult, falseResult },
 				new Symbol[] {},
-				new OpCode[] {new OpCode.Push(trueResult),
-				new OpCode.SetSlot(Symbol.RESULT) },
+				new OpCode[] {
+					new OpCode.PushSymbol(trueResult),
+					new OpCode.FunctionCall(Symbol.GET_SLOT_$)
+				},
 				booleanContext));
 
 		FalseDOS falseObject = new FalseDOS();
@@ -52,8 +54,10 @@ public class StandardObjects {
 		falseObject.setFunction(Symbol.get("ifTrue:ifFalse:"), environment.createFunction( 
 				new Symbol[] {trueResult, falseResult },
 				new Symbol[] {},
-				new OpCode[] {new OpCode.Push(falseResult),
-				new OpCode.SetSlot(Symbol.RESULT) },
+				new OpCode[] {
+					new OpCode.PushSymbol(falseResult),
+					new OpCode.FunctionCall(Symbol.GET_SLOT_$)
+				},
 				booleanContext));
 
 		ObjectDOS booleanContainer = environment.createNewObject();

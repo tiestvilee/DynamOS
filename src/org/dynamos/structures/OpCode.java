@@ -127,26 +127,4 @@ public class OpCode {
 	public static class EndOpCodeList extends OpCode {
 	}
 
-	public static class SetSlot extends OpCode {
-        private Symbol symbol;
-        public SetSlot(Symbol symbol) {
-            this.symbol = symbol;
-        }
-
-        @Override
-        public boolean execute(ObjectDOS context, StackFrame stackFrame) {
-        	ObjectDOS cursor = context;
-        	while(cursor != null && cursor.getLocalSlot(symbol) == null)
-       		{
-        		cursor = cursor.getContext();
-       		}
-        	if(cursor == null) {
-        		context.setSlot(symbol, stackFrame.getArguments().getRawList().get(0));
-        	} else {
-        		cursor.setSlot(symbol, stackFrame.getArguments().getRawList().get(0));
-        	}
-            return true;
-        }
-	}
-
 }
