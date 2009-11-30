@@ -98,4 +98,17 @@ public class BasicOpCodeTest {
     	assertThat(context.getSlot(local), is(object));
     	assertThat(newStackFrame, is(true));
     }
+    
+    @Test
+    public void shouldSetSlotInParentContextIfDefinedThere() {
+    	Context parentContext = interpreter.newContext();
+    	parentContext.setSlot(local, interpreter.getEnvironment().createNewObject());
+    	
+    	context.setContext(parentContext);
+    	stackFrame.pushArgument(object);
+    	new OpCode.SetSlot(local).execute(context, stackFrame);
+    	
+    	assertThat(parentContext.getSlot(local), is(object));
+    	assertThat(context.getSlot(local), is(object));  // goes up to parent...
+    }
 }

@@ -105,4 +105,8 @@ public class ObjectDOS {
 		rootObject.setFunction(Symbol.SET_PARENT_$, SET_PARENT_EXEC);
 		rootObject.setFunction(Symbol.SET_FUNCTION_$_TO_$, SET_FUNCTION_$_TO_$_EXEC);
 	}
+
+	public ObjectDOS getLocalSlot(Symbol symbol) {
+		return slots.get(symbol);
+	}
 }

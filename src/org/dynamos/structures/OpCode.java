@@ -135,7 +135,16 @@ public class OpCode {
 
         @Override
         public boolean execute(ObjectDOS context, StackFrame stackFrame) {
-            context.setSlot(symbol, stackFrame.getArguments().getRawList().get(0));
+        	ObjectDOS cursor = context;
+        	while(cursor != null && cursor.getLocalSlot(symbol) == null)
+       		{
+        		cursor = cursor.getContext();
+       		}
+        	if(cursor == null) {
+        		context.setSlot(symbol, stackFrame.getArguments().getRawList().get(0));
+        	} else {
+        		cursor.setSlot(symbol, stackFrame.getArguments().getRawList().get(0));
+        	}
             return true;
         }
 	}
