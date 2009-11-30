@@ -29,7 +29,7 @@ public class VMObjectDOS {
 
 	public static final Symbol NEW_OBJECT = Symbol.get("newObject");
 
-	public static final Symbol CREATE_FUNCTION_WITH_ARGUMENTS_$_LOCALS_$_OPCODES_$ = Symbol.get("createFunctionWithArguments:locals:opCodes:");
+	public static final Symbol CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$ = Symbol.get("createFunctionWithArguments:locals:opCodes:");
 
 	
     public static ObjectDOS getVMObject(final Environment environment) {
@@ -50,15 +50,15 @@ public class VMObjectDOS {
         	}
         };
 
-        ExecutableDOS CREATE_FUNCTION_WITH_ARGUMENTS_$_LOCALS_$_OPCODES_$_EXEC = new ExecutableDOS() {
+        ExecutableDOS CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$_EXEC = new ExecutableDOS() {
         	@Override
         	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
         		List<ObjectDOS> argumentList = ((ListDOS) arguments.at(0)).getRawList();
-        		List<ObjectDOS> locals = ((ListDOS) arguments.at(1)).getRawList();
-        		List<ObjectDOS> opCodes = ((ListDOS) arguments.at(2)).getRawList();
+        		List<ObjectDOS> opCodes = ((ListDOS) arguments.at(1)).getRawList();
+        		
+        		System.out.println("... creating funciton with " + argumentList + " " + opCodes);
 
         		Symbol[] nativeArguments = new Symbol[argumentList.size()];
-				Symbol[] nativeLocals = new Symbol[locals.size()];
 				OpCode[] nativeOpCodes = new OpCode[opCodes.size()];
 
 				int index = 0;
@@ -67,16 +67,11 @@ public class VMObjectDOS {
 				}
 				
 				index = 0;
-				for(ObjectDOS symbol : locals) {
-					nativeLocals[index++] = ((SymbolWrapper) symbol).getSymbol();
-				}
-				
-				index = 0;
 				for(ObjectDOS opCode : opCodes) {
 					nativeOpCodes[index++] = ((OpCodeWrapper) opCode).getOpCode();
 				}
 				
-				return environment.createFunctionDefinition(nativeArguments, nativeLocals, nativeOpCodes);
+				return environment.createFunctionDefinition(nativeArguments, nativeOpCodes);
         	}
         };
 
@@ -129,7 +124,7 @@ public class VMObjectDOS {
         virtualMachine.setFunction(Symbol.get("print"), PRINT_FUNCTION);
         
         virtualMachine.setFunction(CONTEXTUALIZE_FUNCTION_$_IN_$, CONTEXTUALIZE_FUNCTION_EXEC);
-        virtualMachine.setFunction(CREATE_FUNCTION_WITH_ARGUMENTS_$_LOCALS_$_OPCODES_$, CREATE_FUNCTION_WITH_ARGUMENTS_$_LOCALS_$_OPCODES_$_EXEC);
+        virtualMachine.setFunction(CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$, CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$_EXEC);
         virtualMachine.setFunction(NEW_OBJECT, NEW_OBJECT_EXEC);
         
         virtualMachine.setFunction(ADD_$_TO_$, ADD_EXEC);

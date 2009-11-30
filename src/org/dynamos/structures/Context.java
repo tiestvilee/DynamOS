@@ -26,7 +26,6 @@ public class Context extends ObjectDOS {
         private final Symbol functionDefinition = Symbol.get("functionDefinition");
         private final Symbol context = Symbol.get("context");
         private final Symbol argumentList = Symbol.get("argumentList");
-        private final Symbol locals = Symbol.get("locals");
         private final Symbol opcodes = Symbol.get("opcodes");
         
 		protected ContextBuilder(OpCodeInterpreter interpreter, Environment environment) {
@@ -38,8 +37,7 @@ public class Context extends ObjectDOS {
 	        
 	        contextPrototype.setFunction(Symbol.CONTEXTUALIZE_FUNCTION_$_IN_$, 
 	        		environment.createFunction(
-       				new Symbol[] {functionDefinition, context}, 
-	        		new Symbol[] {},
+       				new Symbol[] {functionDefinition, context},
 	        		new OpCode[] {
 	        				new OpCode.Push(functionDefinition),
 	        				new OpCode.Push(context),
@@ -50,24 +48,21 @@ public class Context extends ObjectDOS {
 
 			contextPrototype.setFunction(Symbol.NEW_OBJECT, 
 					environment.createFunction( 
-						new Symbol[] {}, 
-						new Symbol[] {}, 
+						new Symbol[] {},
 						new OpCode[] {
 							new OpCode.SetObject(VMObjectDOS.VM),
 							new OpCode.FunctionCall(VMObjectDOS.NEW_OBJECT)
 						}, 
 						contextContainingVM ));
 			
-			contextPrototype.setFunction(Symbol.CREATE_FUNCTION_WITH_ARGUMENTS_$_LOCALS_$_OPCODES_$, 
+			contextPrototype.setFunction(Symbol.CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$, 
 					environment.createFunction( 
-						new Symbol[] {argumentList, locals, opcodes}, 
-						new Symbol[] {}, 
+						new Symbol[] {argumentList, opcodes}, 
 						new OpCode[] {
 	        				new OpCode.Push(argumentList),
-	        				new OpCode.Push(locals),
 	        				new OpCode.Push(opcodes),
 							new OpCode.SetObject(VMObjectDOS.VM),
-							new OpCode.FunctionCall(VMObjectDOS.CREATE_FUNCTION_WITH_ARGUMENTS_$_LOCALS_$_OPCODES_$)
+							new OpCode.FunctionCall(VMObjectDOS.CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$)
 						}, 
 						contextContainingVM ));
 			

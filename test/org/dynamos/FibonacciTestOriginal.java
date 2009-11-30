@@ -99,13 +99,13 @@ public class FibonacciTestOriginal {
 		
         Context applicationContext = interpreter.newContext();
 
-        FunctionDefinitionDOS anon1Function = new FunctionDefinitionDOS(interpreter, new Symbol[] {}, new Symbol[] {}, new OpCode[] {
+        FunctionDefinitionDOS anon1Function = new FunctionDefinitionDOS(interpreter, new Symbol[] {}, new OpCode[] {
                 new OpCode.PushSymbol(one),
                 new OpCode.FunctionCall(Symbol.GET_SLOT_$),
 	            new OpCode.Debug("returning (1) ", Symbol.RESULT)
         });
 
-        FunctionDefinitionDOS anon2Function = new FunctionDefinitionDOS(interpreter, new Symbol[] {}, new Symbol[] {temp1}, new OpCode[] {
+        FunctionDefinitionDOS anon2Function = new FunctionDefinitionDOS(interpreter, new Symbol[] {}, new OpCode[] {
             new OpCode.Push(one),  // result = index - 1
             new OpCode.SetObject(index),
             new OpCode.FunctionCall(minus$),
@@ -134,7 +134,7 @@ public class FibonacciTestOriginal {
         });
 
         
-        FunctionDOS fibonacciFunction = new FunctionDOS(new FunctionDefinitionDOS(interpreter, new Symbol[] {index}, new Symbol[] {}, new OpCode[] {
+        FunctionDOS fibonacciFunction = new FunctionDOS(new FunctionDefinitionDOS(interpreter, new Symbol[] {index}, new OpCode[] {
 	            new OpCode.Debug("in fibonacci with argument", index),
 	            new OpCode.Push(two), // result = index isLessThan: two
 	            new OpCode.SetObject(index),

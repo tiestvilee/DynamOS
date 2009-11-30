@@ -104,8 +104,8 @@ public class Environment {
 		return rootObject;
 	}
 
-	public FunctionDOS createFunction(Symbol[] arguments, Symbol[] locals, OpCode[] opCodes, Context localContext) {
-		return createFunction(createFunctionDefinition(arguments, locals, opCodes), localContext);
+	public FunctionDOS createFunction(Symbol[] arguments, OpCode[] opCodes, Context localContext) {
+		return createFunction(createFunctionDefinition(arguments, opCodes), localContext);
 	}
 
 	public FunctionDOS createFunction(FunctionDefinitionDOS functionDefinition, Context localContext) {
@@ -116,11 +116,10 @@ public class Environment {
 		return function;
 	}
 
-	public FunctionDefinitionDOS createFunctionDefinition(Symbol[] arguments, Symbol[] locals, OpCode[] opCodes) {
+	public FunctionDefinitionDOS createFunctionDefinition(Symbol[] arguments, OpCode[] opCodes) {
 		FunctionDefinitionDOS functionDefinition = new FunctionDefinitionDOS(
 				interpreter, 
 				arguments,
-				locals, 
 				opCodes);
 		functionDefinition.setParent(rootObject);
 		return functionDefinition;

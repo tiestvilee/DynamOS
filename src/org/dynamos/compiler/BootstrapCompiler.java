@@ -27,7 +27,6 @@ public class BootstrapCompiler {
 	
 	private FunctionDefinitionDOS transformASTToFunctionDefinition(OpCodeInterpreter interpreter, ASTNode ast) {
 		List<Symbol> arguments = new ArrayList<Symbol>();
-		List<Symbol> locals = new ArrayList<Symbol>();
 		List<OpCode> opcodes = new ArrayList<OpCode>();
 
 		arguments.add(Symbol.get("p"));
@@ -35,13 +34,12 @@ public class BootstrapCompiler {
 		opcodes.add(new OpCode.PushSymbol(Symbol.get("p")));
 		opcodes.add(new OpCode.FunctionCall(Symbol.GET_SLOT_$));
 		
-		return constructFunctionDefinition(interpreter, arguments, locals, opcodes);
+		return constructFunctionDefinition(interpreter, arguments, opcodes);
 	}
 
-	private FunctionDefinitionDOS constructFunctionDefinition(OpCodeInterpreter interpreter, List<Symbol> arguments, List<Symbol> locals, List<OpCode> opcodes) {
+	private FunctionDefinitionDOS constructFunctionDefinition(OpCodeInterpreter interpreter, List<Symbol> arguments, List<OpCode> opcodes) {
 		Symbol[] argumentsArray = arguments.toArray(new Symbol[] {});
-		Symbol[] localsArray = locals.toArray(new Symbol[] {});
 		OpCode[] opCodeArray = opcodes.toArray(new OpCode[] {});
-		return new FunctionDefinitionDOS(interpreter, argumentsArray, localsArray, opCodeArray);
+		return new FunctionDefinitionDOS(interpreter, argumentsArray, opCodeArray);
 	}
 }

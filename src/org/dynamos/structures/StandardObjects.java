@@ -42,7 +42,6 @@ public class StandardObjects {
 		trueObject.setParent(environment.getRootObject());
 		trueObject.setFunction(Symbol.get("ifTrue:ifFalse:"), environment.createFunction( 
 				new Symbol[] {trueResult, falseResult },
-				new Symbol[] {},
 				new OpCode[] {
 					new OpCode.PushSymbol(trueResult),
 					new OpCode.FunctionCall(Symbol.GET_SLOT_$)
@@ -53,7 +52,6 @@ public class StandardObjects {
 		falseObject.setParent(environment.getRootObject());
 		falseObject.setFunction(Symbol.get("ifTrue:ifFalse:"), environment.createFunction( 
 				new Symbol[] {trueResult, falseResult },
-				new Symbol[] {},
 				new OpCode[] {
 					new OpCode.PushSymbol(falseResult),
 					new OpCode.FunctionCall(Symbol.GET_SLOT_$)
@@ -108,8 +106,7 @@ public class StandardObjects {
 
 		// add appropriate function to the prototype
 		numberFactory.setFunction(Symbol.get("numberFrom:"), environment.createFunction(
-				new Symbol[] { number }, 
-				new Symbol[] {}, 
+				new Symbol[] { number },
 				new OpCode[] {
 					new OpCode.Push(numberPrototypeSymbol),
 					new OpCode.SetObject(number),
@@ -129,7 +126,6 @@ public class StandardObjects {
         // add all appropriate functions to the prototype
         numberPrototype.setFunction(Symbol.get("plus:"), environment.createFunction(
         		new Symbol[] {right},
-        		new Symbol[] {},
         		new OpCode[] {
        				new OpCode.Push(right),
         			new OpCode.Push(Symbol.THIS),
@@ -143,7 +139,6 @@ public class StandardObjects {
 
         numberPrototype.setFunction(Symbol.get("minus:"), environment.createFunction(
         		new Symbol[] {right},
-        		new Symbol[] {},
         		new OpCode[] {
        				new OpCode.Push(right),
         			new OpCode.Push(Symbol.THIS),
@@ -157,7 +152,6 @@ public class StandardObjects {
         
         numberPrototype.setFunction(Symbol.get("isLessThan:"), environment.createFunction(
         		new Symbol[] {right},
-        		new Symbol[] {},
         		new OpCode[] {
         			new OpCode.Push(Symbol.THIS),
         			new OpCode.Push(right),

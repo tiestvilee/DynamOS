@@ -135,7 +135,7 @@ public class OpCodeInterpreterParameterTest {
 	}
     
 	private void setUpReceiverFunctionWith(Symbol[] argumentSymbols, OpCode[] receiverOpCodes) {
-		FunctionDefinitionDOS receiverFunction = new FunctionDefinitionDOS(interpreter, argumentSymbols, new Symbol[] {}, receiverOpCodes);
+		FunctionDefinitionDOS receiverFunction = new FunctionDefinitionDOS(interpreter, argumentSymbols, receiverOpCodes);
 		
 		Context emptyContext = interpreter.newContext();
 		emptyContext.setSlot(zeroSymbol, StandardObjects.numberDOS(interpreter.getEnvironment(), 0));

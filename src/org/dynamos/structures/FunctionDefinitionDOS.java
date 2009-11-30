@@ -15,13 +15,11 @@ public class FunctionDefinitionDOS extends ObjectDOS {
     private OpCodeInterpreter interpreter;
     private OpCode[] opCodes;
 	private final Symbol[] arguments;
-	private final Symbol[] locals;
 
 	// TODO should have parent set to rootObject
-    public FunctionDefinitionDOS(OpCodeInterpreter interpreter, Symbol[] arguments, Symbol[] locals, OpCode[] opCodes) {
+    public FunctionDefinitionDOS(OpCodeInterpreter interpreter, Symbol[] arguments, OpCode[] opCodes) {
         this.interpreter = interpreter;
 		this.arguments = arguments;
-		this.locals = locals;
         this.opCodes = opCodes;
     }
 
@@ -33,9 +31,6 @@ public class FunctionDefinitionDOS extends ObjectDOS {
     	}
     	for(;index < arguments.length; index++) {
     		context.setSlot(arguments[index], interpreter.getEnvironment().getUndefined());
-    	}
-    	for(index=0;index < locals.length; index++) {
-    		context.setSlot(locals[index], interpreter.getEnvironment().getNull());
     	}
     	context.setSlot(Symbol.RESULT, context);
     	

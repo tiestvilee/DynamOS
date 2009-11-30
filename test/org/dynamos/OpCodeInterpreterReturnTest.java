@@ -61,7 +61,7 @@ public class OpCodeInterpreterReturnTest {
     public void shouldReturnAValueIntoDefaultSlot() {
         final ObjectDOS result = interpreter.getEnvironment().createNewObject();
         
-        FunctionDefinitionDOS functionThatSetsupReturnSlot = new FunctionDefinitionDOS(interpreter, null, new Symbol[] {}, null) {
+        FunctionDefinitionDOS functionThatSetsupReturnSlot = new FunctionDefinitionDOS(interpreter, null, null) {
             public void execute(Context context) {
             	context.setSlot(Symbol.RESULT, result);
             }
