@@ -88,6 +88,7 @@ public class VMObjectDOS {
         	@Override
         	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
         		ObjectDOS result = environment.createNewObject();
+        		result.setContext(arguments.at(0));
         		return result;
         	}
         };

@@ -254,7 +254,8 @@ public class FibonacciTest {
 	            new OpCode.PushSymbol(fibonacci$),  // save fibonacci to context
 	            new OpCode.Push(temp1),
 	            new OpCode.FunctionCall(Symbol.SET_FUNCTION_$_TO_$),
-            	
+
+	            new OpCode.Push(Symbol.CURRENT_CONTEXT),
             	new OpCode.FunctionCall(Symbol.NEW_OBJECT), // create a new, empy object, move into fibonacciLibrarySlot
             	new OpCode.PushSymbol(fibonacciLibrarySlot),
             	new OpCode.Push(Symbol.RESULT),

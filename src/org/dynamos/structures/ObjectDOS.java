@@ -94,43 +94,6 @@ public class ObjectDOS {
 			return theObject;
 		}
     };
-    
-    private static ExecutableDOS SET_FUNCTION_$_TO_$_EXEC = new ExecutableDOS() {
-		@Override
-		public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
-			theObject.setFunction(((SymbolWrapper) arguments.at(0)).getSymbol(), (ExecutableDOS) arguments.at(1));
-			return theObject;
-		}
-    };
-    
-    private static ExecutableDOS SET_SLOT_$_TO_$_EXEC = new ExecutableDOS() {
-    	@Override
-    	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
-    		Symbol symbol = ((SymbolWrapper) arguments.at(0)).getSymbol();
-    		ObjectDOS value = arguments.at(1);
-    		
-        	ObjectDOS cursor = theObject;
-        	while(cursor != null && cursor.getLocalSlot(symbol) == null)
-       		{
-        		cursor = cursor.getContext();
-       		}
-        	if(cursor == null) {
-        		cursor = theObject;
-        	}
-        	cursor.setSlot(symbol, value);
-        	System.out.println("+++ setting slot " + symbol + " on " + cursor + " to " + value);
-    		return cursor;
-    	}
-    };
-    
-    private static ExecutableDOS GET_SLOT_$_EXEC = new ExecutableDOS() {
-		@Override
-		public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
-    		Symbol symbol = ((SymbolWrapper) arguments.at(0)).getSymbol();
-			return theObject.getSlot(symbol);
-		}
-    };
-    
 
     /* Runtime Definition of Object */
     
@@ -139,9 +102,6 @@ public class ObjectDOS {
 		FUNCTION_LOOKUP = new NewspeakLookupStrategy();
 		
 		rootObject.setFunction(Symbol.SET_PARENT_$, SET_PARENT_EXEC);
-		rootObject.setFunction(Symbol.SET_FUNCTION_$_TO_$, SET_FUNCTION_$_TO_$_EXEC);
-		rootObject.setFunction(Symbol.SET_SLOT_$_TO_$, SET_SLOT_$_TO_$_EXEC);
-		rootObject.setFunction(Symbol.GET_SLOT_$, GET_SLOT_$_EXEC);
 	}
 
 }

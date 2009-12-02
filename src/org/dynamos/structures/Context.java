@@ -48,8 +48,9 @@ public class Context extends ObjectDOS {
 
 			contextPrototype.setFunction(Symbol.NEW_OBJECT, 
 					environment.createFunction( 
-						new Symbol[] {},
+						new Symbol[] {context},
 						new OpCode[] {
+		        			new OpCode.Push(context),
 							new OpCode.SetObject(VMObjectDOS.VM),
 							new OpCode.FunctionCall(VMObjectDOS.NEW_OBJECT)
 						}, 
@@ -66,7 +67,48 @@ public class Context extends ObjectDOS {
 						}, 
 						contextContainingVM ));
 			
+
+			contextPrototype.setFunction(Symbol.SET_FUNCTION_$_TO_$, SET_FUNCTION_$_TO_$_EXEC);
+			contextPrototype.setFunction(Symbol.SET_SLOT_$_TO_$, SET_SLOT_$_TO_$_EXEC);
+			contextPrototype.setFunction(Symbol.GET_SLOT_$, GET_SLOT_$_EXEC);
+			
 		}
+	    
+	    private static ExecutableDOS SET_FUNCTION_$_TO_$_EXEC = new ExecutableDOS() {
+			@Override
+			public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+				theObject.setFunction(((SymbolWrapper) arguments.at(0)).getSymbol(), (ExecutableDOS) arguments.at(1));
+				return theObject;
+			}
+	    };
+	    
+	    private static ExecutableDOS SET_SLOT_$_TO_$_EXEC = new ExecutableDOS() {
+	    	@Override
+	    	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+	    		Symbol symbol = ((SymbolWrapper) arguments.at(0)).getSymbol();
+	    		ObjectDOS value = arguments.at(1);
+	    		
+	        	ObjectDOS cursor = theObject;
+	        	while(cursor != null && cursor.getLocalSlot(symbol) == null)
+	       		{
+	        		cursor = cursor.getContext();
+	       		}
+	        	if(cursor == null) {
+	        		cursor = theObject;
+	        	}
+	        	cursor.setSlot(symbol, value);
+	        	System.out.println("+++ setting slot " + symbol + " on " + cursor + " to " + value);
+	    		return cursor;
+	    	}
+	    };
+	    
+	    private static ExecutableDOS GET_SLOT_$_EXEC = new ExecutableDOS() {
+			@Override
+			public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+	    		Symbol symbol = ((SymbolWrapper) arguments.at(0)).getSymbol();
+				return theObject.getSlot(symbol);
+			}
+	    };
 		
 		public Context createContext() {
 			Context result = new Context();
