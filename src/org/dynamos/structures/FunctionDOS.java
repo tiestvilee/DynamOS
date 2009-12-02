@@ -6,7 +6,7 @@ package org.dynamos.structures;
 public class FunctionDOS extends ExecutableDOS {
     protected FunctionDefinitionDOS function;
 
-    public FunctionDOS(FunctionDefinitionDOS function, Context context) {
+    public FunctionDOS(FunctionDefinitionDOS function, ObjectDOS context) {
         this.function = function;
         setContext(context);
         

@@ -67,6 +67,18 @@ public class Context extends ObjectDOS {
 						}, 
 						contextContainingVM ));
 			
+			contextPrototype.setFunction(Symbol.CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$_IN_$, 
+					environment.createFunction( 
+						new Symbol[] {argumentList, opcodes, context}, 
+						new OpCode[] {
+	        				new OpCode.Push(argumentList),
+	        				new OpCode.Push(opcodes),
+	        				new OpCode.Push(context),
+							new OpCode.SetObject(VMObjectDOS.VM),
+							new OpCode.FunctionCall(VMObjectDOS.CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$_IN_$)
+						}, 
+						contextContainingVM ));
+			
 
 			contextPrototype.setFunction(Symbol.SET_FUNCTION_$_TO_$, SET_FUNCTION_$_TO_$_EXEC);
 			contextPrototype.setFunction(Symbol.SET_SLOT_$_TO_$, SET_SLOT_$_TO_$_EXEC);

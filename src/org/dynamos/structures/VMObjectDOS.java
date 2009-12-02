@@ -31,6 +31,8 @@ public class VMObjectDOS {
 
 	public static final Symbol CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$ = Symbol.get("createFunctionWithArguments:locals:opCodes:");
 
+	public static final Symbol CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$_IN_$ = Symbol.get("createConstructorWithArguments:OpCodes:In:");
+
 	
     public static ObjectDOS getVMObject(final Environment environment) {
         ExecutableDOS PRINT_FUNCTION = new ExecutableDOS() {
@@ -58,39 +60,28 @@ public class VMObjectDOS {
         		
         		System.out.println("... creating funciton with " + argumentList + " " + opCodes);
 
-        		Symbol[] nativeArguments = new Symbol[argumentList.size()];
-				OpCode[] nativeOpCodes = new OpCode[opCodes.size()];
-
-				int index = 0;
-				for(ObjectDOS symbol : argumentList) {
-					nativeArguments[index++] = ((SymbolWrapper) symbol).getSymbol();
-				}
-				
-				index = 0;
-				for(ObjectDOS opCode : opCodes) {
-					nativeOpCodes[index++] = ((OpCodeWrapper) opCode).getOpCode();
-				}
+				Symbol[] nativeArguments = copyListOfSymbolWrappersToArrayOfSymbols(argumentList);
+				OpCode[] nativeOpCodes = copyListOfOpcodeWrappersToArrayOfOpcodes(opCodes);
 				
 				return environment.createFunctionDefinition(nativeArguments, nativeOpCodes);
         	}
         };
 
-        ExecutableDOS NEW_OBJECT_WITH_PARENT_$_EXEC = new ExecutableDOS() {
+        ExecutableDOS CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$_IN_$_EXEC = new ExecutableDOS() {
         	@Override
         	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
-        		ObjectDOS result = environment.createNewObject();
-        		result.setParent(arguments.at(0));
-        		return result;
+        		List<ObjectDOS> argumentList = ((ListDOS) arguments.at(0)).getRawList();
+        		List<ObjectDOS> opCodes = ((ListDOS) arguments.at(1)).getRawList();
+        		ObjectDOS context = arguments.at(2);
+        		
+        		System.out.println("... creating constructor with " + argumentList + " " + opCodes + " at " + context);
+
+				Symbol[] nativeArguments = copyListOfSymbolWrappersToArrayOfSymbols(argumentList);
+				OpCode[] nativeOpCodes = copyListOfOpcodeWrappersToArrayOfOpcodes(opCodes);
+				
+				return environment.createFunction(nativeArguments, nativeOpCodes, context);
         	}
-        };
-        
-        ExecutableDOS NEW_OBJECT_EXEC = new ExecutableDOS() {
-        	@Override
-        	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
-        		ObjectDOS result = environment.createNewObject();
-        		result.setContext(arguments.at(0));
-        		return result;
-        	}
+
         };
 
         ExecutableDOS ADD_EXEC = new ExecutableDOS() {
@@ -126,7 +117,7 @@ public class VMObjectDOS {
         
         virtualMachine.setFunction(CONTEXTUALIZE_FUNCTION_$_IN_$, CONTEXTUALIZE_FUNCTION_EXEC);
         virtualMachine.setFunction(CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$, CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$_EXEC);
-        virtualMachine.setFunction(NEW_OBJECT, NEW_OBJECT_EXEC);
+        virtualMachine.setFunction(CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$_IN_$, CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$_IN_$_EXEC);
         
         virtualMachine.setFunction(ADD_$_TO_$, ADD_EXEC);
         virtualMachine.setFunction(SUBTRACT_$_FROM_$, SUB_EXEC);
@@ -136,4 +127,25 @@ public class VMObjectDOS {
         System.out.println("initialized VM");
         return virtualMachine;
     }
+    
+	private static OpCode[] copyListOfOpcodeWrappersToArrayOfOpcodes(
+			List<ObjectDOS> opCodes) {
+		OpCode[] nativeOpCodes = new OpCode[opCodes.size()];
+		int index;
+		index = 0;
+		for(ObjectDOS opCode : opCodes) {
+			nativeOpCodes[index++] = ((OpCodeWrapper) opCode).getOpCode();
+		}
+		return nativeOpCodes;
+	}
+
+	private static Symbol[] copyListOfSymbolWrappersToArrayOfSymbols(
+			List<ObjectDOS> argumentList) {
+		Symbol[] nativeArguments = new Symbol[argumentList.size()];
+		int index = 0;
+		for(ObjectDOS symbol : argumentList) {
+			nativeArguments[index++] = ((SymbolWrapper) symbol).getSymbol();
+		}
+		return nativeArguments;
+	}
 }

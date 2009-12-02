@@ -112,8 +112,14 @@ public class FibonacciTest {
         
         // new Symbol[] {one, two, temp1, fibonacciLibrarySlot, argumentList, locals, opcodes, anon1, anon2}, 
 		FunctionDOS fibonacciLibrary = new FunctionDOS(new FunctionDefinitionDOS(interpreter, new Symbol[] {numberFactory, listFactory}, new OpCode[] {
-            	new OpCode.Debug("creating fibonacci library", numberFactory),
+        	new OpCode.SetObject(listFactory), // empty symbol list
+        	new OpCode.FunctionCall(newList),
+        	new OpCode.PushSymbol(argumentList),
+        	new OpCode.Push(Symbol.RESULT), // copy into arguments
+        	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
 
+           	new OpCode.StartOpCodeList(), // defining the constructor
+            	new OpCode.Debug("creating fibonacci library", numberFactory),
             	
             	new OpCode.CreateValueObject(interpreter, 1),  // create constant for '1'
             	new OpCode.Push(Symbol.RESULT),
@@ -246,29 +252,19 @@ public class FibonacciTest {
             	new OpCode.FunctionCall(Symbol.CONTEXTUALIZE_FUNCTION_$_IN_$),	  
 	            new OpCode.Debug("contextualized", Symbol.RESULT), 
             	
-            	new OpCode.PushSymbol(temp1),
-	            new OpCode.Push(Symbol.RESULT),  // store fibonacci function temp
-	        	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),	  
-	            new OpCode.Debug("------ temp1", temp1), 
-	            
-	            new OpCode.PushSymbol(fibonacci$),  // save fibonacci to context
-	            new OpCode.Push(temp1),
+	            new OpCode.PushSymbol(fibonacci$),  // save fibonacci to context / object
+	            new OpCode.Push(Symbol.RESULT),
 	            new OpCode.FunctionCall(Symbol.SET_FUNCTION_$_TO_$),
-
-	            new OpCode.Push(Symbol.CURRENT_CONTEXT),
-            	new OpCode.FunctionCall(Symbol.NEW_OBJECT), // create a new, empy object, move into fibonacciLibrarySlot
-            	new OpCode.PushSymbol(fibonacciLibrarySlot),
-            	new OpCode.Push(Symbol.RESULT),
-            	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
-            	
-            	new OpCode.PushSymbol(fibonacci$),  // and add to the fibonacci library
-            	new OpCode.Push(temp1),
-            	new OpCode.SetObject(fibonacciLibrarySlot),
-            	new OpCode.FunctionCall(Symbol.SET_FUNCTION_$_TO_$),
 	            new OpCode.Debug("created fibonacci library", fibonacciLibrarySlot),
-            	
-            	new OpCode.PushSymbol(fibonacciLibrarySlot),  // return the library
-            	new OpCode.FunctionCall(Symbol.GET_SLOT_$)
+        	new OpCode.EndOpCodeList(),
+        	
+        	new OpCode.Push(argumentList), // create fibonacci object
+        	new OpCode.Push(Symbol.RESULT),
+            new OpCode.Push(Symbol.CURRENT_CONTEXT),
+        	new OpCode.FunctionCall(Symbol.CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$_IN_$),
+        	
+        	new OpCode.SetObject(Symbol.RESULT), // call constructor and return result
+        	new OpCode.FunctionCall(Symbol.EXECUTE)
     	}),
     	fibonacciLibraryContext);
 

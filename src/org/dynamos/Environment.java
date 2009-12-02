@@ -104,11 +104,11 @@ public class Environment {
 		return rootObject;
 	}
 
-	public FunctionDOS createFunction(Symbol[] arguments, OpCode[] opCodes, Context localContext) {
+	public FunctionDOS createFunction(Symbol[] arguments, OpCode[] opCodes, ObjectDOS localContext) {
 		return createFunction(createFunctionDefinition(arguments, opCodes), localContext);
 	}
 
-	public FunctionDOS createFunction(FunctionDefinitionDOS functionDefinition, Context localContext) {
+	public FunctionDOS createFunction(FunctionDefinitionDOS functionDefinition, ObjectDOS localContext) {
 		FunctionDOS function = new FunctionDOS(
 				functionDefinition,
 				localContext);
