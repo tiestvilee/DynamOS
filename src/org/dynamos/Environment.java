@@ -1,20 +1,21 @@
 package org.dynamos;
 
-import org.dynamos.structures.Context;
+import org.dynamos.structures.ConstructorDOS;
+import org.dynamos.structures.Activation;
+import org.dynamos.structures.FunctionWithContext;
 import org.dynamos.structures.FunctionDOS;
-import org.dynamos.structures.FunctionDefinitionDOS;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.StandardObjects;
 import org.dynamos.structures.Symbol;
 import org.dynamos.structures.VMObjectDOS;
-import org.dynamos.structures.Context.ContextBuilder;
+import org.dynamos.structures.Activation.ActivationBuilder;
 import org.dynamos.structures.StandardObjects.NullDOS;
 import org.dynamos.structures.StandardObjects.UndefinedDOS;
 
 public class Environment {
 
-	private Context.ContextBuilder contextBuilder;
+	private Activation.ActivationBuilder contextBuilder;
 	private ObjectDOS virtualMachine;
 	private ObjectDOS rootObject;
 	private ObjectDOS numberFactory;
@@ -24,6 +25,7 @@ public class Environment {
 	private ObjectDOS booleanContainer;
 	private final OpCodeInterpreter interpreter;
 	private ObjectDOS listFactory;
+	private ObjectDOS functionPrototype;
 
     /*
 	 * need
@@ -47,20 +49,21 @@ public class Environment {
 		ObjectDOS.initialiseRootObject(this, rootObject);
 		
 		virtualMachine = VMObjectDOS.getVMObject(this);
-		contextBuilder = Context.initializeContext(interpreter, this);
+		contextBuilder = Activation.initializeContext(interpreter, this);
 	}
 	
 	public void init(OpCodeInterpreter interpreter) {
 		booleanContainer = StandardObjects.initialiseBooleans(interpreter, this);
         numberFactory = StandardObjects.createNumberLibrary(interpreter, this);
         listFactory = StandardObjects.createListLibrary(interpreter, this);
+        functionPrototype = FunctionWithContext.createFunctionPrototype(this);
     }
 	
 	public ObjectDOS getVirtualMachine() {
 		return virtualMachine;
 	}
 
-	public ContextBuilder getContextBuilder() {
+	public ActivationBuilder getContextBuilder() {
 		return contextBuilder;
 	}
 	
@@ -104,25 +107,38 @@ public class Environment {
 		return rootObject;
 	}
 
-	public FunctionDOS createFunction(Symbol[] arguments, OpCode[] opCodes, ObjectDOS localContext) {
-		return createFunction(createFunctionDefinition(arguments, opCodes), localContext);
+	public FunctionWithContext createFunctionWithContext(Symbol[] arguments, OpCode[] opCodes, Activation localContext) {
+		return createFunctionWithContext(createFunction(arguments, opCodes), localContext);
 	}
 
-	public FunctionDOS createFunction(FunctionDefinitionDOS functionDefinition, ObjectDOS localContext) {
-		FunctionDOS function = new FunctionDOS(
+	public FunctionWithContext createFunctionWithContext(FunctionDOS functionDefinition, Activation localContext) {
+		FunctionWithContext function = new FunctionWithContext(
 				functionDefinition,
 				localContext);
-		function.setParent(rootObject);
+		function.setParent(functionPrototype);
 		return function;
 	}
 
-	public FunctionDefinitionDOS createFunctionDefinition(Symbol[] arguments, OpCode[] opCodes) {
-		FunctionDefinitionDOS functionDefinition = new FunctionDefinitionDOS(
+	public FunctionDOS createFunction(Symbol[] arguments, OpCode[] opCodes) {
+		FunctionDOS functionDefinition = new FunctionDOS(
 				interpreter, 
 				arguments,
 				opCodes);
 		functionDefinition.setParent(rootObject);
 		return functionDefinition;
+	}
+
+	public ObjectDOS createConstructor(Symbol[] arguments, OpCode[] opCodes, ObjectDOS localContext) {
+		FunctionDOS functionDefinition = new FunctionDOS(
+				interpreter, 
+				arguments,
+				opCodes);
+		functionDefinition.setParent(rootObject);
+		ConstructorDOS function = new ConstructorDOS(
+				functionDefinition,
+				localContext);
+		function.setParent(rootObject);
+		return function;
 	}
 
 }

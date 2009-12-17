@@ -12,4 +12,7 @@ public class SymbolWrapper extends ObjectDOS {
 		return symbol;
 	}
 
+	public String toString() {
+		return symbol.toString();
+	}
 }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.dynamos.OpCodeInterpreter;
-import org.dynamos.structures.FunctionDefinitionDOS;
+import org.dynamos.structures.FunctionDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.Symbol;
 
@@ -16,7 +16,7 @@ public class BootstrapCompiler {
 			")";
 	 */
 
-	public FunctionDefinitionDOS compile(OpCodeInterpreter interpreter, String program) {
+	public FunctionDOS compile(OpCodeInterpreter interpreter, String program) {
 		ASTNode ast = transformStringToAST(program);
 		return transformASTToFunctionDefinition(interpreter, ast);
 	}
@@ -25,7 +25,7 @@ public class BootstrapCompiler {
 		return new TransformStringToAST().transform(program);
 	}
 	
-	private FunctionDefinitionDOS transformASTToFunctionDefinition(OpCodeInterpreter interpreter, ASTNode ast) {
+	private FunctionDOS transformASTToFunctionDefinition(OpCodeInterpreter interpreter, ASTNode ast) {
 		List<Symbol> arguments = new ArrayList<Symbol>();
 		List<OpCode> opcodes = new ArrayList<OpCode>();
 
@@ -37,9 +37,9 @@ public class BootstrapCompiler {
 		return constructFunctionDefinition(interpreter, arguments, opcodes);
 	}
 
-	private FunctionDefinitionDOS constructFunctionDefinition(OpCodeInterpreter interpreter, List<Symbol> arguments, List<OpCode> opcodes) {
+	private FunctionDOS constructFunctionDefinition(OpCodeInterpreter interpreter, List<Symbol> arguments, List<OpCode> opcodes) {
 		Symbol[] argumentsArray = arguments.toArray(new Symbol[] {});
 		OpCode[] opCodeArray = opcodes.toArray(new OpCode[] {});
-		return new FunctionDefinitionDOS(interpreter, argumentsArray, opCodeArray);
+		return new FunctionDOS(interpreter, argumentsArray, opCodeArray);
 	}
 }

@@ -46,9 +46,9 @@ public class VMObjectDOS {
         ExecutableDOS CONTEXTUALIZE_FUNCTION_EXEC = new ExecutableDOS() {
         	@Override
         	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
-        		FunctionDefinitionDOS function = (FunctionDefinitionDOS) arguments.at(0);
-        		Context context = (Context) arguments.at(1);
-        		return environment.createFunction(function, context);
+        		FunctionDOS function = (FunctionDOS) arguments.at(0);
+        		Activation context = (Activation) arguments.at(1);
+        		return environment.createFunctionWithContext(function, context);
         	}
         };
 
@@ -63,7 +63,7 @@ public class VMObjectDOS {
 				Symbol[] nativeArguments = copyListOfSymbolWrappersToArrayOfSymbols(argumentList);
 				OpCode[] nativeOpCodes = copyListOfOpcodeWrappersToArrayOfOpcodes(opCodes);
 				
-				return environment.createFunctionDefinition(nativeArguments, nativeOpCodes);
+				return environment.createFunction(nativeArguments, nativeOpCodes);
         	}
         };
 
@@ -79,7 +79,7 @@ public class VMObjectDOS {
 				Symbol[] nativeArguments = copyListOfSymbolWrappersToArrayOfSymbols(argumentList);
 				OpCode[] nativeOpCodes = copyListOfOpcodeWrappersToArrayOfOpcodes(opCodes);
 				
-				return environment.createFunction(nativeArguments, nativeOpCodes, context);
+				return environment.createConstructor(nativeArguments, nativeOpCodes, context);
         	}
 
         };

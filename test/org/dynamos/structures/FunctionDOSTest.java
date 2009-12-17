@@ -26,8 +26,8 @@ import org.junit.Test;
  */
 public class FunctionDOSTest {
 
-    FunctionDefinitionDOS function;
-    Context context;
+    FunctionDOS function;
+    Activation context;
     ListDOS arguments;
     ObjectDOS object;
     ObjectDOS undefined = new StandardObjects.UndefinedDOS();
@@ -39,13 +39,13 @@ public class FunctionDOSTest {
     public void setup() {
     	interpreter = mock(OpCodeInterpreter.class);
     	environment = mock(Environment.class);
-    	when(interpreter.newContext()).thenReturn(new Context());
+    	when(interpreter.newActivation()).thenReturn(new Activation());
     	when(interpreter.getEnvironment()).thenReturn(environment);
     	when(environment.getNull()).thenReturn(nullObject);
     	when(environment.getUndefined()).thenReturn(undefined);
     	
-    	context = new Context();
-        function = new FunctionDefinitionDOS(interpreter, new Symbol[] {}, new OpCode[] {});
+    	context = new Activation();
+        function = new FunctionDOS(interpreter, new Symbol[] {}, new OpCode[] {});
         
         arguments = new ListDOS();
         object = new ObjectDOS();
@@ -53,7 +53,7 @@ public class FunctionDOSTest {
 
     @Test
     public void shouldCallFunctionWithArgumentsAndObject() {
-        FunctionDOS contextualFunction = new FunctionDOS(function, context);
+        FunctionWithContext contextualFunction = new FunctionWithContext(function, context);
 
         contextualFunction.execute(object, arguments);
 
@@ -64,7 +64,7 @@ public class FunctionDOSTest {
     public void shouldInterpretOpcodes() {
         OpCode[] opCodes = new OpCode[] {};
         
-        FunctionDefinitionDOS actualFunction = new FunctionDefinitionDOS(interpreter, new Symbol[] {}, opCodes);
+        FunctionDOS actualFunction = new FunctionDOS(interpreter, new Symbol[] {}, opCodes);
 
         actualFunction.execute(context);
 
@@ -78,7 +78,7 @@ public class FunctionDOSTest {
 		context.setArguments(arguments);
 		
     	Symbol argument = Symbol.get("argument");
-        FunctionDefinitionDOS actualFunction = new FunctionDefinitionDOS(interpreter, new Symbol[] {argument}, null);
+        FunctionDOS actualFunction = new FunctionDOS(interpreter, new Symbol[] {argument}, null);
 		
         actualFunction.execute(context);
 		
@@ -91,7 +91,7 @@ public class FunctionDOSTest {
 		context.setArguments(arguments);
 		
     	Symbol argument = Symbol.get("argument");
-        FunctionDefinitionDOS actualFunction = new FunctionDefinitionDOS(interpreter, new Symbol[] {argument}, null);
+        FunctionDOS actualFunction = new FunctionDOS(interpreter, new Symbol[] {argument}, null);
 		
         actualFunction.execute(context);
 		
@@ -105,24 +105,24 @@ public class FunctionDOSTest {
 		arguments.add(value);
 		context.setArguments(arguments);
 		
-        FunctionDefinitionDOS actualFunction = new FunctionDefinitionDOS(interpreter, new Symbol[] {}, null);
+        FunctionDOS actualFunction = new FunctionDOS(interpreter, new Symbol[] {}, null);
 		
         actualFunction.execute(context);
 		
         assertThat(((ListDOS) context.getSlot(Symbol.ARGUMENTS)).at(0), is(value));
     }
 
-    private MatchesContextWithValues matchesContextWithValues(final ListDOS arguments, ObjectDOS object, final Context functionContext) {
+    private MatchesContextWithValues matchesContextWithValues(final ListDOS arguments, ObjectDOS object, final ObjectDOS functionContext) {
         return new MatchesContextWithValues(arguments, object, functionContext);
     }
 
-    private class MatchesContextWithValues extends BaseMatcher<Context> {
+    private class MatchesContextWithValues extends BaseMatcher<Activation> {
 
         private final ListDOS arguments;
         private final ObjectDOS object;
-        private final Context functionContext;
+        private final ObjectDOS functionContext;
 
-        public MatchesContextWithValues(ListDOS arguments, ObjectDOS object, Context functionContext) {
+        public MatchesContextWithValues(ListDOS arguments, ObjectDOS object, ObjectDOS functionContext) {
             this.arguments = arguments;
             this.object = object;
             this.functionContext = functionContext;
@@ -130,13 +130,13 @@ public class FunctionDOSTest {
         String message = "";
 
         public boolean matches(Object item) {
-            Context context = (Context) item;
-            if (context.getArguments() != arguments) {
-                message += "arguments doesn't match [" + context.getArguments().list + "] <> [" + arguments.list + "]\n";
+            Activation context = (Activation) item;
+            if (context.getSlot(Symbol.ARGUMENTS) != arguments) {
+                message += "arguments doesn't match [" + ((ListDOS) context.getSlot(Symbol.ARGUMENTS)).list + "] <> [" + arguments.list + "]\n";
                 return false;
             }
-            if (context.getObject() != object) {
-                message += "object doesn't match [" + context.getObject() + "] <> [" + object + "]\n";
+            if (context.getVictim() != object) {
+                message += "object doesn't match [" + context.getVictim() + "] <> [" + object + "]\n";
                 return false;
             }
             if (context.getContext() != functionContext) {

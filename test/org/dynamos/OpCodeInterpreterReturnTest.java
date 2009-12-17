@@ -9,9 +9,9 @@ package org.dynamos;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import org.dynamos.structures.Context;
+import org.dynamos.structures.Activation;
+import org.dynamos.structures.FunctionWithContext;
 import org.dynamos.structures.FunctionDOS;
-import org.dynamos.structures.FunctionDefinitionDOS;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.Symbol;
@@ -25,7 +25,7 @@ import org.junit.Test;
 public class OpCodeInterpreterReturnTest {
 
     OpCodeInterpreter interpreter;
-    Context context;
+    Activation context;
     ObjectDOS theObject;
 
     Symbol functionName = Symbol.get("functionName");
@@ -37,7 +37,7 @@ public class OpCodeInterpreterReturnTest {
     @Before
     public void setUp() {
         interpreter = new OpCodeInterpreter();
-        context = interpreter.newContext();
+        context = interpreter.newActivation();
         theObject = interpreter.getEnvironment().createNewObject();
     }
 
@@ -61,12 +61,12 @@ public class OpCodeInterpreterReturnTest {
     public void shouldReturnAValueIntoDefaultSlot() {
         final ObjectDOS result = interpreter.getEnvironment().createNewObject();
         
-        FunctionDefinitionDOS functionThatSetsupReturnSlot = new FunctionDefinitionDOS(interpreter, null, null) {
-            public void execute(Context context) {
+        FunctionDOS functionThatSetsupReturnSlot = new FunctionDOS(interpreter, null, null) {
+            public void execute(Activation context) {
             	context.setSlot(Symbol.RESULT, result);
             }
         };
-        context.setFunction(functionName, new FunctionDOS(functionThatSetsupReturnSlot, context));
+        context.setFunction(functionName, new FunctionWithContext(functionThatSetsupReturnSlot, context));
 
         OpCode[] opCodes = new OpCode[] {
             new OpCode.FunctionCall(functionName)

@@ -8,8 +8,6 @@ package org.dynamos.structures;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 import org.dynamos.Environment;
 import org.dynamos.OpCodeInterpreter;
@@ -26,7 +24,7 @@ public class ObjectDOSTest {
     Symbol symbol = Symbol.get("MySymbol");
     ObjectDOS value;
     ObjectDOS nullDOS;
-    FunctionDOS function = new FunctionDOS(null, null);
+    FunctionWithContext function = new FunctionWithContext(null, null);
 	private OpCodeInterpreter interpreter;
 	private Environment environment;
 
@@ -46,36 +44,47 @@ public class ObjectDOSTest {
     }
 
     @Test
-    public void shouldUseContextSlotIfNotOnObject() {
-        ObjectDOS context = environment.createNewObject();
-        context.setSlot(symbol, value);
-        theObject.setContext(context);
+    public void shouldUseSlotOnSecondTraitIfNotOnObject() {
+        ObjectDOS trait1 = environment.createNewObject();
+        ObjectDOS trait2 = environment.createNewObject();
+        theObject.setTrait("trait1", trait1);
+        theObject.setTrait("trait2", trait2);
+
+        trait2.setSlot(symbol, value);
 
         assertThat(theObject.getSlot(symbol), is(value));
     }
 
     @Test
-    public void shouldOverideContextSlotWithCurrentSlot() {
-        ObjectDOS context = environment.createNewObject();
+    public void shouldOverideSlotOnSecondTraitWithFirstTraitSlot() {
+        ObjectDOS trait1 = environment.createNewObject();
+        ObjectDOS trait2 = environment.createNewObject();
+        theObject.setTrait("trait1", trait1);
+        theObject.setTrait("trait2", trait2);
 
         ObjectDOS oldValue = environment.createNewObject();
-        context.setSlot(symbol, oldValue);
+        trait2.setSlot(symbol, oldValue);
         
-        theObject.setContext(context);
+        trait1.setSlot(symbol, value);
+
+        assertThat(theObject.getSlot(symbol), is(value));
+    }
+
+    @Test
+    public void shouldOverideSlotOnTraitsWithCurrentSlot() {
+        ObjectDOS trait1 = environment.createNewObject();
+        ObjectDOS trait2 = environment.createNewObject();
+        theObject.setTrait("trait1", trait1);
+        theObject.setTrait("trait2", trait2);
+        
+        trait2.setSlot(symbol, environment.createNewObject());
+        trait1.setSlot(symbol, environment.createNewObject());
+        
         theObject.setSlot(symbol, value);
 
         assertThat(theObject.getSlot(symbol), is(value));
     }
 
-    @Test
-    public void shouldNotAccessSlotsOnParent() {
-        ObjectDOS parent = environment.createNewObject();
-        parent.setSlot(symbol, value);
-        
-        theObject.setParent(parent);
-
-        assertThat(theObject.getSlot(symbol), is(environment.getUndefined()));
-    }
 
     @Test
     public void shouldReturnUndefinedIfNoSlot() {
@@ -84,13 +93,51 @@ public class ObjectDOSTest {
 		ObjectDOS.initialiseRootObject(env, theObject);
         assertSame(env.getUndefined(), theObject.getSlot(symbol));
     }
+    
+    @Test
+    public void shouldAddAndReturnFunction() {
+        theObject.setFunction(symbol, function);
+        assertThat(theObject.getFunction(symbol), is((ExecutableDOS) function));
+    }
 
     @Test
-    public void shouldUseFunctionLookupToFindFunction() {
-    	ObjectDOS.FUNCTION_LOOKUP = mock(FunctionLookupStrategy.class);
-    	
-        theObject.getFunction(symbol);
+    public void shouldUseFunctionOnSecondTraitIfNotOnObject() {
+        ObjectDOS trait1 = environment.createNewObject();
+        ObjectDOS trait2 = environment.createNewObject();
+        theObject.setTrait("trait1", trait1);
+        theObject.setTrait("trait2", trait2);
+
+        trait2.setFunction(symbol, function);
+
+        assertThat(theObject.getFunction(symbol), is((ExecutableDOS) function));
+    }
+
+    @Test
+    public void shouldOverideFunctionOnSecondTraitWithFirstTraitFunction() {
+        ObjectDOS trait1 = environment.createNewObject();
+        ObjectDOS trait2 = environment.createNewObject();
+        theObject.setTrait("trait1", trait1);
+        theObject.setTrait("trait2", trait2);
+
+        trait2.setFunction(symbol, new FunctionWithContext(null, null));
         
-        verify(ObjectDOS.FUNCTION_LOOKUP).lookupFunction(theObject, symbol);
+        trait1.setFunction(symbol, function);
+
+        assertThat(theObject.getFunction(symbol), is((ExecutableDOS) function));
+    }
+
+    @Test
+    public void shouldOverideFunctionOnTraitsWithCurrentFunction() {
+        ObjectDOS trait1 = environment.createNewObject();
+        ObjectDOS trait2 = environment.createNewObject();
+        theObject.setTrait("trait1", trait1);
+        theObject.setTrait("trait2", trait2);
+        
+        trait2.setSlot(symbol, new FunctionWithContext(null, null));
+        trait1.setSlot(symbol, new FunctionWithContext(null, null));
+
+        theObject.setFunction(symbol, function);
+
+        assertThat(theObject.getFunction(symbol), is((ExecutableDOS) function));
     }
 }

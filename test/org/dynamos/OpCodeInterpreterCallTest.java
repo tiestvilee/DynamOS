@@ -10,8 +10,8 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import org.dynamos.structures.Context;
-import org.dynamos.structures.FunctionDOS;
+import org.dynamos.structures.Activation;
+import org.dynamos.structures.FunctionWithContext;
 import org.dynamos.structures.ListDOS;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
@@ -30,9 +30,9 @@ import org.junit.Test;
 public class OpCodeInterpreterCallTest {
 
     OpCodeInterpreter interpreter;
-    Context context;
+    Activation context;
     ObjectDOS theObject;
-    FunctionDOS function;
+    FunctionWithContext function;
 
     Symbol functionName = Symbol.get("functionName");
 
@@ -44,15 +44,15 @@ public class OpCodeInterpreterCallTest {
     @Before
     public void setUp() {
         interpreter = new OpCodeInterpreter();
-        context = interpreter.newContext();
+        context = interpreter.newActivation();
         theObject = interpreter.getEnvironment().createNewObject();
-        function = mock(FunctionDOS.class);
+        function = mock(FunctionWithContext.class);
         expectedArgumentList = new ListDOS();
     }
 
     /* When a context call is made, it is essentially a method call but with the context object */
     @Test
-    public void shouldCallAMethodInContext() {
+    public void shouldCallAMethodOnThis() {
         context.setFunction(functionName, function);
 
         OpCode[] opCodes = new OpCode[] {
@@ -65,7 +65,7 @@ public class OpCodeInterpreterCallTest {
     }
 
     @Test
-    public void shouldCallAMethodInContextWithParameter() {
+    public void shouldCallAMethodOnThisWithParameter() {
         context.setFunction(functionName, function);
         context.setSlot(localArgumentName, theObject);
 
@@ -128,24 +128,6 @@ public class OpCodeInterpreterCallTest {
 
         interpreter.interpret(context, opCodes);
 
-        verify(function).execute(argThat(is(theObject)), argThat(matchArgumentListTo(expectedArgumentList)));
-    }
-
-    /*
-     * TODO do we really need THIS?
-     */
-    @Test
-    public void shouldCallAMethodOnThis() {
-        theObject.setFunction(functionName, function);
-        context.setObject(theObject);
-
-        OpCode[] opCodes = new OpCode[] {
-            new OpCode.SetObject(Symbol.THIS),
-            new OpCode.FunctionCall(functionName)
-        };
-
-        interpreter.interpret(context, opCodes);
-        
         verify(function).execute(argThat(is(theObject)), argThat(matchArgumentListTo(expectedArgumentList)));
     }
     

@@ -5,8 +5,9 @@
 
 package org.dynamos;
 
-import org.dynamos.structures.Context;
+import org.dynamos.structures.Activation;
 import org.dynamos.structures.ListDOS;
+import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.OpCodeWrapper;
 import org.dynamos.structures.StackFrame;
@@ -24,7 +25,7 @@ public class OpCodeInterpreter {
 		environment.init(this);
 	}
 
-    public void interpret(Context context, OpCode[] opCodes) {
+    public void interpret(ObjectDOS context, OpCode[] opCodes) {
         StackFrame stackFrame = new StackFrame();
         for(int i=0; i<opCodes.length; i++) {
 			if(opCodes[i] instanceof OpCode.StartOpCodeList) {
@@ -36,7 +37,7 @@ public class OpCodeInterpreter {
         }
     }
 
-	private int storeOpCodesInList(Context context, OpCode[] opCodes, int i) {
+	private int storeOpCodesInList(ObjectDOS context, OpCode[] opCodes, int i) {
 		int opcodeListDepth = 1;
 		ListDOS opcodeList = new ListDOS();
 		i += 1;
@@ -54,12 +55,16 @@ public class OpCodeInterpreter {
 		return i - 1;
 	}
 
-	public Context newContext() {
-		return environment.getContextBuilder().createContext();
+	public Activation newActivation() {
+		return environment.getContextBuilder().createActivation();
 	}
 
 	public Environment getEnvironment() {
 		return environment;
+	}
+
+	public ObjectDOS newObject() {
+		return environment.createNewObject();
 	}
 
 }

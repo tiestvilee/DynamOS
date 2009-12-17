@@ -15,7 +15,7 @@ import org.dynamos.structures.StandardObjects.ValueObject;
 public class OpCode {
 
 
-	public boolean execute(ObjectDOS context, StackFrame stackFrame) {
+	public boolean execute(ObjectDOS self, StackFrame stackFrame) {
         // NOOP
         return false;
     }
@@ -29,8 +29,8 @@ public class OpCode {
         }
 
         @Override
-        public boolean execute(ObjectDOS context, StackFrame stackFrame) {
-        	ObjectDOS target = context;
+        public boolean execute(ObjectDOS self, StackFrame stackFrame) {
+        	ObjectDOS target = self;
         	if(stackFrame.getObject() != null) {
         		target = stackFrame.getObject();
         	}
@@ -38,7 +38,7 @@ public class OpCode {
 			ExecutableDOS function = (ExecutableDOS) target.getFunction(symbol);
         	ObjectDOS result = function.execute(target, stackFrame.getArguments());
 
-        	context.setSlot(Symbol.RESULT, result);
+        	self.setSlot(Symbol.RESULT, result);
             return true;
         }
     }
@@ -50,8 +50,8 @@ public class OpCode {
         }
 
         @Override
-        public boolean execute(ObjectDOS context, StackFrame stackFrame) {
-            ObjectDOS object = (ObjectDOS) context.getSlot(symbol);
+        public boolean execute(ObjectDOS self, StackFrame stackFrame) {
+            ObjectDOS object = (ObjectDOS) self.getSlot(symbol);
             stackFrame.setObject(object);
             return false;
         }
@@ -64,8 +64,8 @@ public class OpCode {
         }
 
         @Override
-        public boolean execute(ObjectDOS context, StackFrame stackFrame) {
-            ObjectDOS argument = (ObjectDOS) context.getSlot(symbol);
+        public boolean execute(ObjectDOS self, StackFrame stackFrame) {
+            ObjectDOS argument = (ObjectDOS) self.getSlot(symbol);
             stackFrame.pushArgument(argument);
             return false;
         }
@@ -78,7 +78,7 @@ public class OpCode {
         }
 
         @Override
-        public boolean execute(ObjectDOS context, StackFrame stackFrame) {
+        public boolean execute(ObjectDOS self, StackFrame stackFrame) {
             stackFrame.pushArgument(new SymbolWrapper(symbol));
             return false;
         }
@@ -95,8 +95,8 @@ public class OpCode {
 		}
 
         @Override
-        public boolean execute(ObjectDOS context, StackFrame stackFrame) {
-        	context.setSlot(Symbol.RESULT, interpreter.getEnvironment().createNewValueObject(value));
+        public boolean execute(ObjectDOS self, StackFrame stackFrame) {
+        	self.setSlot(Symbol.RESULT, interpreter.getEnvironment().createNewValueObject(value));
             return false;
         }
 	}
@@ -110,13 +110,17 @@ public class OpCode {
         }
 
         @Override
-        public boolean execute(ObjectDOS context, StackFrame stackFrame) {
-            ObjectDOS argument = (ObjectDOS) context.getSlot(symbol);
-            if(argument instanceof ValueObject) {
-            	System.out.println(message + " " + ((ValueObject) argument).getValue() + "@" + argument + " parent " + argument.getParent());
-            } else  {
-            	System.out.println(message + " " + argument);
-            }
+        public boolean execute(ObjectDOS self, StackFrame stackFrame) {
+        	if(symbol == Symbol.PARENT) {
+        		System.out.println(message + " parent of " + self + " is " + self.getTrait("name"));
+        	} else {
+	            ObjectDOS argument = (ObjectDOS) self.getSlot(symbol);
+	            if(argument instanceof ValueObject) {
+	            	System.out.println(message + " " + ((ValueObject) argument).getValue() + "@" + argument + " parent " + argument.getTrait("name"));
+	            } else  {
+	            	System.out.println(message + " " + argument);
+	            }
+        	}
             return false;
         }
     }

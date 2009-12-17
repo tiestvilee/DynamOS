@@ -20,8 +20,8 @@ import org.junit.Test;
  */
 public class BasicOpCodeTest {
 
-    FunctionDefinitionDOS function;
-    Context context;
+    FunctionDOS function;
+    ObjectDOS context;
     ListDOS arguments;
     ObjectDOS object;
     OpCodeInterpreter interpreter;
@@ -31,7 +31,7 @@ public class BasicOpCodeTest {
     @Before
     public void setup() {
     	interpreter = new OpCodeInterpreter();
-    	context = interpreter.newContext();
+    	context = interpreter.newActivation();
     	local = Symbol.get("local");
     	stackFrame = new StackFrame();
     	object = interpreter.getEnvironment().createNewObject();

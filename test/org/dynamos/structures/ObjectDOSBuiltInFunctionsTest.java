@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import org.dynamos.Environment;
 import org.dynamos.OpCodeInterpreter;
+import org.dynamos.structures.StandardObjects.ValueObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,44 +13,108 @@ import org.junit.Test;
 public class ObjectDOSBuiltInFunctionsTest {
 
 	ObjectDOS vm;
-	Context context;
 	ObjectDOS object;
+	ObjectDOS value;
 	ListDOS arguments;
 	Symbol local = Symbol.get("local");
 	private OpCodeInterpreter interpreter;
+	private Environment environment;
+	private Activation context;
 	
 	@Before
 	public void setUp() {
 		interpreter = new OpCodeInterpreter();
-		Environment environment = interpreter.getEnvironment();
+		environment = interpreter.getEnvironment();
 		vm = VMObjectDOS.getVMObject(environment);
-		context = interpreter.newContext();
-		object = environment.createNewObject();
+		object = interpreter.newActivation();
+		value = environment.createNewObject();
 		arguments = new ListDOS();
+    	context = interpreter.newActivation();
 	}
     
     @Test
-    public void shouldSetSlot() {
-    	arguments.add(new SymbolWrapper(local));
-    	arguments.add(object);
+    public void shouldSetSlotInCurrentFunction() {
+    	FunctionDOS function = createFunctionThatSetsAndReturnsValueToLocal();
+
+    	ObjectDOS result = function.execute(object, new ListDOS());
     	
-    	context.getFunction(Symbol.SET_SLOT_$_TO_$).execute(context, arguments);
+    	assertThat(((ValueObject) result).getValue(), is(1234));
+    }
+
+    @Test
+    public void shouldSetSlotInCurrentContextualFunction() {
     	
-    	assertThat(context.getSlot(local), is(object));
+    	FunctionWithContext function = environment.createFunctionWithContext(
+    			createFunctionThatSetsAndReturnsValueToLocal(),
+    			context);
+
+    	ObjectDOS result = function.execute(object, new ListDOS());
+    	
+    	assertThat(((ValueObject) result).getValue(), is(1234));
+    	assertThat(context.getSlot(local), is(environment.getUndefined()));
     }
     
     @Test
-    public void shouldSetSlotInParentContextIfDefinedThere() {
-    	Context parentContext = interpreter.newContext();
-    	parentContext.setSlot(local, interpreter.getEnvironment().createNewObject());
+    public void shouldSetSlotInFunctionsContext() {
+    	context.setSlot(local, environment.getUndefined());
     	
-    	context.setContext(parentContext);
+    	FunctionWithContext function = createFunctionWithContextThatSetsLocalToValue(context);
+    	function.execute(object, new ListDOS());
     	
-    	arguments.add(new SymbolWrapper(local));
-    	arguments.add(object);
-    	context.getFunction(Symbol.SET_SLOT_$_TO_$).execute(context, arguments);
-    	
-    	assertThat(parentContext.getSlot(local), is(object));
-    	assertThat(context.getSlot(local), is(object));  // goes up to parent...
+    	assertThat(((ValueObject) context.getSlot(local)).getValue(), is(1234));
     }
+    
+    @Test
+    public void shouldSetSlotInObject() {
+    	object.setSlot(local, environment.getUndefined());
+
+    	FunctionWithContext function = createFunctionWithContextThatSetsLocalToValue(context);
+    	function.execute(object, new ListDOS());
+
+    	assertThat(context.getSlot(local), is(environment.getUndefined()));
+    	assertThat(((ValueObject) object.getSlot(local)).getValue(), is(1234));
+    }
+
+	private FunctionWithContext createFunctionWithContextThatSetsLocalToValue(
+			Activation context) {
+		FunctionWithContext function = environment.createFunctionWithContext(
+    			new Symbol[] {},
+    			new OpCode[] {
+        			new OpCode.CreateValueObject(interpreter, 1234),
+    				new OpCode.PushSymbol(local),
+    				new OpCode.Push(Symbol.RESULT),
+    				new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$)
+    			},
+    			context);
+		return function;
+	}
+    
+	private FunctionDOS createFunctionThatSetsAndReturnsValueToLocal() {
+		FunctionDOS function = environment.createFunction(
+    			new Symbol[] {},
+    			new OpCode[] {
+        			new OpCode.CreateValueObject(interpreter, 1234),
+    				new OpCode.PushSymbol(local),
+    				new OpCode.Push(Symbol.RESULT),
+    				new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
+    				new OpCode.PushSymbol(local),
+    				new OpCode.FunctionCall(Symbol.GET_SLOT_$)
+    			});
+		return function;
+	}
+    
+//    @Test
+//    public void shouldSetSlotInParentContextIfDefinedThere() {
+//    	ObjectDOS parentContext = interpreter.newContext();
+//    	parentContext.setSlot(local, interpreter.getEnvironment().createNewObject());
+//    	
+//    	context.setContext(parentContext);
+//    	
+//    	arguments.add(new SymbolWrapper(local));
+//    	arguments.add(object);
+//    	context.getFunction(Symbol.SET_SLOT_$_TO_$).execute(context, arguments);
+//    	
+//    	assertThat(parentContext.getSlot(local), is(object));
+//    	assertThat(context.getSlot(local), is(object));  // goes up to parent...
+//    }
 }

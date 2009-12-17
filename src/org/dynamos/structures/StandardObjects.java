@@ -33,14 +33,14 @@ public class StandardObjects {
 	}
 
 	public static ObjectDOS initialiseBooleans(final OpCodeInterpreter interpreter, Environment environment) {
-		Context booleanContext = interpreter.newContext();
+		Activation booleanContext = interpreter.newActivation();
 
 		Symbol trueResult = Symbol.get("trueResult");
 		Symbol falseResult = Symbol.get("falseResult");
 
 		TrueDOS trueObject = new TrueDOS();
 		trueObject.setParent(environment.getRootObject());
-		trueObject.setFunction(Symbol.get("ifTrue:ifFalse:"), environment.createFunction( 
+		trueObject.setFunction(Symbol.get("ifTrue:ifFalse:"), environment.createFunctionWithContext( 
 				new Symbol[] {trueResult, falseResult },
 				new OpCode[] {
 					new OpCode.PushSymbol(trueResult),
@@ -50,7 +50,7 @@ public class StandardObjects {
 
 		FalseDOS falseObject = new FalseDOS();
 		falseObject.setParent(environment.getRootObject());
-		falseObject.setFunction(Symbol.get("ifTrue:ifFalse:"), environment.createFunction( 
+		falseObject.setFunction(Symbol.get("ifTrue:ifFalse:"), environment.createFunctionWithContext( 
 				new Symbol[] {trueResult, falseResult },
 				new OpCode[] {
 					new OpCode.PushSymbol(falseResult),
@@ -86,7 +86,7 @@ public class StandardObjects {
 		Symbol numberFactorySymbol = Symbol.get("numberFactory");
 		
 		// the context in which the number library exists
-		Context numberLibraryContext = interpreter.newContext();
+		Activation numberLibraryContext = interpreter.newActivation();
 
 		// number library depends upon the VM, but that's all
 		numberLibraryContext.setSlot(VMObjectDOS.VM, environment.getVirtualMachine());
@@ -97,7 +97,7 @@ public class StandardObjects {
 		return numberFactory;
 	}
 
-	private static ObjectDOS createNumberFactory(final OpCodeInterpreter interpreter, Environment environment, Context numberLibraryContext, Symbol numberPrototypeSymbol, Symbol numberFactorySymbol) {
+	private static ObjectDOS createNumberFactory(final OpCodeInterpreter interpreter, Environment environment, Activation numberLibraryContext, Symbol numberPrototypeSymbol, Symbol numberFactorySymbol) {
 		// createNumberFactory
 		Symbol number = Symbol.get("number");
 
@@ -105,7 +105,7 @@ public class StandardObjects {
 		numberLibraryContext.setSlot(numberFactorySymbol, numberFactory);
 
 		// add appropriate function to the prototype
-		numberFactory.setFunction(Symbol.get("numberFrom:"), environment.createFunction(
+		numberFactory.setFunction(Symbol.get("numberFrom:"), environment.createFunctionWithContext(
 				new Symbol[] { number },
 				new OpCode[] {
 					new OpCode.Push(numberPrototypeSymbol),
@@ -116,7 +116,7 @@ public class StandardObjects {
 	}
 
 
-	private static void createNumberPrototype(final OpCodeInterpreter interpreter, Environment environment, Context numberLibraryContext, Symbol numberPrototypeSymbol, Symbol numberFactorySymbol) {
+	private static void createNumberPrototype(final OpCodeInterpreter interpreter, Environment environment, Activation numberLibraryContext, Symbol numberPrototypeSymbol, Symbol numberFactorySymbol) {
 		Symbol right = Symbol.get("right");
         
         // define the prototype for all numbers
@@ -124,7 +124,7 @@ public class StandardObjects {
         numberLibraryContext.setSlot(numberPrototypeSymbol, numberPrototype);
         
         // add all appropriate functions to the prototype
-        numberPrototype.setFunction(Symbol.get("plus:"), environment.createFunction(
+        numberPrototype.setFunction(Symbol.get("plus:"), environment.createFunctionWithContext(
         		new Symbol[] {right},
         		new OpCode[] {
        				new OpCode.Push(right),
@@ -137,7 +137,7 @@ public class StandardObjects {
         		}, 
         		numberLibraryContext));
 
-        numberPrototype.setFunction(Symbol.get("minus:"), environment.createFunction(
+        numberPrototype.setFunction(Symbol.get("minus:"), environment.createFunctionWithContext(
         		new Symbol[] {right},
         		new OpCode[] {
        				new OpCode.Push(right),
@@ -150,7 +150,7 @@ public class StandardObjects {
         		},
         		numberLibraryContext));
         
-        numberPrototype.setFunction(Symbol.get("isLessThan:"), environment.createFunction(
+        numberPrototype.setFunction(Symbol.get("isLessThan:"), environment.createFunctionWithContext(
         		new Symbol[] {right},
         		new OpCode[] {
         			new OpCode.Push(Symbol.THIS),

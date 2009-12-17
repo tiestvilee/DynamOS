@@ -4,8 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.dynamos.OpCodeInterpreter;
 import org.dynamos.compiler.BootstrapCompiler;
-import org.dynamos.structures.Context;
-import org.dynamos.structures.FunctionDefinitionDOS;
+import org.dynamos.structures.FunctionDOS;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.Symbol;
@@ -34,8 +33,8 @@ public class BootstrapCompilerTest {
 			//"  result: someParameter\n" +
 			")";
 			
-		FunctionDefinitionDOS definition = new BootstrapCompiler().compile(interpreter, program);
-		Context context = interpreter.newContext();
+		FunctionDOS definition = new BootstrapCompiler().compile(interpreter, program);
+		ObjectDOS context = interpreter.newActivation();
 		context.setSlot(definitionSymbol, definition);
 		context.setSlot(expectedParameterSymbol, expectedParameter);
 		OpCode[] opCodes = new OpCode[] {

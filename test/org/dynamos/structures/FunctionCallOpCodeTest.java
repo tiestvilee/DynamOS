@@ -27,7 +27,7 @@ public class FunctionCallOpCodeTest {
     ExecutableDOS aFunction;
     ExecutableDOS anotherFunction;
 	
-    Context context;
+    ObjectDOS context;
     ListDOS arguments;
     ObjectDOS object;
     OpCodeInterpreter interpreter;
@@ -39,7 +39,7 @@ public class FunctionCallOpCodeTest {
     public void setup() {
     	interpreter = new OpCodeInterpreter();
     	environment = interpreter.getEnvironment();
-    	context = interpreter.newContext();
+    	context = interpreter.newActivation();
     	symbol = Symbol.get("symbol");
     	stackFrame = new StackFrame();
     	aFunction = mock(ExecutableDOS.class);
@@ -48,11 +48,11 @@ public class FunctionCallOpCodeTest {
     }
     
     @Test
-    public void shouldGetFunctionFromContext() {
-    	Context context = mock(Context.class);
-    	when(context.getFunction(symbol)).thenReturn(aFunction);
+    public void shouldGetFunctionFromThis() {
+    	ObjectDOS object = mock(ObjectDOS.class);
+    	when(object.getFunction(symbol)).thenReturn(aFunction);
     	
-    	new OpCode.FunctionCall(symbol).execute(context, stackFrame);
+    	new OpCode.FunctionCall(symbol).execute(object, stackFrame);
     }
     
     @Test
@@ -66,7 +66,7 @@ public class FunctionCallOpCodeTest {
     
     @Test
     public void shouldExecuteFunction() {
-    	Context context = mock(Context.class);
+    	ObjectDOS context = mock(Activation.class);
     	when(context.getFunction(symbol)).thenReturn(aFunction);
 
     	new OpCode.FunctionCall(symbol).execute(context, stackFrame);
@@ -76,7 +76,7 @@ public class FunctionCallOpCodeTest {
     
     @Test
     public void shouldReturnResult() {
-    	Context context = interpreter.newContext();
+    	ObjectDOS context = interpreter.newActivation();
     	context.setFunction(symbol, aFunction);
 
     	when(aFunction.execute((ObjectDOS)anyObject(), (ListDOS)anyObject())).thenReturn(object);

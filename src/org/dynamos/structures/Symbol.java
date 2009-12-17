@@ -29,7 +29,7 @@ public class Symbol {
     }
 
     public String toString() {
-        return symbol;
+        return "Symbol:" + symbol;
     }
 
     public static final Symbol ARGUMENTS = Symbol.get("arguments");
@@ -39,6 +39,7 @@ public class Symbol {
 	public static final Symbol ADD_SLOT_$ = Symbol.get("addSlot:");
 	public static final Symbol ADD_SLOT_$_WITH_VALUE_$ = Symbol.get("addSlot:withValue:");
 	public static final Symbol CONTEXTUALIZE_FUNCTION_$_IN_$ = VMObjectDOS.CONTEXTUALIZE_FUNCTION_$_IN_$;
+	public static final Symbol PARENT = Symbol.get("parent");
 	public static final Symbol SET_PARENT_$ = Symbol.get("parent:");
 	public static final Symbol EXECUTE = Symbol.get("execute");
 	public static final Symbol SET_FUNCTION_$_TO_$ = Symbol.get("setFunction:to:");
