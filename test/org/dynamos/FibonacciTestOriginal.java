@@ -48,7 +48,9 @@ public class FibonacciTestOriginal {
 
     Symbol temp1 = Symbol.get("temp1");
     Symbol temp2 = Symbol.get("temp2");
-	Symbol numberFactory = Symbol.get("numberFactory");;
+	Symbol numberFactory = Symbol.get("numberFactory");
+
+	Symbol applicationObject = Symbol.get("application");
 
     @Test
     public void shouldCalculateFibonacciAt0() {
@@ -99,8 +101,6 @@ public class FibonacciTestOriginal {
 		OpCodeInterpreter interpreter = new OpCodeInterpreter();
 		Environment environment = interpreter.getEnvironment();
 		
-        Activation applicationContext = interpreter.newActivation();
-
         FunctionDOS anon1Function = environment.createFunction(new Symbol[] {}, new OpCode[] {
                 new OpCode.PushSymbol(one),
                 new OpCode.FunctionCall(Symbol.GET_SLOT_$),
@@ -136,7 +136,7 @@ public class FibonacciTestOriginal {
         });
 
         
-        FunctionWithContext fibonacciFunction = environment.createFunctionWithContext(environment.createFunction(new Symbol[] {index}, new OpCode[] {
+        FunctionDOS fibonacciFunction = environment.createFunction(new Symbol[] {index}, new OpCode[] {
 	            new OpCode.Debug("in fibonacci with argument", index),
 	            new OpCode.Push(two), // result = index isLessThan: two
 	            new OpCode.SetObject(index),
@@ -156,23 +156,28 @@ public class FibonacciTestOriginal {
 	            new OpCode.SetObject(Symbol.RESULT), // call anon function
 	            new OpCode.FunctionCall(Symbol.EXECUTE),
 	            new OpCode.Debug("executed function", Symbol.RESULT)
-        	}),
-        	applicationContext);
+        	});
 
-        applicationContext.setSlot(one, StandardObjects.numberDOS(interpreter.getEnvironment(), 1));
-        applicationContext.setSlot(two, StandardObjects.numberDOS(interpreter.getEnvironment(), 2));
-        applicationContext.setSlot(sequenceIndexSymbol, StandardObjects.numberDOS(interpreter.getEnvironment(), sequenceIndex));
-        applicationContext.setSlot(anon1, anon1Function);
-        applicationContext.setSlot(anon2, anon2Function);
-        applicationContext.setFunction(fibonacci$, fibonacciFunction);
+        ObjectDOS application = environment.createNewObject();
+
+        application.setSlot(one, StandardObjects.numberDOS(interpreter.getEnvironment(), 1));
+        application.setSlot(two, StandardObjects.numberDOS(interpreter.getEnvironment(), 2));
+        application.setSlot(anon1, anon1Function);
+        application.setSlot(anon2, anon2Function);
+        application.setFunction(fibonacci$, fibonacciFunction);
         
-        interpreter.interpret(applicationContext, new OpCode[] {
+        Activation activation = interpreter.newActivation();
+        activation.setSlot(applicationObject, application);
+        activation.setSlot(sequenceIndexSymbol, StandardObjects.numberDOS(interpreter.getEnvironment(), sequenceIndex));
+        
+        interpreter.interpret(activation, new OpCode[] {
         	new OpCode.Push(sequenceIndexSymbol),
+        	new OpCode.SetObject(applicationObject),
         	new OpCode.Debug("calling fibonacci with", sequenceIndexSymbol),
         	new OpCode.FunctionCall(fibonacci$)
         });
         
-        assertThat(((ValueObject) applicationContext.getSlot(Symbol.RESULT)).getValue(), is(expectedResult));
+        assertThat(((ValueObject) activation.getSlot(Symbol.RESULT)).getValue(), is(expectedResult));
 	}
 
 }

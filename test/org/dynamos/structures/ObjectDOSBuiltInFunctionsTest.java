@@ -30,6 +30,7 @@ public class ObjectDOSBuiltInFunctionsTest {
 		value = environment.createNewObject();
 		arguments = new ListDOS();
     	context = interpreter.newActivation();
+    	context.setVictim(environment.createNewObject());
 	}
     
     @Test

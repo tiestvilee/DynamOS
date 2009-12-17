@@ -169,6 +169,26 @@ public class Activation extends ObjectDOS {
     public Activation getContext() {
     	return (Activation) getTrait("context");
     }
+    
+    public ObjectDOS getSlot(Symbol symbol) {
+    	// TODO test for this...
+        ObjectDOS slot = super.getSlot(symbol);
+        if(slot == UNDEFINED) {
+        	if(symbol == Symbol.THIS) {
+        		throw new RuntimeException("couldn't find THIS, make sure you set a victim");
+        	}
+        	slot = getSlot(Symbol.THIS).getSlot(symbol);
+        }
+        return slot;
+    }
+
+    public ExecutableDOS getFunction(Symbol symbol) {        
+    	ExecutableDOS slot = super.getFunction(symbol);
+        if(slot == null) {
+        	slot = getSlot(Symbol.THIS).getFunction(symbol);
+        }
+        return slot;
+    }
 
 
 }

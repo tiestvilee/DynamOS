@@ -36,6 +36,8 @@ public class OpCode {
         	}
 			System.out.println("find and execute " + symbol + " on " + target + " with " + ((ListDOS) stackFrame.getArguments()).getRawList());
 			ExecutableDOS function = (ExecutableDOS) target.getFunction(symbol);
+			// TODO AAAAA the following always executes with target, but what if the function was on the real parent object, 
+			// rather than the current activation
         	ObjectDOS result = function.execute(target, stackFrame.getArguments());
 
         	self.setSlot(Symbol.RESULT, result);
@@ -112,11 +114,11 @@ public class OpCode {
         @Override
         public boolean execute(ObjectDOS self, StackFrame stackFrame) {
         	if(symbol == Symbol.PARENT) {
-        		System.out.println(message + " parent of " + self + " is " + self.getTrait("name"));
+        		System.out.println(message + " parent of " + self + " is " + self.getTrait("parent"));
         	} else {
 	            ObjectDOS argument = (ObjectDOS) self.getSlot(symbol);
 	            if(argument instanceof ValueObject) {
-	            	System.out.println(message + " " + ((ValueObject) argument).getValue() + "@" + argument + " parent " + argument.getTrait("name"));
+	            	System.out.println(message + " " + ((ValueObject) argument).getValue() + "@" + argument + " parent " + argument.getTrait("parent"));
 	            } else  {
 	            	System.out.println(message + " " + argument);
 	            }

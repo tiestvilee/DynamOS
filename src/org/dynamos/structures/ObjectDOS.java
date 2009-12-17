@@ -17,7 +17,7 @@ import org.dynamos.Environment;
 public class ObjectDOS {
 	
 	/* Compile time definition of Object */
-	private static ObjectDOS UNDEFINED;
+	public static ObjectDOS UNDEFINED;
 	
     private HashMap<Symbol, ObjectDOS> slots;
     private HashMap<Symbol, ExecutableDOS> functions;

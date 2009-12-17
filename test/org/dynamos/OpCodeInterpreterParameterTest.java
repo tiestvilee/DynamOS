@@ -9,7 +9,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import org.dynamos.structures.Activation;
-import org.dynamos.structures.FunctionWithContext;
 import org.dynamos.structures.FunctionDOS;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
@@ -42,6 +41,9 @@ public class OpCodeInterpreterParameterTest {
 	private Symbol local2Symbol = Symbol.get("local2");
 	private Symbol local3Symbol = Symbol.get("local3");
 	private Symbol functionName2 = Symbol.get("functionName2");
+	
+	private ObjectDOS emptyObject;
+	private Symbol emptyObjectSymbol = Symbol.get("emptyObject");
 
     @Before
     public void setUp() {
@@ -51,10 +53,17 @@ public class OpCodeInterpreterParameterTest {
 		argument2 = interpreter.getEnvironment().createNewObject();
 		argument3 = interpreter.getEnvironment().createNewObject();
         
+		emptyObject = interpreter.getEnvironment().createNewObject();
+		emptyObject.setSlot(zeroSymbol, StandardObjects.numberDOS(interpreter.getEnvironment(), 0));
+		emptyObject.setSlot(oneSymbol, StandardObjects.numberDOS(interpreter.getEnvironment(), 1));
+		
         context = interpreter.newActivation();
 		context.setSlot(local1Symbol, argument1);
 		context.setSlot(local2Symbol, argument2);
 		context.setSlot(local3Symbol, argument3);
+		context.setSlot(emptyObjectSymbol, emptyObject);
+		context.setVictim(interpreter.getEnvironment().createNewObject());
+		
     }
     
     @Test
@@ -74,14 +83,15 @@ public class OpCodeInterpreterParameterTest {
 			new OpCode.PushSymbol(argumentSymbol),
         	new OpCode.FunctionCall(Symbol.GET_SLOT_$)
         };
-		Symbol[] argumentSymbols = new Symbol[] {argumentSymbol, argument2Symbol};
+		Symbol[] argumentSymbols = new Symbol[] {argument1Symbol, argument2Symbol};
 		
-		setUpReceiverFunctionWith(argumentSymbols, receiverOpCodes);
-
+		FunctionDOS receiverFunction = new FunctionDOS(interpreter, argumentSymbols, receiverOpCodes);
+		emptyObject.setFunction(functionName2, receiverFunction);
 		
 		OpCode[] callerOpCodes = new OpCode[] {
         	new OpCode.Push(local1Symbol),
         	new OpCode.Push(local2Symbol),
+        	new OpCode.SetObject(emptyObjectSymbol),
         	new OpCode.FunctionCall(functionName2)
         };
 		
@@ -103,6 +113,7 @@ public class OpCodeInterpreterParameterTest {
 		
 		OpCode[] callerOpCodes = new OpCode[] {
         	new OpCode.Push(local1Symbol),
+        	new OpCode.SetObject(emptyObjectSymbol),
         	new OpCode.FunctionCall(functionName2)
         };
 		
@@ -126,6 +137,7 @@ public class OpCodeInterpreterParameterTest {
         	new OpCode.Push(local1Symbol),
         	new OpCode.Push(local2Symbol),
         	new OpCode.Push(local3Symbol),
+        	new OpCode.SetObject(emptyObjectSymbol),
         	new OpCode.FunctionCall(functionName2)
         };
 
@@ -136,13 +148,7 @@ public class OpCodeInterpreterParameterTest {
     
 	private void setUpReceiverFunctionWith(Symbol[] argumentSymbols, OpCode[] receiverOpCodes) {
 		FunctionDOS receiverFunction = new FunctionDOS(interpreter, argumentSymbols, receiverOpCodes);
-		
-		Activation emptyContext = interpreter.newActivation();
-		emptyContext.setSlot(zeroSymbol, StandardObjects.numberDOS(interpreter.getEnvironment(), 0));
-		emptyContext.setSlot(oneSymbol, StandardObjects.numberDOS(interpreter.getEnvironment(), 1));
-		
-		FunctionWithContext contextualReceiverFunction = new FunctionWithContext(receiverFunction, emptyContext);
-		context.setFunction(functionName2, contextualReceiverFunction);
+		emptyObject.setFunction(functionName2, receiverFunction);
 	}
 
     @Test
@@ -161,6 +167,7 @@ public class OpCodeInterpreterParameterTest {
         	new OpCode.Push(local1Symbol),
         	new OpCode.Push(local2Symbol),
         	new OpCode.Push(local3Symbol),
+        	new OpCode.SetObject(emptyObjectSymbol),
         	new OpCode.FunctionCall(functionName2)
         };
 
