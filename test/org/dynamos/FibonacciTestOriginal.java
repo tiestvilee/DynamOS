@@ -8,6 +8,7 @@ package org.dynamos;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import org.dynamos.structures.Activation;
 import org.dynamos.structures.FunctionWithContext;
 import org.dynamos.structures.FunctionDOS;
 import org.dynamos.structures.ObjectDOS;
@@ -48,64 +49,65 @@ public class FibonacciTestOriginal {
     Symbol temp1 = Symbol.get("temp1");
     Symbol temp2 = Symbol.get("temp2");
 	Symbol numberFactory = Symbol.get("numberFactory");;
-//
-//    @Test
-//    public void shouldCalculateFibonacciAt0() {
-//    	
-//    	assetFibonacciAt(0, 1);
-//        
-//    }
-//
-//    @Test
-//    public void shouldCalculateFibonacciAt1() {
-//    	
-//        assetFibonacciAt(1, 1);
-//        
-//    }
-//
-//    @Test
-//    public void shouldCalculateFibonacciAt2() {
-//    	
-//        assetFibonacciAt(2, 2);
-//        
-//    }
-//
-//    @Test
-//    public void shouldCalculateFibonacciAt3() {
-//    	
-//        assetFibonacciAt(3, 3);
-//        
-//    }
-//
-//    @Test
-//    public void shouldCalculateFibonacciAt4() {
-//    	
-//        assetFibonacciAt(4, 5);
-//        
-//    }
-//
-//    @Test
-//    public void shouldCalculateFibonacciAt5() {
-//    	
-//        assetFibonacciAt(5, 8);
-//        
-//    }
+
+    @Test
+    public void shouldCalculateFibonacciAt0() {
+    	
+    	assetFibonacciAt(0, 1);
+        
+    }
+
+    @Test
+    public void shouldCalculateFibonacciAt1() {
+    	
+        assetFibonacciAt(1, 1);
+        
+    }
+
+    @Test
+    public void shouldCalculateFibonacciAt2() {
+    	
+        assetFibonacciAt(2, 2);
+        
+    }
+
+    @Test
+    public void shouldCalculateFibonacciAt3() {
+    	
+        assetFibonacciAt(3, 3);
+        
+    }
+
+    @Test
+    public void shouldCalculateFibonacciAt4() {
+    	
+        assetFibonacciAt(4, 5);
+        
+    }
+
+    @Test
+    public void shouldCalculateFibonacciAt5() {
+    	
+        assetFibonacciAt(5, 8);
+        
+    }
 
 	private void assetFibonacciAt(int sequenceIndex, int expectedResult) {
         
         System.out.println("******************************************************\n");
         
 		OpCodeInterpreter interpreter = new OpCodeInterpreter();
+		Environment environment = interpreter.getEnvironment();
 		
-        ObjectDOS applicationContext = interpreter.newActivation();
+        Activation applicationContext = interpreter.newActivation();
 
-        FunctionDOS anon1Function = new FunctionDOS(interpreter, new Symbol[] {}, new OpCode[] {
+        FunctionDOS anon1Function = environment.createFunction(new Symbol[] {}, new OpCode[] {
                 new OpCode.PushSymbol(one),
                 new OpCode.FunctionCall(Symbol.GET_SLOT_$),
 	            new OpCode.Debug("returning (1) ", Symbol.RESULT)
         });
 
-        FunctionDOS anon2Function = new FunctionDOS(interpreter, new Symbol[] {}, new OpCode[] {
+        FunctionDOS anon2Function = environment.createFunction(new Symbol[] {}, new OpCode[] {
             new OpCode.Push(one),  // result = index - 1
             new OpCode.SetObject(index),
             new OpCode.FunctionCall(minus$),
@@ -134,7 +136,7 @@ public class FibonacciTestOriginal {
         });
 
         
-        FunctionWithContext fibonacciFunction = new FunctionWithContext(new FunctionDOS(interpreter, new Symbol[] {index}, new OpCode[] {
+        FunctionWithContext fibonacciFunction = environment.createFunctionWithContext(environment.createFunction(new Symbol[] {index}, new OpCode[] {
 	            new OpCode.Debug("in fibonacci with argument", index),
 	            new OpCode.Push(two), // result = index isLessThan: two
 	            new OpCode.SetObject(index),

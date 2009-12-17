@@ -27,7 +27,7 @@ public class FunctionCallOpCodeTest {
     ExecutableDOS aFunction;
     ExecutableDOS anotherFunction;
 	
-    ObjectDOS context;
+    Activation context;
     ListDOS arguments;
     ObjectDOS object;
     OpCodeInterpreter interpreter;
@@ -76,7 +76,7 @@ public class FunctionCallOpCodeTest {
     
     @Test
     public void shouldReturnResult() {
-    	ObjectDOS context = interpreter.newActivation();
+    	Activation context = interpreter.newActivation();
     	context.setFunction(symbol, aFunction);
 
     	when(aFunction.execute((ObjectDOS)anyObject(), (ListDOS)anyObject())).thenReturn(object);

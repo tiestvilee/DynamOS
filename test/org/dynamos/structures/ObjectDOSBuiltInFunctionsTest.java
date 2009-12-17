@@ -26,7 +26,7 @@ public class ObjectDOSBuiltInFunctionsTest {
 		interpreter = new OpCodeInterpreter();
 		environment = interpreter.getEnvironment();
 		vm = VMObjectDOS.getVMObject(environment);
-		object = interpreter.newActivation();
+		object = environment.createNewObject();
 		value = environment.createNewObject();
 		arguments = new ListDOS();
     	context = interpreter.newActivation();

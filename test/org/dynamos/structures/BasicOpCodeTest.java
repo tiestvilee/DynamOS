@@ -21,7 +21,7 @@ import org.junit.Test;
 public class BasicOpCodeTest {
 
     FunctionDOS function;
-    ObjectDOS context;
+    Activation context;
     ListDOS arguments;
     ObjectDOS object;
     OpCodeInterpreter interpreter;
