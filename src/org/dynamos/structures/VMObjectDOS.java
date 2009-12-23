@@ -31,7 +31,7 @@ public class VMObjectDOS {
 
 	public static final Symbol CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$ = Symbol.get("createFunctionWithArguments:locals:opCodes:");
 
-	public static final Symbol CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$_IN_$ = Symbol.get("createConstructorWithArguments:OpCodes:In:");
+	public static final Symbol CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$ = Symbol.get("createConstructorWithArguments:OpCodes:");
 
 	
     public static ObjectDOS getVMObject(final Environment environment) {
@@ -67,19 +67,18 @@ public class VMObjectDOS {
         	}
         };
 
-        ExecutableDOS CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$_IN_$_EXEC = new ExecutableDOS() {
+        ExecutableDOS CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$_EXEC = new ExecutableDOS() {
         	@Override
         	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
         		List<ObjectDOS> argumentList = ((ListDOS) arguments.at(0)).getRawList();
         		List<ObjectDOS> opCodes = ((ListDOS) arguments.at(1)).getRawList();
-        		ObjectDOS context = arguments.at(2);
         		
-        		System.out.println("... creating constructor with " + argumentList + " " + opCodes + " at " + context);
+        		System.out.println("... creating constructor with " + argumentList + " " + opCodes);
 
 				Symbol[] nativeArguments = copyListOfSymbolWrappersToArrayOfSymbols(argumentList);
 				OpCode[] nativeOpCodes = copyListOfOpcodeWrappersToArrayOfOpcodes(opCodes);
 				
-				return environment.createConstructor(nativeArguments, nativeOpCodes, context);
+				return environment.createConstructor(nativeArguments, nativeOpCodes);
         	}
 
         };
@@ -117,7 +116,7 @@ public class VMObjectDOS {
         
         virtualMachine.setFunction(CONTEXTUALIZE_FUNCTION_$_IN_$, CONTEXTUALIZE_FUNCTION_EXEC);
         virtualMachine.setFunction(CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$, CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$_EXEC);
-        virtualMachine.setFunction(CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$_IN_$, CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$_IN_$_EXEC);
+        virtualMachine.setFunction(CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$, CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$_EXEC);
         
         virtualMachine.setFunction(ADD_$_TO_$, ADD_EXEC);
         virtualMachine.setFunction(SUBTRACT_$_FROM_$, SUB_EXEC);
@@ -128,7 +127,7 @@ public class VMObjectDOS {
         return virtualMachine;
     }
     
-	private static OpCode[] copyListOfOpcodeWrappersToArrayOfOpcodes(
+	static OpCode[] copyListOfOpcodeWrappersToArrayOfOpcodes(
 			List<ObjectDOS> opCodes) {
 		OpCode[] nativeOpCodes = new OpCode[opCodes.size()];
 		int index;
@@ -139,7 +138,7 @@ public class VMObjectDOS {
 		return nativeOpCodes;
 	}
 
-	private static Symbol[] copyListOfSymbolWrappersToArrayOfSymbols(
+	static Symbol[] copyListOfSymbolWrappersToArrayOfSymbols(
 			List<ObjectDOS> argumentList) {
 		Symbol[] nativeArguments = new Symbol[argumentList.size()];
 		int index = 0;

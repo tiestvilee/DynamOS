@@ -70,12 +70,12 @@ public class ObjectDOS {
     }
 
     public ObjectDOS getTrait(String name) {
-    	ObjectDOS trait = traits.get(name);
-        if(trait == null) {
-            return null;
-        }
-        return trait;
+    	return traits.get(name);
     }
+
+	public void removeTrait(String name) {
+		traits.remove(name);
+	}
 
     public void setParent(ObjectDOS parent) {
         setTrait("parent", parent);
@@ -86,7 +86,7 @@ public class ObjectDOS {
     }
 
     public String toString() {
-        return getClass().getSimpleName() + functions.keySet() + slots.keySet();
+        return getClass().getSimpleName() + " f" + functions.keySet() + " s" + slots.keySet();
     }
 
     public HashMap<Symbol, ExecutableDOS> getFunctions() {

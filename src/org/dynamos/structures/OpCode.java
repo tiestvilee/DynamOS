@@ -128,9 +128,11 @@ public class OpCode {
     }
     
 	public static class StartOpCodeList extends OpCode {
+		/* do nothing */
 	}
     
 	public static class EndOpCodeList extends OpCode {
+		/* do nothing */
 	}
 
 }

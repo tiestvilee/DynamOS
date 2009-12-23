@@ -25,7 +25,7 @@ public class OpCodeInterpreter {
 		environment.init(this);
 	}
 
-    public void interpret(Activation context, OpCode[] opCodes) {
+    public void interpret(ObjectDOS context, OpCode[] opCodes) {
         StackFrame stackFrame = new StackFrame();
         for(int i=0; i<opCodes.length; i++) {
 			if(opCodes[i] instanceof OpCode.StartOpCodeList) {
@@ -37,7 +37,7 @@ public class OpCodeInterpreter {
         }
     }
 
-	private int storeOpCodesInList(Activation context, OpCode[] opCodes, int i) {
+	private int storeOpCodesInList(ObjectDOS context, OpCode[] opCodes, int i) {
 		int opcodeListDepth = 1;
 		ListDOS opcodeList = new ListDOS();
 		i += 1;

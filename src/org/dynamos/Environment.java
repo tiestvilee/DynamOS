@@ -1,9 +1,9 @@
 package org.dynamos;
 
-import org.dynamos.structures.ConstructorDOS;
 import org.dynamos.structures.Activation;
-import org.dynamos.structures.FunctionWithContext;
+import org.dynamos.structures.ConstructorDOS;
 import org.dynamos.structures.FunctionDOS;
+import org.dynamos.structures.FunctionWithContext;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.StandardObjects;
@@ -128,15 +128,13 @@ public class Environment {
 		return functionDefinition;
 	}
 
-	public ObjectDOS createConstructor(Symbol[] arguments, OpCode[] opCodes, ObjectDOS localContext) {
+	public ConstructorDOS createConstructor(Symbol[] arguments, OpCode[] opCodes) {
 		FunctionDOS functionDefinition = new FunctionDOS(
 				interpreter, 
 				arguments,
 				opCodes);
 		functionDefinition.setParent(rootObject);
-		ConstructorDOS function = new ConstructorDOS(
-				functionDefinition,
-				localContext);
+		ConstructorDOS function = new ConstructorDOS(functionDefinition);
 		function.setParent(rootObject);
 		return function;
 	}

@@ -9,7 +9,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import org.dynamos.structures.Activation;
-import org.dynamos.structures.FunctionWithContext;
 import org.dynamos.structures.FunctionDOS;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
@@ -47,7 +46,6 @@ public class FibonacciTestOriginal {
     Symbol anon2 = Symbol.get("anon2");
 
     Symbol temp1 = Symbol.get("temp1");
-    Symbol temp2 = Symbol.get("temp2");
 	Symbol numberFactory = Symbol.get("numberFactory");
 
 	Symbol applicationObject = Symbol.get("application");
@@ -115,11 +113,9 @@ public class FibonacciTestOriginal {
             new OpCode.Push(Symbol.RESULT), // result = fibonacci( result )
             new OpCode.FunctionCall(fibonacci$),
 
-            new OpCode.Debug("result", Symbol.RESULT),
             new OpCode.PushSymbol(temp1),  // temp1 = result
             new OpCode.Push(Symbol.RESULT),
-            new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
-            new OpCode.Debug("temp1", temp1),
+            new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
 
             new OpCode.Push(two),  // result = index - 2
             new OpCode.SetObject(index),
@@ -128,11 +124,13 @@ public class FibonacciTestOriginal {
             new OpCode.Push(Symbol.RESULT), // result = fibonacci( result )
             new OpCode.FunctionCall(fibonacci$),
 
+            new OpCode.Debug("processing index", index),
             new OpCode.Debug("left side", temp1),
             new OpCode.Debug("right side", Symbol.RESULT),
             new OpCode.Push(Symbol.RESULT), // temp1 = temp1 + result
             new OpCode.SetObject(temp1),
-            new OpCode.FunctionCall(plus$)
+            new OpCode.FunctionCall(plus$),
+            new OpCode.Debug("hence result", Symbol.RESULT),
         });
 
         
@@ -155,7 +153,7 @@ public class FibonacciTestOriginal {
 	            
 	            new OpCode.SetObject(Symbol.RESULT), // call anon function
 	            new OpCode.FunctionCall(Symbol.EXECUTE),
-	            new OpCode.Debug("executed function", Symbol.RESULT)
+	            new OpCode.Debug("finished fibonacci, returning", Symbol.RESULT)
         	});
 
         ObjectDOS application = environment.createNewObject();
@@ -174,7 +172,8 @@ public class FibonacciTestOriginal {
         	new OpCode.Push(sequenceIndexSymbol),
         	new OpCode.SetObject(applicationObject),
         	new OpCode.Debug("calling fibonacci with", sequenceIndexSymbol),
-        	new OpCode.FunctionCall(fibonacci$)
+        	new OpCode.FunctionCall(fibonacci$),
+        	new OpCode.Debug("shell finished", Symbol.RESULT),
         });
         
         assertThat(((ValueObject) activation.getSlot(Symbol.RESULT)).getValue(), is(expectedResult));

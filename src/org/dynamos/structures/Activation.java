@@ -67,7 +67,7 @@ public class Activation extends ObjectDOS {
 						}, 
 						contextContainingVM ));
 			
-			activationPrototype.setFunction(Symbol.CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$_IN_$, 
+			activationPrototype.setFunction(Symbol.CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$, 
 					environment.createFunctionWithContext( 
 						new Symbol[] {argumentList, opcodes, context}, 
 						new OpCode[] {
@@ -75,12 +75,13 @@ public class Activation extends ObjectDOS {
 	        				new OpCode.Push(opcodes),
 	        				new OpCode.Push(context),
 							new OpCode.SetObject(VMObjectDOS.VM),
-							new OpCode.FunctionCall(VMObjectDOS.CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$_IN_$)
+							new OpCode.FunctionCall(VMObjectDOS.CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$)
 						}, 
 						contextContainingVM ));
 			
 
 			activationPrototype.setFunction(Symbol.SET_FUNCTION_$_TO_$, SET_FUNCTION_$_TO_$_EXEC);
+			activationPrototype.setFunction(Symbol.SET_LOCAL_SLOT_$_TO_$, SET_LOCAL_SLOT_$_TO_$_EXEC);
 			activationPrototype.setFunction(Symbol.SET_SLOT_$_TO_$, SET_SLOT_$_TO_$_EXEC);
 			activationPrototype.setFunction(Symbol.GET_SLOT_$, GET_SLOT_$_EXEC);
 			
@@ -102,18 +103,18 @@ public class Activation extends ObjectDOS {
 	    		
 	        	ObjectDOS objectWithSlot;
 	    		if(theObject instanceof Activation) {
+	    			/* implicit call */
 		        	objectWithSlot = findSlotInContextChain(theObject, symbol);
 	    		} else {
+	    			/* explicit call */
 	    			objectWithSlot = theObject;
 	    		}
 	    		objectWithSlot.setSlot(symbol, value);
-	        	System.out.println("+++|| setting slot " + symbol + " on " + objectWithSlot + " to " + value + " -> " + objectWithSlot.getSlot(symbol));
+	        	System.out.println("+++|| set slot " + symbol + " on " + objectWithSlot + " to " + value + " -> " + objectWithSlot.getSlot(symbol));
 	    		return objectWithSlot;
 	    	}
 
-			private ObjectDOS findSlotInContextChain(ObjectDOS theObject,
-					Symbol symbol) {
-				ObjectDOS objectWithSlot;
+			private ObjectDOS findSlotInContextChain(ObjectDOS theObject, Symbol symbol) {
 				Activation cursor = (Activation) theObject;
 				while(cursor != null && cursor.getLocalSlot(symbol) == null)
 				{
@@ -121,15 +122,31 @@ public class Activation extends ObjectDOS {
 				}
 				
 				if(cursor == null) {
-					objectWithSlot = ((Activation) theObject).getVictim();
-					if(objectWithSlot.getLocalSlot(symbol) == null) {
-						objectWithSlot = theObject;
-					}
-				} else {
-					objectWithSlot = cursor;
+					System.out.println("using a victim " + ((Activation) theObject).getVictim());
+					return ((Activation) theObject).getVictim();
 				}
-				return objectWithSlot;
+	    		System.out.println("using an activation " + cursor);
+				
+				return cursor;
 			}
+	    };
+	    
+	    private static ExecutableDOS SET_LOCAL_SLOT_$_TO_$_EXEC = new ExecutableDOS() {
+	    	@Override
+	    	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+	    		Symbol symbol = ((SymbolWrapper) arguments.at(0)).getSymbol();
+	    		ObjectDOS value = arguments.at(1);
+	    		
+	    		if(theObject instanceof Activation) {
+	    			/* implicit call */
+	    			theObject.setSlot(symbol, value);
+		        	System.out.println("+++|| set slot " + symbol + " on " + theObject + " to " + value + " -> " + theObject.getSlot(symbol));
+		        	return theObject;
+	    		} else {
+	    			/* explicit call */
+	    			throw new RuntimeException("Can't set a slot directly on an object, only within that object's functions");
+	    		}
+	    	}
 	    };
 	    
 	    private static ExecutableDOS GET_SLOT_$_EXEC = new ExecutableDOS() {

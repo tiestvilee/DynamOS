@@ -21,15 +21,19 @@ public class StandardObjects {
 	// PICs are unique to every sandbox!
 
 	public static class NullDOS extends ObjectDOS {
+		/* just for debugging really */
 	}
 
 	public static class UndefinedDOS extends ObjectDOS {
+		/* just for debugging really */
 	}
 
 	public static class TrueDOS extends ObjectDOS {
+		/* just for debugging really */
 	}
 
 	public static class FalseDOS extends ObjectDOS {
+		/* just for debugging really */
 	}
 
 	public static ObjectDOS initialiseBooleans(final OpCodeInterpreter interpreter, Environment environment) {

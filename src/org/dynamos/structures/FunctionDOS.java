@@ -25,19 +25,36 @@ public class FunctionDOS extends ExecutableDOS {
 
     public void execute(Activation activation) {
     	ListDOS contextArguments = (ListDOS) activation.getSlot(Symbol.ARGUMENTS);
-		int finalIndex = Math.min(contextArguments.size(), arguments.length);
-		
-		int index = 0;
-    	for(;index < finalIndex; index++) {
-    		activation.setSlot(arguments[index], contextArguments.at(index));
-    	}
-    	for(;index < arguments.length; index++) {
-    		activation.setSlot(arguments[index], interpreter.getEnvironment().getUndefined());
-    	}
+    	
+		updateArgumentsInContext(activation, contextArguments);
     	activation.setSlot(Symbol.RESULT, activation);
     	
         interpreter.interpret(activation, opCodes);
     }
+    
+    public ObjectDOS construct(ListDOS contextArguments) {
+    	ObjectDOS newObject = interpreter.getEnvironment().createNewObject();
+    	newObject.setTrait("constructorFunctions", interpreter.newActivation());
+    	
+    	updateArgumentsInContext(newObject, contextArguments);
+    	
+        interpreter.interpret(newObject, opCodes);
+        
+        newObject.removeTrait("constructorFunctions");
+        
+        return newObject;
+    }
+
+	private void updateArgumentsInContext(ObjectDOS context, ListDOS contextArguments) {
+		int finalIndex = Math.min(contextArguments.size(), arguments.length);
+		int index = 0;
+    	for(;index < finalIndex; index++) {
+    		context.setSlot(arguments[index], contextArguments.at(index));
+    	}
+    	for(;index < arguments.length; index++) {
+    		context.setSlot(arguments[index], interpreter.getEnvironment().getUndefined());
+    	}
+	}
 
 	public Activation newActivation(Activation context, ListDOS arguments, ObjectDOS theObject) {
 		// TODO where should this stuff be set?  in the interpreter?
@@ -54,10 +71,8 @@ public class FunctionDOS extends ExecutableDOS {
 		return activation;
 	}
 
-	public ObjectDOS newObject(ObjectDOS context, ListDOS arguments) {
+	public ObjectDOS newObject() {
 		ObjectDOS newObject = interpreter.newObject();
-        //newContext.setContext(context);
-        newObject.setArguments(arguments);
 		return newObject;
 	}
 
