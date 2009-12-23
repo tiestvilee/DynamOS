@@ -107,6 +107,8 @@ public class Activation extends ObjectDOS {
 		        	objectWithSlot = findSlotInContextChain(theObject, symbol);
 	    		} else {
 	    			/* explicit call */
+	    			// this currently must be allowed so that Constructor functions work
+	    			// TODO is this bad?  is this a big hole? setters are only available on contexts, so you could change temps in a context, yuk
 	    			objectWithSlot = theObject;
 	    		}
 	    		objectWithSlot.setSlot(symbol, value);

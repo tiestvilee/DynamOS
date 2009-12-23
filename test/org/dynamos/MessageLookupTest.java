@@ -168,29 +168,33 @@ public class MessageLookupTest {
 		assertThat(((ValueObject)result.getSlot(Symbol.RESULT).getSlot(obj1slot)).getValue(), is(3456));
 	}
 
-//	@Test
-//	public void functionCannotSetObjectSlotDirectly() {
-//		updateShellToCallCustomMethod();
-//		
-//		List<OpCode> customMessageOpCodes = new ArrayList<OpCode>();
-//		Collections.addAll(customMessageOpCodes,
-//			new OpCode.CreateValueObject(interpreter, 3456),
-//			new OpCode.PushSymbol(obj1slot),
-//			new OpCode.Push(Symbol.RESULT),
-//			new OpCode.SetObject(Symbol.THIS),
-//			new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$)
-//		);
-//		
-//		setupCustomMessage(customMessageOpCodes);
-//		
-//		try {
-//			executeOpCodes(opCodeList, opCodeShellList);
-//			fail("Shouldn't be allowed to assign slots on other objects");
-//		} catch (Exception e) {
-//			// pass
-//		}
-//		
-//	}
+	@Test
+	public void functionCannotSetObjectSlotDirectly() {
+		updateShellToCallCustomMethod();
+		
+		List<OpCode> customMessageOpCodes = new ArrayList<OpCode>();
+		Collections.addAll(customMessageOpCodes,
+			new OpCode.CreateValueObject(interpreter, 4567),
+			new OpCode.PushSymbol(obj1slot),
+			new OpCode.Push(Symbol.RESULT),
+			new OpCode.SetObject(Symbol.CURRENT_CONTEXT),
+			new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$)
+		);
+		
+		setupCustomMessage(customMessageOpCodes);
+		
+		try {
+			ObjectDOS result = executeOpCodes(opCodeList, opCodeShellList);
+			
+			assertThat(((ValueObject)result.getSlot(Symbol.RESULT).getSlot(obj1slot)).getValue(), is(1234));
+
+			fail("Shouldn't be allowed to assign slots on other objects");
+		} catch (Exception e) {
+			System.out.println(e);
+			// pass
+		}
+		
+	}
 
 	@Test
 	public void functionCannotSetObjectLocalSlotDirectly() {
