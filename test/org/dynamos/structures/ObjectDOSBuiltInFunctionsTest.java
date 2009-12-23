@@ -76,8 +76,7 @@ public class ObjectDOSBuiltInFunctionsTest {
     	assertThat(((ValueObject) object.getSlot(local)).getValue(), is(1234));
     }
 
-	private FunctionWithContext createFunctionWithContextThatSetsLocalToValue(
-			Activation context) {
+	private FunctionWithContext createFunctionWithContextThatSetsLocalToValue(Activation localContext) {
 		FunctionWithContext function = environment.createFunctionWithContext(
     			new Symbol[] {},
     			new OpCode[] {
@@ -86,7 +85,7 @@ public class ObjectDOSBuiltInFunctionsTest {
     				new OpCode.Push(Symbol.RESULT),
     				new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$)
     			},
-    			context);
+    			localContext);
 		return function;
 	}
     

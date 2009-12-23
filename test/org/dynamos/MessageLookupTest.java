@@ -59,7 +59,7 @@ public class MessageLookupTest {
 	
 	@Test
 	public void executes() {
-		ObjectDOS result = executeOpCodes(opCodeList, opCodeShellList);
+		ObjectDOS result = executeOpCodes();
 		assertThat(((ValueObject)result.getSlot(Symbol.RESULT).getSlot(obj1slot)).getValue(), is(1234));
 	}
 
@@ -72,7 +72,7 @@ public class MessageLookupTest {
 			);
 		updateOpcodeList(opCodeShellList, END_OF_SHELL, customOpCodes);
 		
-		ObjectDOS result = executeOpCodes(opCodeList, opCodeShellList);
+		ObjectDOS result = executeOpCodes();
 		assertThat(((ValueObject)result.getSlot(Symbol.RESULT).getSlot(obj1slot)).getValue(), is(2345));
 	}
 
@@ -85,7 +85,7 @@ public class MessageLookupTest {
 			);
 		updateOpcodeList(opCodeShellList, END_OF_SHELL, customOpCodes);
 		
-		ObjectDOS result = executeOpCodes(opCodeList, opCodeShellList);
+		ObjectDOS result = executeOpCodes();
 		assertThat(((ValueObject)result.getSlot(Symbol.RESULT)).getValue(), is(6789));
 	}
 
@@ -101,7 +101,7 @@ public class MessageLookupTest {
 		
 		setupCustomMessage(customMessageOpCodes);
 		
-		ObjectDOS result = executeOpCodes(opCodeList, opCodeShellList);
+		ObjectDOS result = executeOpCodes();
 		assertThat(((ValueObject)result.getSlot(Symbol.RESULT)).getValue(), is(6789));
 	}
 
@@ -121,7 +121,7 @@ public class MessageLookupTest {
 		
 		setupCustomMessage(customMessageOpCodes);
 		
-		ObjectDOS result = executeOpCodes(opCodeList, opCodeShellList);
+		ObjectDOS result = executeOpCodes();
 		
 		assertThat(((ValueObject)object0.getSlot(obj0slot)).getValue(), is(6789));
 		assertThat(((ValueObject)result.getSlot(Symbol.RESULT).getSlot(obj0slot)).getValue(), is(8901));
@@ -138,7 +138,7 @@ public class MessageLookupTest {
 		
 		setupCustomMessage(customMessageOpCodes);
 		
-		ObjectDOS result = executeOpCodes(opCodeList, opCodeShellList);
+		ObjectDOS result = executeOpCodes();
 		
 		assertThat(((ValueObject)object0.getSlot(obj0slot)).getValue(), is(6789));
 		assertThat(((ValueObject)result.getSlot(Symbol.RESULT).getSlot(obj0slot)).getValue(), is(9012));
@@ -161,7 +161,7 @@ public class MessageLookupTest {
 		
 		setupCustomMessage(customMessageOpCodes);
 		
-		ObjectDOS result = executeOpCodes(opCodeList, opCodeShellList);
+		ObjectDOS result = executeOpCodes();
 		
 		assertThat(((ValueObject)object0.getSlot(obj0slot)).getValue(), is(6789));
 		assertThat(((ValueObject)result.getSlot(Symbol.RESULT).getSlot(obj0slot)).getValue(), is(6789));
@@ -184,7 +184,7 @@ public class MessageLookupTest {
 		setupCustomMessage(customMessageOpCodes);
 		
 		try {
-			ObjectDOS result = executeOpCodes(opCodeList, opCodeShellList);
+			ObjectDOS result = executeOpCodes();
 			
 			assertThat(((ValueObject)result.getSlot(Symbol.RESULT).getSlot(obj1slot)).getValue(), is(1234));
 
@@ -212,7 +212,7 @@ public class MessageLookupTest {
 		setupCustomMessage(customMessageOpCodes);
 		
 		try {
-			executeOpCodes(opCodeList, opCodeShellList);
+			executeOpCodes();
 			fail("Shouldn't be allowed to assign slots on other objects");
 		} catch (Exception e) {
 			// pass
@@ -269,7 +269,7 @@ public class MessageLookupTest {
 		opcodes.addAll(i-1, customOpCodes);
 	}
 	
-	private ObjectDOS executeOpCodes(List<OpCode> opCodeList, List<OpCode> opCodeShellList) {
+	private ObjectDOS executeOpCodes() {
 		ExecutableDOS obj1Constructor = createObj1Constructor(opCodeList);
 		object0 = createSuperObject0();
 
@@ -285,27 +285,27 @@ public class MessageLookupTest {
 	}
 
 	private List<OpCode> setupBasicShellOpCodes() {
-		List<OpCode> opCodeShellList = new ArrayList<OpCode>();
-		Collections.addAll(opCodeShellList,
+		List<OpCode> opCodes = new ArrayList<OpCode>();
+		Collections.addAll(opCodes,
 	        	new OpCode.Push(obj0),
 	        	new OpCode.Push(listFactory),
 	        	new OpCode.FunctionCall(obj1ConstructorSymbol),
 	        	
 				new OpCode.Debug("returning from shell", Symbol.RESULT)
 	        );
-		return opCodeShellList;
+		return opCodes;
 	}
 
 	private ObjectDOS createSuperObject0() {
-		ObjectDOS object0 = interpreter.newObject();
-		object0.setSlot(obj0slot, new StandardObjects.ValueObject(6789));
-		object0.setFunction(obj0message, interpreter.getEnvironment().createFunction(
+		ObjectDOS newObject0 = interpreter.newObject();
+		newObject0.setSlot(obj0slot, new StandardObjects.ValueObject(6789));
+		newObject0.setFunction(obj0message, interpreter.getEnvironment().createFunction(
 				new Symbol[] {}, 
 				new OpCode[] {
 					new OpCode.PushSymbol(obj0slot),
 					new OpCode.FunctionCall(Symbol.GET_SLOT_$)
 				}));
-		object0.setFunction(obj0setter, interpreter.getEnvironment().createFunction(
+		newObject0.setFunction(obj0setter, interpreter.getEnvironment().createFunction(
 				new Symbol[] {}, 
 				new OpCode[] {
 					new OpCode.CreateValueObject(interpreter, 9012),
@@ -314,17 +314,17 @@ public class MessageLookupTest {
 					new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
 					new OpCode.Debug("what's this?", Symbol.THIS)
 				}));
-		return object0;
+		return newObject0;
 	}
 
-	private ExecutableDOS createObj1Constructor(List<OpCode> opCodeList) {
-		OpCode[] opCodes = opCodeList.toArray(new OpCode[0]);
+	private ExecutableDOS createObj1Constructor(List<OpCode> opCodesList) {
+		OpCode[] opCodes = opCodesList.toArray(new OpCode[0]);
 		return interpreter.getEnvironment().createConstructor(new Symbol[] {obj0, listFactory}, opCodes);
 	}
 
 	private List<OpCode> setupBasicObj1ConstructorOpCodes() {
-		List<OpCode> opCodeList = new ArrayList<OpCode>();
-		Collections.addAll(opCodeList,
+		List<OpCode> opCodes = new ArrayList<OpCode>();
+		Collections.addAll(opCodes,
 			// set parent
 			new OpCode.Push(obj0),
 			new OpCode.FunctionCall(Symbol.SET_PARENT_$),
@@ -379,6 +379,6 @@ public class MessageLookupTest {
             
 			new OpCode.Debug("returning from obj1 constructor", Symbol.RESULT)
         	);
-		return opCodeList;
+		return opCodes;
 	}
 }

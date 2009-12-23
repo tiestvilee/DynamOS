@@ -68,7 +68,7 @@ public class StandardObjects {
 		return booleanContainer;
 	}
 
-	public static ObjectDOS createListLibrary(final OpCodeInterpreter interpreter, Environment environment) {
+	public static ObjectDOS createListLibrary(Environment environment) {
 		ObjectDOS listFactory = environment.createNewObject();
 		
 		// add appropriate function to the prototype
@@ -95,13 +95,13 @@ public class StandardObjects {
 		// number library depends upon the VM, but that's all
 		numberLibraryContext.setSlot(VMObjectDOS.VM, environment.getVirtualMachine());
 
-		ObjectDOS numberFactory = createNumberFactory(interpreter, environment, numberLibraryContext, numberPrototypeSymbol, numberFactorySymbol);
-		createNumberPrototype(interpreter, environment, numberLibraryContext, numberPrototypeSymbol, numberFactorySymbol);
+		ObjectDOS numberFactory = createNumberFactory(environment, numberLibraryContext, numberPrototypeSymbol, numberFactorySymbol);
+		createNumberPrototype(environment, numberLibraryContext, numberPrototypeSymbol, numberFactorySymbol);
 
 		return numberFactory;
 	}
 
-	private static ObjectDOS createNumberFactory(final OpCodeInterpreter interpreter, Environment environment, Activation numberLibraryContext, Symbol numberPrototypeSymbol, Symbol numberFactorySymbol) {
+	private static ObjectDOS createNumberFactory(Environment environment, Activation numberLibraryContext, Symbol numberPrototypeSymbol, Symbol numberFactorySymbol) {
 		// createNumberFactory
 		Symbol number = Symbol.get("number");
 
@@ -120,7 +120,7 @@ public class StandardObjects {
 	}
 
 
-	private static void createNumberPrototype(final OpCodeInterpreter interpreter, Environment environment, Activation numberLibraryContext, Symbol numberPrototypeSymbol, Symbol numberFactorySymbol) {
+	private static void createNumberPrototype(Environment environment, Activation numberLibraryContext, Symbol numberPrototypeSymbol, Symbol numberFactorySymbol) {
 		Symbol right = Symbol.get("right");
         
         // define the prototype for all numbers

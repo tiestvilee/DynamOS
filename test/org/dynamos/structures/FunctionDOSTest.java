@@ -112,34 +112,34 @@ public class FunctionDOSTest {
         assertThat(((ListDOS) context.getSlot(Symbol.ARGUMENTS)).at(0), is(value));
     }
 
-    private MatchesContextWithValues matchesContextWithValues(final ListDOS arguments, ObjectDOS object, final ObjectDOS functionContext) {
-        return new MatchesContextWithValues(arguments, object, functionContext);
+    private MatchesContextWithValues matchesContextWithValues(final ListDOS expectedArguments, ObjectDOS expectedObject, final ObjectDOS functionContext) {
+        return new MatchesContextWithValues(expectedArguments, expectedObject, functionContext);
     }
 
     private class MatchesContextWithValues extends BaseMatcher<Activation> {
 
-        private final ListDOS arguments;
-        private final ObjectDOS object;
+        private final ListDOS expectedArguments;
+        private final ObjectDOS expectedObject;
         private final ObjectDOS functionContext;
 
         public MatchesContextWithValues(ListDOS arguments, ObjectDOS object, ObjectDOS functionContext) {
-            this.arguments = arguments;
-            this.object = object;
+            this.expectedArguments = arguments;
+            this.expectedObject = object;
             this.functionContext = functionContext;
         }
         String message = "";
 
         public boolean matches(Object item) {
-            Activation context = (Activation) item;
-            if (context.getSlot(Symbol.ARGUMENTS) != arguments) {
-                message += "arguments doesn't match [" + ((ListDOS) context.getSlot(Symbol.ARGUMENTS)).list + "] <> [" + arguments.list + "]\n";
+            Activation matchingContext = (Activation) item;
+            if (matchingContext.getSlot(Symbol.ARGUMENTS) != expectedArguments) {
+                message += "arguments doesn't match [" + ((ListDOS) matchingContext.getSlot(Symbol.ARGUMENTS)).list + "] <> [" + expectedArguments.list + "]\n";
                 return false;
             }
-            if (context.getVictim() != object) {
-                message += "object doesn't match [" + context.getVictim() + "] <> [" + object + "]\n";
+            if (matchingContext.getVictim() != expectedObject) {
+                message += "object doesn't match [" + matchingContext.getVictim() + "] <> [" + expectedObject + "]\n";
                 return false;
             }
-            if (context.getContext() != functionContext) {
+            if (matchingContext.getContext() != functionContext) {
                 message += "context doesn't match\n";
                 return false;
             }

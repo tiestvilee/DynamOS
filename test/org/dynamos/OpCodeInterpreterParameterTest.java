@@ -97,7 +97,7 @@ public class OpCodeInterpreterParameterTest {
 		
         interpreter.interpret(context, callerOpCodes);
 
-		assertThat( (ObjectDOS) context.getSlot(Symbol.RESULT), is(agumentValue));
+		assertThat( context.getSlot(Symbol.RESULT), is(agumentValue));
 	}
 	
 	@Test
@@ -119,7 +119,7 @@ public class OpCodeInterpreterParameterTest {
 		
         interpreter.interpret(context, callerOpCodes);
 
-		assertThat( (StandardObjects.UndefinedDOS) context.getSlot(Symbol.RESULT), is(interpreter.getEnvironment().getUndefined()));
+		assertThat( context.getSlot(Symbol.RESULT), is(interpreter.getEnvironment().getUndefined()));
 	}
 	
 	@Test
@@ -143,7 +143,7 @@ public class OpCodeInterpreterParameterTest {
 
         interpreter.interpret(context, callerOpCodes);
 
-		assertThat( (ObjectDOS) context.getSlot(Symbol.RESULT), is(argument2));
+		assertThat( context.getSlot(Symbol.RESULT), is(argument2));
 	}
     
 	private void setUpReceiverFunctionWith(Symbol[] argumentSymbols, OpCode[] receiverOpCodes) {
@@ -173,7 +173,7 @@ public class OpCodeInterpreterParameterTest {
 
         interpreter.interpret(context, callerOpCodes);
 
-		assertThat( (ObjectDOS) context.getSlot(Symbol.RESULT), is(argument1));
+		assertThat( context.getSlot(Symbol.RESULT), is(argument1));
 	}
 
 }

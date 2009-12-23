@@ -49,13 +49,13 @@ public class Environment {
 		ObjectDOS.initialiseRootObject(this, rootObject);
 		
 		virtualMachine = VMObjectDOS.getVMObject(this);
-		contextBuilder = Activation.initializeContext(interpreter, this);
+		contextBuilder = Activation.initializeContext(this);
 	}
 	
-	public void init(OpCodeInterpreter interpreter) {
+	public void init() {
 		booleanContainer = StandardObjects.initialiseBooleans(interpreter, this);
         numberFactory = StandardObjects.createNumberLibrary(interpreter, this);
-        listFactory = StandardObjects.createListLibrary(interpreter, this);
+        listFactory = StandardObjects.createListLibrary(this);
         functionPrototype = FunctionWithContext.createFunctionPrototype(this);
     }
 	

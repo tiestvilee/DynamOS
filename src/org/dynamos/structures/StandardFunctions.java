@@ -12,7 +12,7 @@ public class StandardFunctions {
 		
 		@Override
 		public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
-			return (ObjectDOS) theObject.getSlot(symbol);
+			return theObject.getSlot(symbol);
 		}
 
 		public Symbol forSlot() {
@@ -30,7 +30,7 @@ public class StandardFunctions {
 		@Override
 		public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
 			theObject.setSlot(symbol, arguments.at(0));
-			return (ObjectDOS) arguments.at(0);
+			return arguments.at(0);
 		}
 
 		public Symbol forSlot() {

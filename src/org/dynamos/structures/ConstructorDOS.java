@@ -17,7 +17,7 @@ public class ConstructorDOS extends ExecutableDOS {
         return function.construct(arguments);
     }
     
-    private class ExecuteFunction extends ExecutableDOS {
+    class ExecuteFunction extends ExecutableDOS {
 
 		@Override
 		public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {

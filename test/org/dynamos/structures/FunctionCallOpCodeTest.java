@@ -49,7 +49,7 @@ public class FunctionCallOpCodeTest {
     
     @Test
     public void shouldGetFunctionFromThis() {
-    	ObjectDOS object = mock(ObjectDOS.class);
+    	object = mock(ObjectDOS.class);
     	when(object.getFunction(symbol)).thenReturn(aFunction);
     	
     	new OpCode.FunctionCall(symbol).execute(object, stackFrame);
@@ -57,7 +57,7 @@ public class FunctionCallOpCodeTest {
     
     @Test
     public void shouldGetFunctionFromObject() {
-    	ObjectDOS object = mock(ObjectDOS.class);
+    	object = mock(ObjectDOS.class);
     	when(object.getFunction(symbol)).thenReturn(aFunction);
     	stackFrame.setObject(object);
     	
@@ -66,7 +66,7 @@ public class FunctionCallOpCodeTest {
     
     @Test
     public void shouldExecuteFunction() {
-    	ObjectDOS context = mock(Activation.class);
+    	context = mock(Activation.class);
     	when(context.getFunction(symbol)).thenReturn(aFunction);
 
     	new OpCode.FunctionCall(symbol).execute(context, stackFrame);
@@ -76,7 +76,7 @@ public class FunctionCallOpCodeTest {
     
     @Test
     public void shouldReturnResult() {
-    	Activation context = interpreter.newActivation();
+    	context = interpreter.newActivation();
     	context.setFunction(symbol, aFunction);
 
     	when(aFunction.execute((ObjectDOS)anyObject(), (ListDOS)anyObject())).thenReturn(object);

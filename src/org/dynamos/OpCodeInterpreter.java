@@ -22,7 +22,7 @@ public class OpCodeInterpreter {
 	
 	public OpCodeInterpreter() {
 		environment = new Environment(this);
-		environment.init(this);
+		environment.init();
 	}
 
     public void interpret(ObjectDOS context, OpCode[] opCodes) {
@@ -37,10 +37,10 @@ public class OpCodeInterpreter {
         }
     }
 
-	private int storeOpCodesInList(ObjectDOS context, OpCode[] opCodes, int i) {
+	private int storeOpCodesInList(ObjectDOS context, OpCode[] opCodes, int index) {
 		int opcodeListDepth = 1;
 		ListDOS opcodeList = new ListDOS();
-		i += 1;
+		int i = index + 1;
 		for(;i<opCodes.length && opcodeListDepth > 0;i++) {
 			if(opCodes[i] instanceof OpCode.StartOpCodeList) {
 				opcodeListDepth++;

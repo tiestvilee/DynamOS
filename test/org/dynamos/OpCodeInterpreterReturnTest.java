@@ -54,7 +54,7 @@ public class OpCodeInterpreterReturnTest {
 
         interpreter.interpret(context, opCodes);
 
-        assertThat( (ObjectDOS) context.getSlot(Symbol.RESULT), is(result));
+        assertThat( context.getSlot(Symbol.RESULT), is(result));
     }
 
     @Test
@@ -62,8 +62,8 @@ public class OpCodeInterpreterReturnTest {
         final ObjectDOS result = interpreter.getEnvironment().createNewObject();
         
         FunctionDOS functionThatSetsupReturnSlot = new FunctionDOS(interpreter, null, null) {
-            public void execute(Activation context) {
-            	context.setSlot(Symbol.RESULT, result);
+            public void execute(Activation functionContext) {
+            	functionContext.setSlot(Symbol.RESULT, result);
             }
         };
         context.setFunction(functionName, new FunctionWithContext(functionThatSetsupReturnSlot, context));
@@ -74,7 +74,7 @@ public class OpCodeInterpreterReturnTest {
 
         interpreter.interpret(context, opCodes);
 
-        assertThat((ObjectDOS) context.getSlot(Symbol.RESULT), is(result));
+        assertThat( context.getSlot(Symbol.RESULT), is(result));
     }
 
 

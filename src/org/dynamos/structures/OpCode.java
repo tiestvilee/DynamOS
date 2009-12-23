@@ -15,7 +15,7 @@ import org.dynamos.structures.StandardObjects.ValueObject;
 public class OpCode {
 
 
-	public boolean execute(ObjectDOS self, StackFrame stackFrame) {
+	public boolean execute(@SuppressWarnings("unused") ObjectDOS self, @SuppressWarnings("unused") StackFrame stackFrame) {
         // NOOP
         return false;
     }
@@ -34,8 +34,8 @@ public class OpCode {
         	if(stackFrame.getObject() != null) {
         		target = stackFrame.getObject();
         	}
-			System.out.println("find and execute " + symbol + " on " + target + " with " + ((ListDOS) stackFrame.getArguments()).getRawList());
-			ExecutableDOS function = (ExecutableDOS) target.getFunction(symbol);
+			System.out.println("find and execute " + symbol + " on " + target + " with " + stackFrame.getArguments().getRawList());
+			ExecutableDOS function = target.getFunction(symbol);
 			// TODO AAAAA the following always executes with target, but what if the function was on the real parent object, 
 			// rather than the current activation
         	ObjectDOS result = function.execute(target, stackFrame.getArguments());
@@ -53,7 +53,7 @@ public class OpCode {
 
         @Override
         public boolean execute(ObjectDOS self, StackFrame stackFrame) {
-            ObjectDOS object = (ObjectDOS) self.getSlot(symbol);
+            ObjectDOS object = self.getSlot(symbol);
             stackFrame.setObject(object);
             return false;
         }
@@ -67,7 +67,7 @@ public class OpCode {
 
         @Override
         public boolean execute(ObjectDOS self, StackFrame stackFrame) {
-            ObjectDOS argument = (ObjectDOS) self.getSlot(symbol);
+            ObjectDOS argument = self.getSlot(symbol);
             stackFrame.pushArgument(argument);
             return false;
         }
@@ -116,7 +116,7 @@ public class OpCode {
         	if(symbol == Symbol.PARENT) {
         		System.out.println(message + " parent of " + self + " is " + self.getTrait("parent"));
         	} else {
-	            ObjectDOS argument = (ObjectDOS) self.getSlot(symbol);
+	            ObjectDOS argument = self.getSlot(symbol);
 	            if(argument instanceof ValueObject) {
 	            	System.out.println(message + " " + ((ValueObject) argument).getValue() + "@" + argument + " parent " + argument.getTrait("parent"));
 	            } else  {

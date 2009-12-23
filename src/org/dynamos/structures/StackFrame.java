@@ -23,8 +23,8 @@ public class StackFrame {
         return object;
     }
 
-    public void pushArgument(ObjectDOS object) {
-        arguments.add(object);
+    public void pushArgument(ObjectDOS argument) {
+        arguments.add(argument);
     }
 
     public ListDOS getArguments() {

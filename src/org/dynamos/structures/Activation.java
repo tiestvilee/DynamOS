@@ -6,7 +6,6 @@
 package org.dynamos.structures;
 
 import org.dynamos.Environment;
-import org.dynamos.OpCodeInterpreter;
 
 
 /**
@@ -15,8 +14,8 @@ import org.dynamos.OpCodeInterpreter;
  */
 public class Activation extends ObjectDOS {
 	
-	public static ActivationBuilder initializeContext(OpCodeInterpreter interpreter, Environment environment) {
-		return new ActivationBuilder(interpreter, environment);
+	public static ActivationBuilder initializeContext(Environment environment) {
+		return new ActivationBuilder(environment);
 	}
 	
 	public static class ActivationBuilder {
@@ -28,7 +27,7 @@ public class Activation extends ObjectDOS {
         private final Symbol argumentList = Symbol.get("argumentList");
         private final Symbol opcodes = Symbol.get("opcodes");
         
-		protected ActivationBuilder(OpCodeInterpreter interpreter, Environment environment) {
+		protected ActivationBuilder(Environment environment) {
 			activationPrototype = environment.createNewObject();
 			activationPrototype.setSlot(Symbol.RESULT, environment.getUndefined());
 			
@@ -120,7 +119,7 @@ public class Activation extends ObjectDOS {
 				Activation cursor = (Activation) theObject;
 				while(cursor != null && cursor.getLocalSlot(symbol) == null)
 				{
-					cursor = (Activation) cursor.getContext();
+					cursor = cursor.getContext();
 				}
 				
 				if(cursor == null) {
@@ -144,10 +143,9 @@ public class Activation extends ObjectDOS {
 	    			theObject.setSlot(symbol, value);
 		        	System.out.println("+++|| set slot " + symbol + " on " + theObject + " to " + value + " -> " + theObject.getSlot(symbol));
 		        	return theObject;
-	    		} else {
-	    			/* explicit call */
-	    			throw new RuntimeException("Can't set a slot directly on an object, only within that object's functions");
 	    		}
+	    		/* explicit call */
+	    		throw new RuntimeException("Can't set a slot directly on an object, only within that object's functions");
 	    	}
 	    };
 	    
