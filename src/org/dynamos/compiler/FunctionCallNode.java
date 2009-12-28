@@ -24,6 +24,26 @@ public class FunctionCallNode extends NamedNode {
 	public FunctionCallNode getChain() {
 		return chain;
 	}
+	
+	public String toString() {
+		return toString("");
+	}
+	
+	public String toString(String indent) {
+		String args = "";
+		for(ASTNode argument : arguments) {
+			args += argument.toString(indent + "  ");
+		}
+		String result = indent + "(fcfc " + getName() + args + ")";
+		
+		if(chain != null) {
+			return chain.toString(result);
+		}
+		return result;
+	}
 
+	private String toString(String indent, String chain) {
+		return indent + "(cccc" + getName() + " " + chain + ")";
+	}
 
 }

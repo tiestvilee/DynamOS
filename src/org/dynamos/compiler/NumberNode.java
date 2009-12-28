@@ -10,4 +10,10 @@ public class NumberNode extends ASTNode {
 	public int getValue() {
 		return value;
 	}
+	
+	@Override
+	public String toString(String indent) {
+		return "" + value;
+	}
+
 }

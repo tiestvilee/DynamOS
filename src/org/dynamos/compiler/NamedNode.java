@@ -16,4 +16,9 @@ public class NamedNode extends ASTNode {
 		}
 	}
 
+	@Override
+	public String toString(String indent) {
+		return name;
+	}
+
 }

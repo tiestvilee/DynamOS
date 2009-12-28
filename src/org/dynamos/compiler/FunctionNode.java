@@ -1,18 +1,10 @@
 package org.dynamos.compiler;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
-public class FunctionNode extends StatementContainingNode {
 
-	private List<String> arguments = new ArrayList<String>();
-	
-	public List<String> getArguments() {
-		return Collections.unmodifiableList(arguments);
-	}
+public class FunctionNode extends MessageNode {
 
-	public void addParameter(String string) {
-		arguments.add(string);
+	public String type() {
+		return "function";
 	}
 }

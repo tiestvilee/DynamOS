@@ -1,4 +1,5 @@
 package org.dynamos.compiler;
 
-public class ASTNode {
+public abstract class ASTNode {
+	public abstract String toString(String indent);
 }

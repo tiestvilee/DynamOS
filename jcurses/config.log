@@ -1,0 +1,28 @@
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+
+configure:528: checking for java
+configure:573: checking for gcc
+configure:602: checking for gcc
+configure:715: checking whether the C compiler (gcc  ) works
+configure:731: gcc -o conftest    conftest.c  1>&5
+configure:757: checking whether the C compiler (gcc  ) is a cross-compiler
+configure:762: checking whether we are using GNU C
+configure:790: checking whether gcc accepts -g
+configure:822: checking for initscr in -lcurses
+configure:841: gcc -o conftest -g   conftest.c -lcurses   1>&5
+/usr/i486-suse-linux/bin/ld: cannot find -lcurses
+collect2: ld returned 1 exit status
+configure: failed program was:
+#line 830 "configure"
+#include "confdefs.h"
+/* Override any gcc2 internal prototype to avoid an error.  */
+/* We use char because int might match the return type of a gcc2
+    builtin and then its argument prototype would still apply.  */
+char initscr();
+
+int main() {
+initscr()
+; return 0; }
+configure:862: checking for initscr in -lncurses
+configure:881: gcc -o conftest -g   conftest.c -lncurses   1>&5

@@ -10,4 +10,9 @@ public class StringNode extends ASTNode {
 	public String getValue() {
 		return value;
 	}
+	
+	@Override
+	public String toString(String indent) {
+		return value;
+	}
 }

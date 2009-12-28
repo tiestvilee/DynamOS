@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 public class TransformStringToAST {
 	
-	private abstract class State {
+	static abstract class State {
 
 		public abstract void process(ASTNode root, Stream stream);
 		
@@ -15,7 +15,7 @@ public class TransformStringToAST {
 
 	}
 	
-	private class FunctionDefinition extends State {
+	static class FunctionDefinition extends State {
 		
 		/*
 		 * FunctionDefinition => Identifier(':' Identifier (FunctionDefinitionChain | ))
@@ -27,6 +27,20 @@ public class TransformStringToAST {
 			stream.consumeFunctionStart();
 			
 			FunctionNode fnode = (FunctionNode) node;
+			
+			new MessageDefinition().process(fnode, stream);
+			
+			new FunctionBody().process(fnode, stream);
+			
+			stream.consumeRightBracket();
+		}
+	}
+	
+	static class MessageDefinition extends State {
+
+		@Override
+		public void process(ASTNode root, Stream stream) {
+			MessageNode fnode = (MessageNode) root;
 			
 			String id = stream.consumeIdentifier();
 			fnode.appendToName(id);
@@ -43,26 +57,23 @@ public class TransformStringToAST {
 			}
 			
 			stream.consumeNewLine();
-			
-			new FunctionBody().process(fnode, stream);
-			
-			stream.consumeRightBracket();
 		}
+		
 	}
 	
-	private class ContextFunctionCall extends State {
+	static class ContextFunctionCall extends State {
 		@Override
 		public void process(ASTNode node, Stream stream) {
 			StatementContainingNode fnode = (StatementContainingNode) node;
 			
 			FunctionCallNode call = new FunctionCallNode();
-			fnode.addStatement(call);
-			
 			new FunctionCall().process(call, stream);
+			
+			fnode.addStatement(call);
 		}
 	}
 	
-	private class ParameterFunctionCall extends State {
+	static class ParameterFunctionCall extends State {
 		@Override
 		public void process(ASTNode node, Stream stream) {
 			FunctionCallNode fnode = (FunctionCallNode) node;
@@ -74,7 +85,7 @@ public class TransformStringToAST {
 		}
 	}
 	
-	private class ChainedFunctionCall extends State {
+	static class ChainedFunctionCall extends State {
 		@Override
 		public void process(ASTNode node, Stream stream) {
 			FunctionCallNode fnode = (FunctionCallNode) node;
@@ -86,7 +97,7 @@ public class TransformStringToAST {
 		}
 	}
 	
-	private class FunctionCall extends State {
+	static class FunctionCall extends State {
 		/*
 		 * 
 		 *  FunctionCall => Identifier( ':' ( '(' FunctionCall ')' | Identifier ) | FunctionCall | ) 
@@ -94,10 +105,10 @@ public class TransformStringToAST {
 		 */
 		@Override
 		public void process(ASTNode node, Stream stream) {
-			System.out.println("function call " + stream.getRemainder());
 			FunctionCallNode call = (FunctionCallNode) node;
 
 			String id = stream.consumeIdentifier();
+			System.out.println("function call " + id);
 			call.appendToName(id);
 			
 			if(stream.matchesColon()) {
@@ -138,7 +149,7 @@ public class TransformStringToAST {
 		}
 	}
 	
-	private class Closure extends State {
+	static class Closure extends State {
 
 		@Override
 		public void process(ASTNode node, Stream stream) {
@@ -164,42 +175,44 @@ public class TransformStringToAST {
 		
 	}
 	
-	private class LocalDefinition extends State {
+	static class SlotDefinition extends State {
 		@Override
 		public void process(ASTNode node, Stream stream) {
 			StatementContainingNode fnode = (StatementContainingNode) node;
 
 			stream.consumeLocalStart();
-			fnode.addLocal(new SymbolNode(stream.consumeIdentifier()));
+			fnode.addSlot(new SymbolNode(stream.consumeIdentifier()));
 			stream.consumeRightBracket();
 		}
 	}
 	
-	private class OpenObject extends State {
+	static class ObjectDefinition extends State {
 		@Override
 		public void process(ASTNode node, Stream stream) {
-			OpenObjectNode openObject = new OpenObjectNode();
+			ConstructorNode objectConstructor = new ConstructorNode();
 			
 			StatementContainingNode fnode = (StatementContainingNode) node;
-			fnode.addStatement(openObject);
+			fnode.addStatement(objectConstructor);
 
-			stream.consumeOpenObjectStart();
-			openObject.appendToName(stream.consumeIdentifier());
-			stream.consumeNewLine();
+			stream.consumeObjectConstructorStart();
 			
-			new FunctionBody().process(openObject, stream);
+			new MessageDefinition().process(objectConstructor, stream);
+			
+			new FunctionBody().process(objectConstructor, stream);
+			
+			stream.consumeRightBracket();
 		}
 	}
 	
-	private class FunctionBody extends State {
+	static class FunctionBody extends State {
 		@Override
 		public void process(ASTNode node, Stream stream) {
 			while(true) {
 				if(stream.matchesIdentifier()) {
 					new ContextFunctionCall().process(node, stream);
 				}
-				else if(stream.matchesLocalStart()) {
-					new LocalDefinition().process(node, stream);
+				else if(stream.matchesSlotStart()) {
+					new SlotDefinition().process(node, stream);
 					stream.consumeNewLine();
 				}
 				else if(stream.matchesFunctionStart()) {
@@ -208,8 +221,8 @@ public class TransformStringToAST {
 					((StatementContainingNode) node).addStatement(function);
 					new FunctionDefinition().process(function, stream);
 					stream.consumeNewLine();
-				} else if(stream.matchesOpenObjectStart()) {
-					new OpenObject().process(node, stream);
+				} else if(stream.matchesObjectConstructorStart()) {
+					new ObjectDefinition().process(node, stream);
 				} else if(stream.matchesNewLine()) {
 					stream.consumeNewLine();
 				} else if(stream.matchesRightBracket() || stream.matchesRightBrace()) {
@@ -222,7 +235,7 @@ public class TransformStringToAST {
 	}
 
 	
-	private class Stream {
+	static class Stream {
 		private final String program;
 		private int index;
 		private static final String WHITESPACE = "[^\\S\n]";
@@ -233,11 +246,11 @@ public class TransformStringToAST {
 		}
 		
 		public void consumeLocalStart() {
-			consumeMatchWithPreceedingWhitespace("local start", "\\(local ");
+			consumeMatchWithPreceedingWhitespace("slot start", "\\(slot ");
 		}
 		
-		public boolean matchesLocalStart() {
-			return testMatch("\\(local ");
+		public boolean matchesSlotStart() {
+			return testMatch("\\(slot ");
 		}
 		
 		public boolean matchesFunctionStart() {
@@ -248,12 +261,12 @@ public class TransformStringToAST {
 			consumeMatchWithPreceedingWhitespace("Function start", "\\(function ");
 		}
 
-		public boolean matchesOpenObjectStart() {
-			return testMatch("\\(open ");
+		public boolean matchesObjectConstructorStart() {
+			return testMatch("\\(object ");
 		}
 
-		public void consumeOpenObjectStart() {
-			consumeMatchWithPreceedingWhitespace("Open object start", "\\(open ");
+		public void consumeObjectConstructorStart() {
+			consumeMatchWithPreceedingWhitespace("Open object start", "\\(object ");
 		}
 
 		public boolean matchesHash() {
@@ -387,13 +400,11 @@ public class TransformStringToAST {
 
 	public ASTNode transform(String program) {
 		Stream stream = new Stream(program, 0);
-		ASTNode root = new FunctionNode();
+		StatementContainingNode root = new StatementContainingNode();
 		
-		State state = new FunctionDefinition();
+		new ObjectDefinition().process(root, stream);
 		
-		state.process(root, stream);
-		
-		return root;
+		return root.getStatements().get(0);
 	}
 
 }
