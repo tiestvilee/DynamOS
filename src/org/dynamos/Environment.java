@@ -86,6 +86,7 @@ public class Environment {
 	public ObjectDOS createNewObject() {
 		ObjectDOS object = new ObjectDOS();
 		object.setParent(rootObject);
+		object.setSlot(Symbol.THIS, object);
 		return object;
 	}
 	

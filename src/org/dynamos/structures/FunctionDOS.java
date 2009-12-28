@@ -34,13 +34,13 @@ public class FunctionDOS extends ExecutableDOS {
     
     public ObjectDOS construct(ListDOS contextArguments) {
     	ObjectDOS newObject = interpreter.getEnvironment().createNewObject();
-    	newObject.setTrait("constructorFunctions", interpreter.newActivation());
+    	newObject.setTrait("activationFunctions", interpreter.newActivation());
     	
     	updateArgumentsInContext(newObject, contextArguments);
     	
         interpreter.interpret(newObject, opCodes);
         
-        newObject.removeTrait("constructorFunctions");
+        newObject.removeTrait("activationFunctions");
         
         return newObject;
     }
