@@ -5,231 +5,147 @@ import java.util.regex.Pattern;
 
 public class TransformStringToAST {
 	
-	static abstract class State {
-
-		public abstract void process(ASTNode root, Stream stream);
+	/*
+	 * FunctionDefinition => Identifier(':' Identifier (FunctionDefinitionChain | ))
+	 * FunctionDefinitionChain => Identifier ':' Identifier (FunctionDefinitionChain | ))
+	 */
+	public ASTNode functionDefinition(Stream stream) {
+		FunctionNode fnode = new FunctionNode();
 		
-		public boolean isEOF() {
-			return false;
-		}
-
+		stream.consumeFunctionStart();
+		messageDefinition(fnode, stream);
+		functionBody(fnode, stream);
+		stream.consumeRightBracket();
+		stream.consumeNewLine();
+		
+		return fnode;
 	}
 	
-	static class FunctionDefinition extends State {
+	public void messageDefinition(MessageNode fnode, Stream stream) {
 		
-		/*
-		 * FunctionDefinition => Identifier(':' Identifier (FunctionDefinitionChain | ))
-		 * FunctionDefinitionChain => Identifier ':' Identifier (FunctionDefinitionChain | ))
-		 */
-		@Override
-		public void process(ASTNode node, Stream stream) {
-			
-			stream.consumeFunctionStart();
-			
-			FunctionNode fnode = (FunctionNode) node;
-			
-			new MessageDefinition().process(fnode, stream);
-			
-			new FunctionBody().process(fnode, stream);
-			
-			stream.consumeRightBracket();
-		}
-	}
-	
-	static class MessageDefinition extends State {
-
-		@Override
-		public void process(ASTNode root, Stream stream) {
-			MessageNode fnode = (MessageNode) root;
-			
-			String id = stream.consumeIdentifier();
-			fnode.appendToName(id);
-			
-			if(stream.matchesColon()) {
-				do {
-					fnode.appendToName(stream.consumeColon());
-					fnode.addParameter(stream.consumeIdentifier());
-					if(!stream.matchesIdentifier()) {
-						break;
-					}
-					fnode.appendToName(stream.consumeIdentifier());
-				} while (true);
-			}
-			
-			stream.consumeNewLine();
+		fnode.appendToName(stream.consumeIdentifier());
+		
+		if(stream.matchesColon()) {
+			do {
+				fnode.appendToName(stream.consumeColon());
+				fnode.addParameter(stream.consumeIdentifier());
+				if(!stream.matchesIdentifier()) {
+					break;
+				}
+				fnode.appendToName(stream.consumeIdentifier());
+			} while (true);
 		}
 		
+		stream.consumeNewLine();
 	}
 	
-	static class ContextFunctionCall extends State {
-		@Override
-		public void process(ASTNode node, Stream stream) {
-			StatementContainingNode fnode = (StatementContainingNode) node;
-			
-			FunctionCallNode call = new FunctionCallNode();
-			new FunctionCall().process(call, stream);
-			
-			fnode.addStatement(call);
-		}
-	}
-	
-	static class ParameterFunctionCall extends State {
-		@Override
-		public void process(ASTNode node, Stream stream) {
-			FunctionCallNode fnode = (FunctionCallNode) node;
-			
-			FunctionCallNode call = new FunctionCallNode();
-			fnode.addParameter(call);
-			
-			new FunctionCall().process(call, stream);
-		}
-	}
-	
-	static class ChainedFunctionCall extends State {
-		@Override
-		public void process(ASTNode node, Stream stream) {
-			FunctionCallNode fnode = (FunctionCallNode) node;
-			
-			FunctionCallNode call = new FunctionCallNode();
-			fnode.setChain(call);
-			
-			new FunctionCall().process(call, stream);
-		}
-	}
-	
-	static class FunctionCall extends State {
 		/*
 		 * 
 		 *  FunctionCall => Identifier( ':' ( '(' FunctionCall ')' | Identifier ) | FunctionCall | ) 
 		 * 
 		 */
-		@Override
-		public void process(ASTNode node, Stream stream) {
-			FunctionCallNode call = (FunctionCallNode) node;
+	public FunctionCallNode functionCall(Stream stream) {
+		FunctionCallNode call = new FunctionCallNode();
 
-			String id = stream.consumeIdentifier();
-			System.out.println("function call " + id);
-			call.appendToName(id);
-			
-			if(stream.matchesColon()) {
-				do {
-					call.appendToName(stream.consumeColon());
-					
-					consumeParameter(stream, call);
-					
-					if(stream.matchesIdentifier()) {
-						call.appendToName(stream.consumeIdentifier());
-					} else if (stream.matchesRightBracket()) {
-						return;
-					} else {
-						stream.consumeNewLine();
-						return;
-					}
-				} while (true);
-			} else if (stream.matchesIdentifier()) {
-				new ChainedFunctionCall().process(call, stream);
-			}
-		}
-
-		private void consumeParameter(Stream stream, FunctionCallNode call) {
-			if (stream.matchesLeftBracket()) {
-				stream.consumeLeftBracket();
-				new ParameterFunctionCall().process(call, stream);
-				stream.consumeRightBracket();
-			} else if(stream.matchesIdentifier()) {
-				call.addParameter(new SymbolNode(stream.consumeIdentifier()));
-			} else if(stream.matchesHash()) {
-				stream.consumeHash();
-				call.addParameter(new NumberNode(stream.consumeDigits()));
-			} else if(stream.matchesString()) {
-				call.addParameter(new StringNode(stream.consumeString()));
-			} else if(stream.matchesLeftBrace()) {
-				new Closure().process(call, stream);
-			}
-		}
-	}
-	
-	static class Closure extends State {
-
-		@Override
-		public void process(ASTNode node, Stream stream) {
-			ClosureNode closure = new ClosureNode();
-			((FunctionCallNode) node).addParameter(closure);
-			
-			stream.consumeLeftBrace();
-			consumeParameters(stream, closure);
-			stream.consumePipe();
-			new FunctionBody().process(closure, stream);
-			stream.consumeRightBrace();
-		}
-
-		private void consumeParameters(Stream stream, ClosureNode closure) {
-			if(stream.matchesIdentifier()) {
-				closure.addParameter(stream.consumeIdentifier());
-				while(stream.matchesComma()) {
-					stream.consumeComma();
-					closure.addParameter(stream.consumeIdentifier());
-				}
-			}
-		}
+		call.appendToName(stream.consumeIdentifier());
 		
-	}
-	
-	static class SlotDefinition extends State {
-		@Override
-		public void process(ASTNode node, Stream stream) {
-			StatementContainingNode fnode = (StatementContainingNode) node;
-
-			stream.consumeLocalStart();
-			fnode.addSlot(new SymbolNode(stream.consumeIdentifier()));
-			stream.consumeRightBracket();
-		}
-	}
-	
-	static class ObjectDefinition extends State {
-		@Override
-		public void process(ASTNode node, Stream stream) {
-			ConstructorNode objectConstructor = new ConstructorNode();
-			
-			StatementContainingNode fnode = (StatementContainingNode) node;
-			fnode.addStatement(objectConstructor);
-
-			stream.consumeObjectConstructorStart();
-			
-			new MessageDefinition().process(objectConstructor, stream);
-			
-			new FunctionBody().process(objectConstructor, stream);
-			
-			stream.consumeRightBracket();
-		}
-	}
-	
-	static class FunctionBody extends State {
-		@Override
-		public void process(ASTNode node, Stream stream) {
-			while(true) {
+		if(stream.matchesColon()) {
+			do {
+				call.appendToName(stream.consumeColon());
+				
+				functionCallConsumeParameter(stream, call);
+				
 				if(stream.matchesIdentifier()) {
-					new ContextFunctionCall().process(node, stream);
-				}
-				else if(stream.matchesSlotStart()) {
-					new SlotDefinition().process(node, stream);
-					stream.consumeNewLine();
-				}
-				else if(stream.matchesFunctionStart()) {
-					// yuck, should do this elsewhere
-					ASTNode function = new FunctionNode();
-					((StatementContainingNode) node).addStatement(function);
-					new FunctionDefinition().process(function, stream);
-					stream.consumeNewLine();
-				} else if(stream.matchesObjectConstructorStart()) {
-					new ObjectDefinition().process(node, stream);
-				} else if(stream.matchesNewLine()) {
-					stream.consumeNewLine();
-				} else if(stream.matchesRightBracket() || stream.matchesRightBrace()) {
-					return;
+					call.appendToName(stream.consumeIdentifier());
+				} else if (stream.matchesRightBracket()) {
+					return call;
 				} else {
-					throw new RuntimeException("don't understand from [" + stream.getRemainder());
+					stream.consumeNewLine();
+					return call;
 				}
+			} while (true);
+		} else if (stream.matchesIdentifier()) {
+			call.setChain(functionCall(stream));
+		}
+		return call;
+	}
+
+	private void functionCallConsumeParameter(Stream stream, FunctionCallNode call) {
+		if (stream.matchesLeftBracket()) {
+			stream.consumeLeftBracket();
+			call.addParameter(functionCall(stream));
+			stream.consumeRightBracket();
+		} else if(stream.matchesIdentifier()) {
+			call.addParameter(new SymbolNode(stream.consumeIdentifier()));
+		} else if(stream.matchesHash()) {
+			stream.consumeHash();
+			call.addParameter(new NumberNode(stream.consumeDigits()));
+		} else if(stream.matchesString()) {
+			call.addParameter(new StringNode(stream.consumeString()));
+		} else if(stream.matchesLeftBrace()) {
+			closure(call, stream);
+		}
+	}
+	
+	public void closure(ASTNode node, Stream stream) {
+		ClosureNode closure = new ClosureNode();
+		((FunctionCallNode) node).addParameter(closure);
+		
+		stream.consumeLeftBrace();
+		closureConsumeParameters(stream, closure);
+		stream.consumePipe();
+		functionBody(closure, stream);
+		stream.consumeRightBrace();
+	}
+
+	private void closureConsumeParameters(Stream stream, ClosureNode closure) {
+		if(stream.matchesIdentifier()) {
+			closure.addParameter(stream.consumeIdentifier());
+			while(stream.matchesComma()) {
+				stream.consumeComma();
+				closure.addParameter(stream.consumeIdentifier());
+			}
+		}
+	}
+	
+	public void slotDefinition(ASTNode node, Stream stream) {
+		StatementContainingNode fnode = (StatementContainingNode) node;
+
+		stream.consumeLocalStart();
+		fnode.addSlot(new SymbolNode(stream.consumeIdentifier()));
+		stream.consumeRightBracket();
+	}
+	
+	public ASTNode objectDefinition( Stream stream) {
+		ConstructorNode objectConstructor = new ConstructorNode();
+
+		stream.consumeObjectConstructorStart();
+		messageDefinition(objectConstructor, stream);
+		functionBody(objectConstructor, stream);
+		stream.consumeRightBracket();
+		
+		return objectConstructor;
+	}
+	
+	public void functionBody(StatementContainingNode node, Stream stream) {
+		while(true) {
+			if(stream.matchesIdentifier()) {
+				node.addStatement(functionCall(stream));
+			}
+			else if(stream.matchesSlotStart()) {
+				slotDefinition(node, stream);
+				stream.consumeNewLine();
+			}
+			else if(stream.matchesFunctionStart()) {
+				node.addStatement(functionDefinition(stream));
+			} else if(stream.matchesObjectConstructorStart()) {
+				node.addStatement(objectDefinition(stream));
+			} else if(stream.matchesNewLine()) {
+				stream.consumeNewLine();
+			} else if(stream.matchesRightBracket() || stream.matchesRightBrace()) {
+				return;
+			} else {
+				throw new RuntimeException("don't understand from [" + stream.getRemainder());
 			}
 		}
 	}
@@ -400,11 +316,8 @@ public class TransformStringToAST {
 
 	public ASTNode transform(String program) {
 		Stream stream = new Stream(program, 0);
-		StatementContainingNode root = new StatementContainingNode();
 		
-		new ObjectDefinition().process(root, stream);
-		
-		return root.getStatements().get(0);
+		return objectDefinition(stream);
 	}
 
 }

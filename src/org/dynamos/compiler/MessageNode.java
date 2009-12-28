@@ -27,6 +27,6 @@ public abstract class MessageNode extends StatementContainingNode {
 		for(ASTNode statement: statements) {
 			statementsAsString += statement.toString(indent + "  ") + " ";
 		}
-		return indent + "(" + type() + " " + getName() + " {\n" + statementsAsString + "\n" + indent + "})\n";
+		return indent + "(" + type() + " " + getName() + "{\n" + indent + "  " + statementsAsString + "\n" + indent + "})\n";
 	}
 }

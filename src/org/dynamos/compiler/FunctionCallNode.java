@@ -34,16 +34,16 @@ public class FunctionCallNode extends NamedNode {
 		for(ASTNode argument : arguments) {
 			args += argument.toString(indent + "  ");
 		}
-		String result = indent + "(fcfc " + getName() + args + ")";
+		String result = "(" + getName() + args + ")";
 		
 		if(chain != null) {
-			return chain.toString(result);
+			return chain.toString(indent, result);
 		}
 		return result;
 	}
 
-	private String toString(String indent, String chain) {
-		return indent + "(cccc" + getName() + " " + chain + ")";
+	private String toString(String indent, String chaincalculation) {
+		return "(" + chaincalculation + " " + toString(indent) + ")";
 	}
 
 }
