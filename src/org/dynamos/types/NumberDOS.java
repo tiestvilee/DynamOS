@@ -10,6 +10,7 @@ import org.dynamos.OpCodeInterpreter;
 import org.dynamos.structures.Activation;
 import org.dynamos.structures.ExecutableDOS;
 import org.dynamos.structures.ListDOS;
+import org.dynamos.structures.Mirror;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.Symbol;
@@ -50,7 +51,7 @@ public class NumberDOS {
 					new OpCode.Push(numberPrototypeSymbol),
 					new OpCode.Push(number),
 					new OpCode.SetObject(mirror),
-					new OpCode.FunctionCall(Symbol.SET_PARENT_TO_$_ON_$)
+					new OpCode.FunctionCall(Mirror.SET_PARENT_TO_$_ON_$)
 				}, mirrorContext));
 		
 		// the prototype needs the numberfactory so it can convert values into numbers.

@@ -24,6 +24,11 @@ public class Activation extends ObjectDOS {
 
         private final Symbol functionDefinition = Symbol.get("functionDefinition");
         private final Symbol context = Symbol.get("context");
+        
+        private final Symbol parent = Symbol.get("parent");
+        private final Symbol name = Symbol.get("name");
+        private final Symbol trait = Symbol.get("trait");
+        
         private final Symbol argumentList = Symbol.get("argumentList");
         private final Symbol opcodes = Symbol.get("opcodes");
         
@@ -32,7 +37,8 @@ public class Activation extends ObjectDOS {
 			activationPrototype.setSlot(Symbol.RESULT, environment.getUndefined());
 			
 	        Activation contextContainingVM = createActivation();
-	        contextContainingVM.setSlot(VMObjectDOS.VM, environment.getVirtualMachine());
+	        // because the mirror is in the context, not a trait, we must delegate to its functions
+	        contextContainingVM.setSlot(Symbol.MIRROR, environment.getMirror());
 	        
 	        activationPrototype.setFunction(Symbol.CONTEXTUALIZE_FUNCTION_$_IN_$, 
 	        		environment.createFunctionWithContext(
@@ -40,8 +46,8 @@ public class Activation extends ObjectDOS {
 	        		new OpCode[] {
 	        				new OpCode.Push(functionDefinition),
 	        				new OpCode.Push(context),
-	        				new OpCode.SetObject(VMObjectDOS.VM),
-	        				new OpCode.FunctionCall(VMObjectDOS.CONTEXTUALIZE_FUNCTION_$_IN_$)
+	        				new OpCode.SetObject(Symbol.MIRROR),
+	        				new OpCode.FunctionCall(Mirror.CONTEXTUALIZE_FUNCTION_$_IN_$)
 	        		},
 	        		contextContainingVM));
 
@@ -50,8 +56,8 @@ public class Activation extends ObjectDOS {
 						new Symbol[] {context},
 						new OpCode[] {
 		        			new OpCode.Push(context),
-							new OpCode.SetObject(VMObjectDOS.VM),
-							new OpCode.FunctionCall(VMObjectDOS.NEW_OBJECT)
+							new OpCode.SetObject(Symbol.MIRROR),
+							new OpCode.FunctionCall(Mirror.NEW_OBJECT)
 						}, 
 						contextContainingVM ));
 			
@@ -61,8 +67,8 @@ public class Activation extends ObjectDOS {
 						new OpCode[] {
 	        				new OpCode.Push(argumentList),
 	        				new OpCode.Push(opcodes),
-							new OpCode.SetObject(VMObjectDOS.VM),
-							new OpCode.FunctionCall(VMObjectDOS.CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$)
+							new OpCode.SetObject(Symbol.MIRROR),
+							new OpCode.FunctionCall(Mirror.CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$)
 						}, 
 						contextContainingVM ));
 			
@@ -73,20 +79,59 @@ public class Activation extends ObjectDOS {
 	        				new OpCode.Push(argumentList),
 	        				new OpCode.Push(opcodes),
 	        				new OpCode.Push(context),
-							new OpCode.SetObject(VMObjectDOS.VM),
-							new OpCode.FunctionCall(VMObjectDOS.CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$)
+							new OpCode.SetObject(Symbol.MIRROR),
+							new OpCode.FunctionCall(Mirror.CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$)
 						}, 
 						contextContainingVM ));
 			
+			activationPrototype.setFunction(Symbol.PARENT_$, 
+					environment.createFunctionWithContext( 
+							new Symbol[] {parent}, 
+							new OpCode[] {
+		        				new OpCode.Push(parent),
+		        				new OpCode.Push(Symbol.THIS),
+								new OpCode.SetObject(Symbol.MIRROR),
+								new OpCode.FunctionCall(Mirror.SET_PARENT_TO_$_ON_$)
+							}, 
+							contextContainingVM ));
+			
+			activationPrototype.setFunction(Symbol.PARENT, 
+					environment.createFunctionWithContext(
+							new Symbol[] {parent}, 
+							new OpCode[] {
+		        				new OpCode.Push(Symbol.THIS),
+								new OpCode.SetObject(Symbol.MIRROR),
+								new OpCode.FunctionCall(Mirror.GET_PARENT_ON_$)
+							}, 
+							contextContainingVM ));
+			
+			activationPrototype.setFunction(Symbol.SET_TRAIT_$_TO_$, 
+					environment.createFunctionWithContext( 
+							new Symbol[] {name, trait}, 
+							new OpCode[] {
+		        				new OpCode.Push(name),
+		        				new OpCode.Push(trait),
+		        				new OpCode.Push(Symbol.THIS),
+								new OpCode.SetObject(Symbol.MIRROR),
+								new OpCode.FunctionCall(Mirror.SET_TRAIT_$_TO_$_ON_$)
+							}, 
+							contextContainingVM ));
+			
+			activationPrototype.setFunction(Symbol.GET_TRAIT_$, 
+					environment.createFunctionWithContext( 
+							new Symbol[] {name}, 
+							new OpCode[] {
+		        				new OpCode.Push(name),
+		        				new OpCode.Push(Symbol.THIS),
+								new OpCode.SetObject(Symbol.MIRROR),
+								new OpCode.FunctionCall(Mirror.GET_TRAIT_$_ON_$)
+							}, 
+							contextContainingVM ));
 
 			activationPrototype.setFunction(Symbol.SET_FUNCTION_$_TO_$, SET_FUNCTION_$_TO_$_EXEC);
 			activationPrototype.setFunction(Symbol.SET_LOCAL_SLOT_$_TO_$, SET_LOCAL_SLOT_$_TO_$_EXEC);
 			activationPrototype.setFunction(Symbol.SET_SLOT_$_TO_$, SET_SLOT_$_TO_$_EXEC);
 			activationPrototype.setFunction(Symbol.GET_SLOT_$, GET_SLOT_$_EXEC);
-			activationPrototype.setFunction(Symbol.PARENT_$, SET_PARENT_$_EXEC);
-			activationPrototype.setFunction(Symbol.PARENT, GET_PARENT_EXEC);
-			activationPrototype.setFunction(Symbol.SET_TRAIT_$_TO_$, SET_TRAIT_$_TO_$_EXEC);
-			activationPrototype.setFunction(Symbol.GET_TRAIT_$, GET_TRAIT_$_EXEC);
 			
 		}
 	    
@@ -158,37 +203,6 @@ public class Activation extends ObjectDOS {
 			public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
 	    		Symbol symbol = ((SymbolWrapper) arguments.at(0)).getSymbol();
 				return theObject.getSlot(symbol);
-			}
-	    };
-	    
-	    private static ExecutableDOS SET_PARENT_$_EXEC = new ExecutableDOS() {
-			@Override
-			public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
-				System.out.println("+++ setting parent of " + theObject + " to " + arguments.at(0));
-				theObject.setParent(arguments.at(0));
-				return theObject;
-			}
-	    };
-	    
-	    private static ExecutableDOS GET_PARENT_EXEC = new ExecutableDOS() {
-			@Override
-			public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
-				return theObject.getParent();
-			}
-	    };
-	    
-	    private static ExecutableDOS SET_TRAIT_$_TO_$_EXEC = new ExecutableDOS() {
-			@Override
-			public ObjectDOS execute(ObjectDOS  theObject, ListDOS arguments) {
-				theObject.setTrait(arguments.at(0).toString(), arguments.at(1));
-				return theObject;
-			}
-	    };
-	    
-	    private static ExecutableDOS GET_TRAIT_$_EXEC = new ExecutableDOS() {
-			@Override
-			public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
-				return theObject.getTrait(arguments.at(0).toString());
 			}
 	    };
 
