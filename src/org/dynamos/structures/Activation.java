@@ -83,6 +83,10 @@ public class Activation extends ObjectDOS {
 			activationPrototype.setFunction(Symbol.SET_LOCAL_SLOT_$_TO_$, SET_LOCAL_SLOT_$_TO_$_EXEC);
 			activationPrototype.setFunction(Symbol.SET_SLOT_$_TO_$, SET_SLOT_$_TO_$_EXEC);
 			activationPrototype.setFunction(Symbol.GET_SLOT_$, GET_SLOT_$_EXEC);
+			activationPrototype.setFunction(Symbol.PARENT_$, SET_PARENT_$_EXEC);
+			activationPrototype.setFunction(Symbol.PARENT, GET_PARENT_EXEC);
+			activationPrototype.setFunction(Symbol.SET_TRAIT_$_TO_$, SET_TRAIT_$_TO_$_EXEC);
+			activationPrototype.setFunction(Symbol.GET_TRAIT_$, GET_TRAIT_$_EXEC);
 			
 		}
 	    
@@ -156,7 +160,39 @@ public class Activation extends ObjectDOS {
 				return theObject.getSlot(symbol);
 			}
 	    };
-		
+	    
+	    private static ExecutableDOS SET_PARENT_$_EXEC = new ExecutableDOS() {
+			@Override
+			public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+				System.out.println("+++ setting parent of " + theObject + " to " + arguments.at(0));
+				theObject.setParent(arguments.at(0));
+				return theObject;
+			}
+	    };
+	    
+	    private static ExecutableDOS GET_PARENT_EXEC = new ExecutableDOS() {
+			@Override
+			public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+				return theObject.getParent();
+			}
+	    };
+	    
+	    private static ExecutableDOS SET_TRAIT_$_TO_$_EXEC = new ExecutableDOS() {
+			@Override
+			public ObjectDOS execute(ObjectDOS  theObject, ListDOS arguments) {
+				theObject.setTrait(arguments.at(0).toString(), arguments.at(1));
+				return theObject;
+			}
+	    };
+	    
+	    private static ExecutableDOS GET_TRAIT_$_EXEC = new ExecutableDOS() {
+			@Override
+			public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+				return theObject.getTrait(arguments.at(0).toString());
+			}
+	    };
+
+
 		public Activation createActivation() {
 			Activation result = new Activation();
 			result.setParent(activationPrototype);

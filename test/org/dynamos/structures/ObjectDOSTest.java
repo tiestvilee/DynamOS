@@ -90,7 +90,7 @@ public class ObjectDOSTest {
     public void shouldReturnUndefinedIfNoSlot() {
     	theObject = environment.createNewObject(); // TODO again, this sux the big time
     	Environment env = new Environment(new OpCodeInterpreter());
-		ObjectDOS.initialiseRootObject(env, theObject);
+		ObjectDOS.initialiseRootObject(env);
         assertSame(env.getUndefined(), theObject.getSlot(symbol));
     }
     

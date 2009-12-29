@@ -6,7 +6,7 @@
 package org.dynamos.structures;
 
 import org.dynamos.OpCodeInterpreter;
-import org.dynamos.structures.StandardObjects.ValueObject;
+import org.dynamos.types.NumberDOS.ValueObject;
 
 /**
  *
@@ -34,7 +34,7 @@ public class OpCode {
         	if(stackFrame.getObject() != null) {
         		target = stackFrame.getObject();
         	}
-			System.out.println("find and execute " + symbol + " on " + target + " with " + stackFrame.getArguments().getRawList());
+			System.out.println("find and execute " + symbol + " on " + target + "\n....with " + stackFrame.getArguments().getRawList());
 			ExecutableDOS function = target.getFunction(symbol);
 			// TODO AAAAA the following always executes with target, but what if the function was on the real parent object, 
 			// rather than the current activation

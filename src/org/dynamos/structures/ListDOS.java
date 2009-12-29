@@ -3,7 +3,7 @@ package org.dynamos.structures;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.dynamos.structures.StandardObjects.ValueObject;
+import org.dynamos.types.NumberDOS.ValueObject;
 
 public class ListDOS extends ObjectDOS {
 	
@@ -33,7 +33,7 @@ public class ListDOS extends ObjectDOS {
 	class AtFunction extends ExecutableDOS {
 		@Override
 		public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
-			StandardObjects.ValueObject index = (ValueObject) arguments.getRawList().get(0);
+			ValueObject index = (ValueObject) arguments.getRawList().get(0);
 			System.out.println("made it! " + index.getValue() +  " " + list.get(index.getValue()));
 			return list.get(index.getValue());
 		}

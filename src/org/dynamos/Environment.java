@@ -4,14 +4,17 @@ import org.dynamos.structures.Activation;
 import org.dynamos.structures.ConstructorDOS;
 import org.dynamos.structures.FunctionDOS;
 import org.dynamos.structures.FunctionWithContext;
+import org.dynamos.structures.Mirror;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
-import org.dynamos.structures.StandardObjects;
 import org.dynamos.structures.Symbol;
 import org.dynamos.structures.VMObjectDOS;
 import org.dynamos.structures.Activation.ActivationBuilder;
-import org.dynamos.structures.StandardObjects.NullDOS;
-import org.dynamos.structures.StandardObjects.UndefinedDOS;
+import org.dynamos.types.BooleanDOS;
+import org.dynamos.types.NumberDOS;
+import org.dynamos.types.StandardObjects;
+import org.dynamos.types.StandardObjects.NullDOS;
+import org.dynamos.types.StandardObjects.UndefinedDOS;
 
 public class Environment {
 
@@ -22,6 +25,7 @@ public class Environment {
     
 	private ObjectDOS nullDOS;
     private ObjectDOS undefined;
+	private ObjectDOS mirror;
 	private ObjectDOS booleanContainer;
 	private final OpCodeInterpreter interpreter;
 	private ObjectDOS listFactory;
@@ -46,15 +50,17 @@ public class Environment {
 		undefined = new UndefinedDOS();
 		undefined.setParent(rootObject);
 		
-		ObjectDOS.initialiseRootObject(this, rootObject);
+		ObjectDOS.initialiseRootObject(this);
+		
+		mirror = Mirror.initialiseMirror(this);
 		
 		virtualMachine = VMObjectDOS.getVMObject(this);
 		contextBuilder = Activation.initializeContext(this);
 	}
 	
 	public void init() {
-		booleanContainer = StandardObjects.initialiseBooleans(interpreter, this);
-        numberFactory = StandardObjects.createNumberLibrary(interpreter, this);
+		booleanContainer = BooleanDOS.initialiseBooleans(this);
+        numberFactory = NumberDOS.createNumberLibrary(interpreter, this);
         listFactory = StandardObjects.createListLibrary(this);
         functionPrototype = FunctionWithContext.createFunctionPrototype(this);
     }
@@ -65,6 +71,10 @@ public class Environment {
 
 	public ActivationBuilder getContextBuilder() {
 		return contextBuilder;
+	}
+	
+	public ObjectDOS getMirror() {
+		return mirror;
 	}
 	
 	public ObjectDOS getNumberFactory() {
@@ -91,7 +101,7 @@ public class Environment {
 	}
 	
 	public ObjectDOS createNewValueObject(int value) {
-		StandardObjects.ValueObject object = new StandardObjects.ValueObject(value);
+		NumberDOS.ValueObject object = new NumberDOS.ValueObject(value);
 		object.setParent(rootObject);
 		return object;
 	}

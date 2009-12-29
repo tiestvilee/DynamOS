@@ -30,7 +30,7 @@ public class BootstrapCompilerTest {
 	@Test
 	public void shouldReturnParameter() {
 		String program =
-			"(function test: someParameter\n" +
+			"(object test: someParameter\n" +
 			//"  result: someParameter\n" +
 			")";
 			

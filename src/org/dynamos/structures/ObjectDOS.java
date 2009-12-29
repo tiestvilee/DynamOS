@@ -101,32 +101,10 @@ public class ObjectDOS {
 	    setSlot(Symbol.ARGUMENTS, arguments);
 	}
 
-	/*
-     * object appropriate functions
-     */
-    private static ExecutableDOS SET_PARENT_EXEC = new ExecutableDOS() {
-		@Override
-		public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
-			System.out.println("+++ setting parent of " + theObject + " to " + arguments.at(0));
-			theObject.setParent(arguments.at(0));
-			return theObject;
-		}
-    };
-    
-    private static ExecutableDOS GET_PARENT_EXEC = new ExecutableDOS() {
-		@Override
-		public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
-			return theObject.getParent();
-		}
-    };
-
     /* Runtime Definition of Object */
     
-	public static void initialiseRootObject(Environment environment, ObjectDOS rootObject) {
+	public static void initialiseRootObject(Environment environment) {
 		UNDEFINED = environment.getUndefined();
-		
-		rootObject.setFunction(Symbol.SET_PARENT_$, SET_PARENT_EXEC);
-		rootObject.setFunction(Symbol.PARENT, GET_PARENT_EXEC);
 	}
 
 }

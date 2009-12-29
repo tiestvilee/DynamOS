@@ -12,9 +12,8 @@ import org.dynamos.structures.Activation;
 import org.dynamos.structures.ExecutableDOS;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
-import org.dynamos.structures.StandardObjects;
 import org.dynamos.structures.Symbol;
-import org.dynamos.structures.StandardObjects.ValueObject;
+import org.dynamos.types.NumberDOS.ValueObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -298,7 +297,7 @@ public class MessageLookupTest {
 
 	private ObjectDOS createSuperObject0() {
 		ObjectDOS newObject0 = interpreter.newObject();
-		newObject0.setSlot(obj0slot, new StandardObjects.ValueObject(6789));
+		newObject0.setSlot(obj0slot, new ValueObject(6789));
 		newObject0.setFunction(obj0message, interpreter.getEnvironment().createFunction(
 				new Symbol[] {}, 
 				new OpCode[] {
@@ -327,7 +326,7 @@ public class MessageLookupTest {
 		Collections.addAll(opCodes,
 			// set parent
 			new OpCode.Push(obj0),
-			new OpCode.FunctionCall(Symbol.SET_PARENT_$),
+			new OpCode.FunctionCall(Symbol.PARENT_$),
 				
 			// set up obj1slot
 			new OpCode.CreateValueObject(interpreter, 1234),

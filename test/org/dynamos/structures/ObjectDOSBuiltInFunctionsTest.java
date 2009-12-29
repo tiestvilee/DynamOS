@@ -5,7 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import org.dynamos.Environment;
 import org.dynamos.OpCodeInterpreter;
-import org.dynamos.structures.StandardObjects.ValueObject;
+import org.dynamos.types.NumberDOS.ValueObject;
 import org.junit.Before;
 import org.junit.Test;
 

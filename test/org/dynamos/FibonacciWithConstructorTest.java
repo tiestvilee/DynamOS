@@ -13,7 +13,7 @@ import org.dynamos.structures.ConstructorDOS;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.Symbol;
-import org.dynamos.structures.StandardObjects.ValueObject;
+import org.dynamos.types.NumberDOS;
 import org.junit.Test;
 
 /**
@@ -281,7 +281,7 @@ public class FibonacciWithConstructorTest {
         	new OpCode.FunctionCall(fibonacci$)
         });
         
-        assertThat(((ValueObject) applicationContext.getSlot(Symbol.RESULT)).getValue(), is(expectedResult));
+        assertThat(((NumberDOS.ValueObject) applicationContext.getSlot(Symbol.RESULT)).getValue(), is(expectedResult));
 	}
 
 }

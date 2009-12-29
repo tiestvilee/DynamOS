@@ -8,7 +8,7 @@ package org.dynamos.structures;
 import java.util.List;
 
 import org.dynamos.Environment;
-import org.dynamos.structures.StandardObjects.ValueObject;
+import org.dynamos.types.NumberDOS.ValueObject;
 
 
 /**

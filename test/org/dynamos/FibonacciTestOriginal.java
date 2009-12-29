@@ -12,9 +12,8 @@ import org.dynamos.structures.Activation;
 import org.dynamos.structures.FunctionDOS;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
-import org.dynamos.structures.StandardObjects;
 import org.dynamos.structures.Symbol;
-import org.dynamos.structures.StandardObjects.ValueObject;
+import org.dynamos.types.NumberDOS;
 import org.junit.Test;
 
 /**
@@ -158,15 +157,15 @@ public class FibonacciTestOriginal {
 
         ObjectDOS application = environment.createNewObject();
 
-        application.setSlot(one, StandardObjects.numberDOS(interpreter.getEnvironment(), 1));
-        application.setSlot(two, StandardObjects.numberDOS(interpreter.getEnvironment(), 2));
+        application.setSlot(one, NumberDOS.numberDOS(interpreter.getEnvironment(), 1));
+        application.setSlot(two, NumberDOS.numberDOS(interpreter.getEnvironment(), 2));
         application.setSlot(anon1, anon1Function);
         application.setSlot(anon2, anon2Function);
         application.setFunction(fibonacci$, fibonacciFunction);
         
         Activation activation = interpreter.newActivation();
         activation.setSlot(applicationObject, application);
-        activation.setSlot(sequenceIndexSymbol, StandardObjects.numberDOS(interpreter.getEnvironment(), sequenceIndex));
+        activation.setSlot(sequenceIndexSymbol, NumberDOS.numberDOS(interpreter.getEnvironment(), sequenceIndex));
         
         interpreter.interpret(activation, new OpCode[] {
         	new OpCode.Push(sequenceIndexSymbol),
@@ -176,7 +175,7 @@ public class FibonacciTestOriginal {
         	new OpCode.Debug("shell finished", Symbol.RESULT),
         });
         
-        assertThat(((ValueObject) activation.getSlot(Symbol.RESULT)).getValue(), is(expectedResult));
+        assertThat(((NumberDOS.ValueObject) activation.getSlot(Symbol.RESULT)).getValue(), is(expectedResult));
 	}
 
 }

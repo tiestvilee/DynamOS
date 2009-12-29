@@ -15,6 +15,7 @@ import static org.hamcrest.CoreMatchers.is;
 
 import org.dynamos.Environment;
 import org.dynamos.OpCodeInterpreter;
+import org.dynamos.types.StandardObjects;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Before;
