@@ -41,7 +41,7 @@ public class Symbol {
 	public static final Symbol PARENT = Symbol.get("parent");
 	public static final Symbol PARENT_$ = Symbol.get("parent:");
 	public static final Symbol EXECUTE = Symbol.get("execute");
-	public static final Symbol SET_FUNCTION_$_TO_$ = Symbol.get("setFunction:to:");
+	public static final Symbol SET_LOCAL_FUNCTION_$_TO_$ = Symbol.get("setFunction:to:");
 	public static final Symbol SET_SLOT_$_TO_$ = Symbol.get("setSlot:to:");
 	public static final Symbol GET_SLOT_$ = Symbol.get("getSlot:");
 	public static final Symbol SET_LOCAL_SLOT_$_TO_$ = Symbol.get("setLocalSlot:to:");

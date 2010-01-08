@@ -19,37 +19,39 @@ public class TransformStringToASTTest {
 	}
 	
 	@Test
-	public void shouldCreateFunctionNode() {
-		ASTNode root = transformer.transform(
+	public void shouldCreateConstructorNode() {
+		StatementContainingNode root = transformer.transform(
 			"(object object-WithParam: param1 andParam?: param2 \n " +
-			") \n "
+			") \n"
 		);
 		
-		assertThat(((ConstructorNode) root).getName(), is("object-WithParam:andParam?:"));
-		assertThat(((ConstructorNode) root).getArguments().get(0), is("param1"));
-		assertThat(((ConstructorNode) root).getArguments().get(1), is("param2"));
+		ConstructorNode node = (ConstructorNode) root.getStatements().get(0);
+		
+		assertThat(node.getName(), is("object-WithParam:andParam?:"));
+		assertThat(node.getArguments().get(0), is("param1"));
+		assertThat(node.getArguments().get(1), is("param2"));
 	}
 	
 	@Test
 	public void shouldIgnoreComments() {
-		ASTNode root = transformer.transform(
+		StatementContainingNode root = transformer.transform(
 			"(object object-WithParam: param1 andParam?: param2 // comment 1\n" +
 			"  // comment 2\n" +
 			") \n "
 		);
 		
-		assertThat(((ConstructorNode) root).getStatements().size(), is(0));
+		ConstructorNode node = (ConstructorNode) root.getStatements().get(0);
+
+		assertThat(node.getStatements().size(), is(0));
 	}
 	
 	@Test
 	public void shouldCreateFunctionCall() {
-		ASTNode root = transformer.transform(
-			"(object test\n" +
-			"  function-WithParam: param1 andParam?: param2\n" +
-			")"
+		StatementContainingNode root = transformer.transform(
+			"function-WithParam: param1 andParam?: param2\n"
 		);
-		
-		FunctionCallNode call = ((FunctionCallNode) ((StatementContainingNode) root).getStatements().get(0));
+
+		FunctionCallNode call = ((FunctionCallNode) root.getStatements().get(0));
 
 		assertThat(call.getName(), is("function-WithParam:andParam?:"));
 		assertThat(((SymbolNode) call.getArguments().get(0)).getName(), is("param1"));
@@ -58,13 +60,11 @@ public class TransformStringToASTTest {
 	
 	@Test
 	public void shouldCreateNestedFunctionCall() {
-		ASTNode root = transformer.transform(
-			"(object test\n" +
-			"  function-WithParam: (function1) andParam?: (function2: param1)\n" +
-			")"
+		StatementContainingNode root = transformer.transform(
+			"function-WithParam: (function1) andParam?: (function2: param1)\n"
 		);
-		
-		FunctionCallNode call = ((FunctionCallNode) ((StatementContainingNode) root).getStatements().get(0));
+
+		FunctionCallNode call = ((FunctionCallNode) root.getStatements().get(0));
 
 		assertThat(call.getName(), is("function-WithParam:andParam?:"));
 		assertThat(((FunctionCallNode) call.getArguments().get(0)).getName(), is("function1"));
@@ -74,13 +74,11 @@ public class TransformStringToASTTest {
 	
 	@Test
 	public void shouldChainParameterlessCalls() {
-		ASTNode root = transformer.transform(
-			"(object test\n" +
-			"  accessor1 accessor2 function1: (function2: param1) // a comment, just to see\n" +
-			")"
+		StatementContainingNode root = transformer.transform(
+			"accessor1 accessor2 function1: (function2: param1) // a comment, just to see\n"
 		);
 		
-		FunctionCallNode call = ((FunctionCallNode) ((StatementContainingNode) root).getStatements().get(0));
+		FunctionCallNode call = ((FunctionCallNode) root.getStatements().get(0));
 
 		assertThat(call.getName(), is("accessor1"));
 		assertThat(call.getChain().getName(), is("accessor2"));
@@ -91,13 +89,11 @@ public class TransformStringToASTTest {
 	
 	@Test
 	public void shouldCreateClosure() {
-		ASTNode root = transformer.transform(
-			"(object test\n" +
-			"  functionWithClosure: [param1, param2| ]\n" +
-			")"
+		StatementContainingNode root = transformer.transform(
+			"functionWithClosure: [param1, param2| ]\n"
 		);
 		
-		FunctionCallNode call = ((FunctionCallNode) ((StatementContainingNode) root).getStatements().get(0));
+		FunctionCallNode call = ((FunctionCallNode) root.getStatements().get(0));
 		ClosureNode closure = ((ClosureNode) call.getArguments().get(0));
 
 		assertThat( closure.getArguments().get(0), is("param1"));
@@ -106,7 +102,7 @@ public class TransformStringToASTTest {
 	
 	@Test
 	public void shouldCreateClosureWithStatement() {
-		ASTNode root = transformer.transform(
+		StatementContainingNode root = transformer.transform(
 			"(object test\n" +
 			"  functionWithClosure: [param1, param2| functioncall1: param1\n" +
 			"    functionCall2\n" +
@@ -115,7 +111,9 @@ public class TransformStringToASTTest {
 			")"
 		);
 		
-		FunctionCallNode call = ((FunctionCallNode) ((StatementContainingNode) root).getStatements().get(0));
+		ConstructorNode node = (ConstructorNode) root.getStatements().get(0);
+
+		FunctionCallNode call = ((FunctionCallNode) node.getStatements().get(0));
 		ClosureNode closure = ((ClosureNode) call.getArguments().get(0));
 
 		assertThat( closure.getStatements().size(), is(3));
@@ -123,46 +121,44 @@ public class TransformStringToASTTest {
 	
 	@Test
 	public void shouldDefineNumberConstant() {
-		ASTNode root = transformer.transform(
-			"(object test\n" +
-			"  function-WithParam: #1234\n" +
-			")"
+		StatementContainingNode root = transformer.transform(
+			"function-WithParam: #1234\n"
 		);
 		
-		FunctionCallNode call = ((FunctionCallNode) ((StatementContainingNode) root).getStatements().get(0));
+		FunctionCallNode call = ((FunctionCallNode) root.getStatements().get(0));
 
 		assertThat(((NumberNode) call.getArguments().get(0)).getValue(), is(1234));
 	}
 	
 	@Test
 	public void shouldDefineStringConstant() {
-		ASTNode root = transformer.transform(
-			"(object test\n" +
-			"  function-WithParam: 'a string'\n" +
-			")"
+		StatementContainingNode root = transformer.transform(
+			"function-WithParam: 'a string'\n"
 		);
 		
-		FunctionCallNode call = ((FunctionCallNode) ((StatementContainingNode) root).getStatements().get(0));
+		FunctionCallNode call = ((FunctionCallNode) root.getStatements().get(0));
 
 		assertThat(((StringNode) call.getArguments().get(0)).getValue(), is("a string"));
 	}
 	
 	@Test
 	public void shouldAddLocalToContext() {
-		ASTNode root = transformer.transform(
+		StatementContainingNode root = transformer.transform(
 			"(object test\n" +
 			"  (slot aLocal)\n" +
 			")"
 		);
 		
-		List<SymbolNode> slots = ((ConstructorNode) root).getSlots();
+		ConstructorNode node = (ConstructorNode) root.getStatements().get(0);
+
+		List<SymbolNode> slots = node.getSlots();
 		
 		assertThat(slots.get(0).getName(), is("aLocal"));
 	}
 	
 	@Test
 	public void shouldCreateNestedFunction() {
-		ASTNode root = transformer.transform(
+		StatementContainingNode root = transformer.transform(
 			"(object test\n" +
 			"  (function nestedFunction: param1\n" +
 			"    result: param1\n" +
@@ -170,7 +166,9 @@ public class TransformStringToASTTest {
 			")"
 		);
 		
-		FunctionNode nested = ((FunctionNode) ((StatementContainingNode) root).getStatements().get(0));
+		ConstructorNode node = (ConstructorNode) root.getStatements().get(0);
+
+		FunctionNode nested = ((FunctionNode) node.getStatements().get(0));
 
 		assertThat(nested.getName(), is("nestedFunction:"));
 		assertThat(nested.getArguments().get(0), is("param1"));
@@ -181,8 +179,8 @@ public class TransformStringToASTTest {
 	}
 	
 	@Test
-	public void shouldOpenObjectForModifying() {
-		ASTNode root = transformer.transform(
+	public void shouldDefineObjectConstructorWithinAnotherConstructor() {
+		StatementContainingNode root = transformer.transform(
 				"(object test\n" +
 				"  (object aLocal\n" +
 				"    (function afunc: theParam\n" +
@@ -191,8 +189,10 @@ public class TransformStringToASTTest {
 				"  )\n" +
 				")"
 			);
-			
-		ConstructorNode open = (ConstructorNode) ((ConstructorNode) root).getStatements().get(0);
+		
+		ConstructorNode node = (ConstructorNode) root.getStatements().get(0);
+
+		ConstructorNode open = (ConstructorNode) node.getStatements().get(0);
 		assertThat(open.getName(), is("aLocal"));
 		
 		FunctionNode fnode = (FunctionNode) open.getStatements().get(0);
@@ -213,7 +213,7 @@ public class TransformStringToASTTest {
 
 	@Test
 	public void shouldTranslateNumberLibrarySuccessfully() {
-		ASTNode node = transformer.transform(
+		StatementContainingNode node = transformer.transform(
 				"(object numberFactory: vm\n" + 
 				"  \n" + 
 				"  (object numberPrototype\n" + 

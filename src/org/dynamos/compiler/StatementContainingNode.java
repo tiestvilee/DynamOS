@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.dynamos.structures.OpCode;
+
 public class StatementContainingNode extends NamedNode {
 	
 	List<ASTNode> statements = new ArrayList<ASTNode>();
@@ -23,6 +25,13 @@ public class StatementContainingNode extends NamedNode {
 	
 	public List<SymbolNode> getSlots() {
 		return Collections.unmodifiableList(slots);
+	}
+
+	@Override
+	public void compile(List<OpCode> opCodes, int tempNumber) {
+		for(ASTNode node : statements) {
+			node.compile(opCodes, tempNumber);
+		}
 	}
 
 }

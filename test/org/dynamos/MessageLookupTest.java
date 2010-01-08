@@ -240,7 +240,7 @@ public class MessageLookupTest {
 	            
 	            new OpCode.PushSymbol(obj1custom),
 	            new OpCode.Push(Symbol.RESULT),
-	            new OpCode.FunctionCall(Symbol.SET_FUNCTION_$_TO_$)
+	            new OpCode.FunctionCall(Symbol.SET_LOCAL_FUNCTION_$_TO_$)
 			);
 		System.out.println(opCodeList.size());
 		updateOpcodeList(opCodeList, END_OF_OBJ1_CONSTRUCTOR, customOpCodes);
@@ -354,7 +354,7 @@ public class MessageLookupTest {
             
             new OpCode.PushSymbol(obj1message),
             new OpCode.Push(Symbol.RESULT),
-            new OpCode.FunctionCall(Symbol.SET_FUNCTION_$_TO_$),
+            new OpCode.FunctionCall(Symbol.SET_LOCAL_FUNCTION_$_TO_$),
             
 			// set up obj1slot accessor
         	new OpCode.SetObject(listFactory), // empty symbol list
@@ -374,7 +374,7 @@ public class MessageLookupTest {
             
             new OpCode.PushSymbol(obj1slot),
             new OpCode.Push(Symbol.RESULT),
-            new OpCode.FunctionCall(Symbol.SET_FUNCTION_$_TO_$),
+            new OpCode.FunctionCall(Symbol.SET_LOCAL_FUNCTION_$_TO_$),
             
 			new OpCode.Debug("returning from obj1 constructor", Symbol.RESULT)
         	);

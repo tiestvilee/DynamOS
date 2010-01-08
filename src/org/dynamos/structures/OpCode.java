@@ -21,9 +21,28 @@ public class OpCode {
     }
    
     public static final OpCode NOOP = new OpCode();
+    
+    protected static class OpCodeWithSymbol extends OpCode{
+    	protected Symbol symbol;
 
-    public static class FunctionCall extends OpCode {
-        private Symbol symbol;
+    	@Override
+		public int hashCode() {
+			return symbol.hashCode();
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			return getClass() == obj.getClass() && symbol.equals(((OpCodeWithSymbol) obj).symbol);
+		}
+		
+		@Override
+		public String toString() {
+			return getClass().getSimpleName() + ":" + symbol.toString();
+		}
+
+    }
+
+    public static class FunctionCall extends OpCodeWithSymbol {
         public FunctionCall(Symbol symbol) {
             this.symbol = symbol;
         }
@@ -43,10 +62,10 @@ public class OpCode {
         	self.setSlot(Symbol.RESULT, result);
             return true;
         }
+        
     }
 
-    public static class SetObject extends OpCode {
-        private Symbol symbol;
+    public static class SetObject extends OpCodeWithSymbol {
         public SetObject(Symbol symbol) {
             this.symbol = symbol;
         }
@@ -57,10 +76,10 @@ public class OpCode {
             stackFrame.setObject(object);
             return false;
         }
+
     }
     
-    public static class Push extends OpCode {
-        private Symbol symbol;
+    public static class Push extends OpCodeWithSymbol {
         public Push(Symbol symbol) {
             this.symbol = symbol;
         }
@@ -71,10 +90,10 @@ public class OpCode {
             stackFrame.pushArgument(argument);
             return false;
         }
+
     }
 
-	public static class PushSymbol extends OpCode {
-        private Symbol symbol;
+	public static class PushSymbol extends OpCodeWithSymbol {
         public PushSymbol(Symbol symbol) {
             this.symbol = symbol;
         }
@@ -101,6 +120,16 @@ public class OpCode {
         	self.setSlot(Symbol.RESULT, interpreter.getEnvironment().createNewValueObject(value));
             return false;
         }
+        
+    	@Override
+		public int hashCode() {
+			return value;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			return value == ((CreateValueObject) obj).value;
+		}
 	}
 
     public static class Debug extends OpCode {
@@ -129,10 +158,30 @@ public class OpCode {
     
 	public static class StartOpCodeList extends OpCode {
 		/* do nothing */
+        
+    	@Override
+		public int hashCode() {
+			return 1;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			return obj instanceof StartOpCodeList;
+		}
 	}
     
 	public static class EndOpCodeList extends OpCode {
 		/* do nothing */
+        
+    	@Override
+		public int hashCode() {
+			return 2;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			return obj instanceof EndOpCodeList;
+		}
 	}
 
 }

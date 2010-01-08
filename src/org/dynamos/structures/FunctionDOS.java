@@ -83,4 +83,8 @@ public class FunctionDOS extends ExecutableDOS {
         return activation.getSlot(Symbol.RESULT);
 	}
 
+	public OpCode[] getOpCodes() {
+		return opCodes;
+	}
+
 }

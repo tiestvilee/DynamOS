@@ -78,6 +78,80 @@ public class Mirror {
 		return mirror;
 	}
 	
+
+    private static ExecutableDOS SET_FUNCTION_$_TO_$_EXEC = new ExecutableDOS() {
+		@Override
+		public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+			theObject.setFunction(((SymbolWrapper) arguments.at(0)).getSymbol(), (ExecutableDOS) arguments.at(1));
+			return theObject;
+		}
+    };
+    
+    private static ExecutableDOS SET_SLOT_$_TO_$_EXEC = new ExecutableDOS() {
+    	@Override
+    	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+    		Symbol symbol = ((SymbolWrapper) arguments.at(0)).getSymbol();
+    		ObjectDOS value = arguments.at(1);
+    		
+        	ObjectDOS objectWithSlot;
+    		if(theObject instanceof Activation) {
+    			/* implicit call */
+	        	objectWithSlot = findSlotInContextChain(theObject, symbol);
+    		} else {
+    			/* explicit call */
+    			// this currently must be allowed so that Constructor functions work
+    			// TODO is this bad?  is this a big hole? setters are only available on contexts, so you could change temps in a context, yuk
+    			objectWithSlot = theObject;
+    		}
+    		objectWithSlot.setSlot(symbol, value);
+        	System.out.println("+++|| set slot " + symbol + " on " + objectWithSlot + " to " + value + " -> " + objectWithSlot.getSlot(symbol));
+    		return objectWithSlot;
+    	}
+
+		private ObjectDOS findSlotInContextChain(ObjectDOS theObject, Symbol symbol) {
+			Activation cursor = (Activation) theObject;
+			while(cursor != null && cursor.getLocalSlot(symbol) == null)
+			{
+				cursor = cursor.getContext();
+			}
+			
+			if(cursor == null) {
+				System.out.println("using a victim " + ((Activation) theObject).getVictim());
+				return ((Activation) theObject).getVictim();
+			}
+    		System.out.println("using an activation " + cursor);
+			
+			return cursor;
+		}
+    };
+    
+    private static ExecutableDOS SET_LOCAL_SLOT_$_TO_$_EXEC = new ExecutableDOS() {
+    	@Override
+    	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+    		Symbol symbol = ((SymbolWrapper) arguments.at(0)).getSymbol();
+    		ObjectDOS value = arguments.at(1);
+    		
+    		if(theObject instanceof Activation) {
+    			/* implicit call */
+    			theObject.setSlot(symbol, value);
+	        	System.out.println("+++|| set slot " + symbol + " on " + theObject + " to " + value + " -> " + theObject.getSlot(symbol));
+	        	return theObject;
+    		}
+    		/* explicit call */
+    		throw new RuntimeException("Can't set a slot directly on an object, only within that object's functions");
+    	}
+    };
+    
+    private static ExecutableDOS GET_SLOT_$_EXEC = new ExecutableDOS() {
+		@Override
+		public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+    		Symbol symbol = ((SymbolWrapper) arguments.at(0)).getSymbol();
+			return theObject.getSlot(symbol);
+		}
+    };
+
+
+	
     private static ExecutableDOS SET_PARENT_TO_$_ON_$_EXEC = new ExecutableDOS() {
 		@Override
 		public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {

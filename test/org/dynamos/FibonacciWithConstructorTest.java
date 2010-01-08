@@ -242,7 +242,7 @@ public class FibonacciWithConstructorTest {
             	
 	            new OpCode.PushSymbol(fibonacci$),  // save fibonacci to context / object
 	            new OpCode.Push(Symbol.RESULT),
-	            new OpCode.FunctionCall(Symbol.SET_FUNCTION_$_TO_$),
+	            new OpCode.FunctionCall(Symbol.SET_LOCAL_FUNCTION_$_TO_$),
 	            new OpCode.Debug("created fibonacci library", fibonacciLibrarySlot),
     	});
 

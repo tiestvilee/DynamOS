@@ -61,10 +61,10 @@ public class TransformStringToAST {
 				node.addStatement(objectDefinition(stream));
 			} else if(stream.matchesNewLine()) {
 				stream.consumeNewLine();
-			} else if(stream.matchesRightBracket() || stream.matchesRightBrace()) {
+			} else if(stream.matchesRightBracket() || stream.matchesRightBrace() || stream.eos()) {
 				return;
 			} else {
-				throw new RuntimeException("don't understand from [" + stream.getRemainder());
+				throw new RuntimeException("don't understand from [" + stream.getRemainder() + "]");
 			}
 		}
 	}
@@ -189,6 +189,11 @@ public class TransformStringToAST {
 			this.index = index;
 		}
 		
+		public boolean eos() {
+			consumeMatch("EOS", "(" + WHITESPACE + "*)");
+			return index == program.length();
+		}
+
 		public void consumeLocalStart() {
 			consumeMatchWithPreceedingWhitespace("slot start", "\\(slot ");
 		}
@@ -342,10 +347,14 @@ public class TransformStringToAST {
 
 	}
 
-	public ASTNode transform(String program) {
+	public StatementContainingNode transform(String program) {
 		Stream stream = new Stream(program, 0);
 		
-		return objectDefinition(stream);
+		StatementContainingNode node = new StatementContainingNode();
+		
+		functionBody(node, stream);
+		
+		return node; 
 	}
 
 }

@@ -128,14 +128,14 @@ public class Activation extends ObjectDOS {
 							}, 
 							contextContainingVM ));
 
-			activationPrototype.setFunction(Symbol.SET_FUNCTION_$_TO_$, SET_FUNCTION_$_TO_$_EXEC);
+			activationPrototype.setFunction(Symbol.SET_LOCAL_FUNCTION_$_TO_$, SET_LOCAL_FUNCTION_$_TO_$_EXEC);
 			activationPrototype.setFunction(Symbol.SET_LOCAL_SLOT_$_TO_$, SET_LOCAL_SLOT_$_TO_$_EXEC);
 			activationPrototype.setFunction(Symbol.SET_SLOT_$_TO_$, SET_SLOT_$_TO_$_EXEC);
 			activationPrototype.setFunction(Symbol.GET_SLOT_$, GET_SLOT_$_EXEC);
 			
 		}
 	    
-	    private static ExecutableDOS SET_FUNCTION_$_TO_$_EXEC = new ExecutableDOS() {
+	    private static ExecutableDOS SET_LOCAL_FUNCTION_$_TO_$_EXEC = new ExecutableDOS() {
 			@Override
 			public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
 				theObject.setFunction(((SymbolWrapper) arguments.at(0)).getSymbol(), (ExecutableDOS) arguments.at(1));
