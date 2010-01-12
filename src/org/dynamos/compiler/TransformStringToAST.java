@@ -140,7 +140,7 @@ public class TransformStringToAST {
 	 * FunctionDefinition => '(function' MessageDefinition FunctionBody ')\n'
 	 */
 	public ASTNode functionDefinition(Stream stream) {
-		FunctionNode fnode = new FunctionNode();
+		MessageNode fnode = new FunctionNode();
 		
 		stream.consumeFunctionStart();
 		messageDefinition(fnode, stream);

@@ -168,7 +168,7 @@ public class TransformStringToASTTest {
 		
 		ConstructorNode node = (ConstructorNode) root.getStatements().get(0);
 
-		FunctionNode nested = ((FunctionNode) node.getStatements().get(0));
+		MessageNode nested = ((MessageNode) node.getStatements().get(0));
 
 		assertThat(nested.getName(), is("nestedFunction:"));
 		assertThat(nested.getArguments().get(0), is("param1"));
@@ -195,7 +195,7 @@ public class TransformStringToASTTest {
 		ConstructorNode open = (ConstructorNode) node.getStatements().get(0);
 		assertThat(open.getName(), is("aLocal"));
 		
-		FunctionNode fnode = (FunctionNode) open.getStatements().get(0);
+		MessageNode fnode = (MessageNode) open.getStatements().get(0);
 		assertThat(fnode.getName(), is("afunc:"));
 		assertThat(fnode.getArguments().get(0), is("theParam"));
 		
@@ -214,9 +214,9 @@ public class TransformStringToASTTest {
 	@Test
 	public void shouldTranslateNumberLibrarySuccessfully() {
 		StatementContainingNode node = transformer.transform(
-				"(object numberFactory: vm\n" + 
+				"(object numberFactoryConstructor: vm\n" + 
 				"  \n" + 
-				"  (object numberPrototype\n" + 
+				"  (object numberPrototypeConstructor\n" + 
 				"    (function plus: number\n" + 
 				"      result: (vm add: number to: this)\n" + 
 				"    )\n" + 
@@ -228,7 +228,8 @@ public class TransformStringToASTTest {
 				"    (function isLessThan: number\n" + 
 				"      result: (vm value: this isLessThan: number)\n" + 
 				"    )\n" + 
-				"  )\n" + 
+				"  )\n" +
+				"  numberPrototype: (numberPrototypeConstructor execute)\n" + 
 				"  \n" + 
 				"  (function numberFrom: value\n" + 
 				"     value parent: numberPrototype\n" + 
