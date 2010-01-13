@@ -8,14 +8,8 @@ import org.dynamos.structures.Symbol;
 
 
 public class ConstructorNode extends MessageNode {
-	// a cosntructor node is a message node
-	
 	public String type() {
 		return "object";
-	}
-	
-	void assignToPublicInterface(List<OpCode> opCodes) {
-		// not sure I want to do this as the default...
 	}
 
 	void createFunction(List<OpCode> opCodes) {

@@ -10,6 +10,7 @@ import org.dynamos.structures.Symbol;
 public abstract class MessageNode extends StatementContainingNode {
 
 	private List<String> arguments = new ArrayList<String>();
+	private boolean isPrivate = false;
 	
 	public List<String> getArguments() {
 		return Collections.unmodifiableList(arguments);
@@ -17,6 +18,14 @@ public abstract class MessageNode extends StatementContainingNode {
 
 	public void addParameter(String string) {
 		arguments.add(string);
+	}
+	
+	public Boolean isPrivate() {
+		return isPrivate;
+	}
+	
+	public void isPrivate(boolean isPrivate) {
+		this.isPrivate = isPrivate ;
 	}
 	
 	public abstract String type();
@@ -33,6 +42,7 @@ public abstract class MessageNode extends StatementContainingNode {
 		return indent + "(" + type() + " " + getName() + "{\n" + indent + "  " + statementsAsString + "\n" + indent + "})\n";
 	}
 
+
 	@Override
 	public void compile(List<OpCode> opCodes, int tempNumber) {
 		setupArgumentList(opCodes);
@@ -43,7 +53,7 @@ public abstract class MessageNode extends StatementContainingNode {
 		
 		createFunction(opCodes);
 	    
-		assignToPublicInterface(opCodes);
+		assignToSlotsOrFunctions(opCodes);
 	
 	}
 
@@ -62,7 +72,18 @@ public abstract class MessageNode extends StatementContainingNode {
 	}
 	
 	abstract void createFunction(List<OpCode> opCodes);
-	abstract void assignToPublicInterface(List<OpCode> opCodes);
+	
+	void assignToSlotsOrFunctions(List<OpCode> opCodes) {
+		if(isPrivate) {
+			opCodes.add(new OpCode.PushSymbol(Symbol.get(getName()))); // save into functions with correct name
+			opCodes.add(new OpCode.Push(Symbol.RESULT));
+			opCodes.add(new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$));
+		} else {
+			opCodes.add(new OpCode.PushSymbol(Symbol.get(getName()))); // save into functions with correct name
+			opCodes.add(new OpCode.Push(Symbol.RESULT));
+			opCodes.add(new OpCode.FunctionCall(Symbol.SET_LOCAL_FUNCTION_$_TO_$));
+		}
+	}
 
 
 }

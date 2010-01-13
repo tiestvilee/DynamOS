@@ -10,9 +10,11 @@ public class TransformStringToAST {
 	 * ObjectDefinition => '(object' MessageDefinition FunctionBody ')'
 	 */
 	public ASTNode objectDefinition( Stream stream) {
-		ConstructorNode objectConstructor = new ConstructorNode();
+		MessageNode objectConstructor = new ConstructorNode();
 
+		objectConstructor.isPrivate(stream.matchesPrivate());
 		stream.consumeObjectConstructorStart();
+		
 		messageDefinition(objectConstructor, stream);
 		functionBody(objectConstructor, stream);
 		stream.consumeRightBracket();
@@ -142,6 +144,7 @@ public class TransformStringToAST {
 	public ASTNode functionDefinition(Stream stream) {
 		MessageNode fnode = new FunctionNode();
 		
+		fnode.isPrivate(stream.matchesPrivate());
 		stream.consumeFunctionStart();
 		messageDefinition(fnode, stream);
 		functionBody(fnode, stream);
@@ -202,20 +205,24 @@ public class TransformStringToAST {
 			return testMatch("\\(slot ");
 		}
 		
+		public boolean matchesPrivate() {
+			return testMatch("\\(private-");
+		}
+
 		public boolean matchesFunctionStart() {
-			return testMatch("\\(function ");
+			return testMatch("\\((private-)?function ");
 		}
 
 		public void consumeFunctionStart() {
-			consumeMatchWithPreceedingWhitespace("Function start", "\\(function ");
+			consumeMatchWithPreceedingWhitespace("Function start", "\\((private-)?function ");
 		}
 
 		public boolean matchesObjectConstructorStart() {
-			return testMatch("\\(object ");
+			return testMatch("\\((private-)?constructor ");
 		}
 
 		public void consumeObjectConstructorStart() {
-			consumeMatchWithPreceedingWhitespace("Open object start", "\\(object ");
+			consumeMatchWithPreceedingWhitespace("Constructor start", "\\((private-)?constructor ");
 		}
 
 		public boolean matchesHash() {

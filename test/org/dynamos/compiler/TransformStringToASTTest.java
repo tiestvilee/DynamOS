@@ -21,26 +21,39 @@ public class TransformStringToASTTest {
 	@Test
 	public void shouldCreateConstructorNode() {
 		StatementContainingNode root = transformer.transform(
-			"(object object-WithParam: param1 andParam?: param2 \n " +
+			"(constructor object-WithParam: param1 andParam?: param2 \n " +
 			") \n"
 		);
 		
-		ConstructorNode node = (ConstructorNode) root.getStatements().get(0);
+		MessageNode node = (MessageNode) root.getStatements().get(0);
 		
 		assertThat(node.getName(), is("object-WithParam:andParam?:"));
+		assertThat(node.isPrivate(), is(false));
 		assertThat(node.getArguments().get(0), is("param1"));
 		assertThat(node.getArguments().get(1), is("param2"));
 	}
 	
 	@Test
+	public void shouldCreatePrivateConstructorNode() {
+		StatementContainingNode root = transformer.transform(
+			"(private-constructor object\n " +
+			") \n"
+		);
+		
+		MessageNode node = (MessageNode) root.getStatements().get(0);
+		
+		assertThat(node.isPrivate(), is(true));
+	}
+	
+	@Test
 	public void shouldIgnoreComments() {
 		StatementContainingNode root = transformer.transform(
-			"(object object-WithParam: param1 andParam?: param2 // comment 1\n" +
+			"(constructor object-WithParam: param1 andParam?: param2 // comment 1\n" +
 			"  // comment 2\n" +
 			") \n "
 		);
 		
-		ConstructorNode node = (ConstructorNode) root.getStatements().get(0);
+		MessageNode node = (MessageNode) root.getStatements().get(0);
 
 		assertThat(node.getStatements().size(), is(0));
 	}
@@ -103,7 +116,7 @@ public class TransformStringToASTTest {
 	@Test
 	public void shouldCreateClosureWithStatement() {
 		StatementContainingNode root = transformer.transform(
-			"(object test\n" +
+			"(constructor test\n" +
 			"  functionWithClosure: [param1, param2| functioncall1: param1\n" +
 			"    functionCall2\n" +
 			"    functionCall3: param1 anotherParam: param2\n" +
@@ -111,7 +124,7 @@ public class TransformStringToASTTest {
 			")"
 		);
 		
-		ConstructorNode node = (ConstructorNode) root.getStatements().get(0);
+		MessageNode node = (MessageNode) root.getStatements().get(0);
 
 		FunctionCallNode call = ((FunctionCallNode) node.getStatements().get(0));
 		ClosureNode closure = ((ClosureNode) call.getArguments().get(0));
@@ -144,12 +157,12 @@ public class TransformStringToASTTest {
 	@Test
 	public void shouldAddLocalToContext() {
 		StatementContainingNode root = transformer.transform(
-			"(object test\n" +
+			"(constructor test\n" +
 			"  (slot aLocal)\n" +
 			")"
 		);
 		
-		ConstructorNode node = (ConstructorNode) root.getStatements().get(0);
+		MessageNode node = (MessageNode) root.getStatements().get(0);
 
 		List<SymbolNode> slots = node.getSlots();
 		
@@ -159,18 +172,18 @@ public class TransformStringToASTTest {
 	@Test
 	public void shouldCreateNestedFunction() {
 		StatementContainingNode root = transformer.transform(
-			"(object test\n" +
+			"(constructor test\n" +
 			"  (function nestedFunction: param1\n" +
 			"    result: param1\n" +
 			"  )\n" +
 			")"
 		);
 		
-		ConstructorNode node = (ConstructorNode) root.getStatements().get(0);
-
+		MessageNode node = (MessageNode) root.getStatements().get(0);
 		MessageNode nested = ((MessageNode) node.getStatements().get(0));
 
 		assertThat(nested.getName(), is("nestedFunction:"));
+		assertThat(nested.isPrivate(), is(false));
 		assertThat(nested.getArguments().get(0), is("param1"));
 		
 		FunctionCallNode call = (FunctionCallNode) nested.getStatements().get(0);
@@ -179,10 +192,25 @@ public class TransformStringToASTTest {
 	}
 	
 	@Test
+	public void shouldCreateNestedPrivateFunction() {
+		StatementContainingNode root = transformer.transform(
+			"(constructor test\n" +
+			"  (private-function nestedFunction\n" +
+			"  )\n" +
+			")"
+		);
+		
+		MessageNode node = (MessageNode) root.getStatements().get(0);
+		MessageNode nested = ((MessageNode) node.getStatements().get(0));
+
+		assertThat(nested.isPrivate(), is(true));
+	}
+	
+	@Test
 	public void shouldDefineObjectConstructorWithinAnotherConstructor() {
 		StatementContainingNode root = transformer.transform(
-				"(object test\n" +
-				"  (object aLocal\n" +
+				"(constructor test\n" +
+				"  (constructor aLocal\n" +
 				"    (function afunc: theParam\n" +
 				"      result: theParam\n" +
 				"    )\n" +
@@ -190,9 +218,9 @@ public class TransformStringToASTTest {
 				")"
 			);
 		
-		ConstructorNode node = (ConstructorNode) root.getStatements().get(0);
+		MessageNode node = (MessageNode) root.getStatements().get(0);
 
-		ConstructorNode open = (ConstructorNode) node.getStatements().get(0);
+		MessageNode open = (MessageNode) node.getStatements().get(0);
 		assertThat(open.getName(), is("aLocal"));
 		
 		MessageNode fnode = (MessageNode) open.getStatements().get(0);
@@ -214,9 +242,9 @@ public class TransformStringToASTTest {
 	@Test
 	public void shouldTranslateNumberLibrarySuccessfully() {
 		StatementContainingNode node = transformer.transform(
-				"(object numberFactoryConstructor: vm\n" + 
+				"(constructor numberFactoryConstructor: vm\n" + 
 				"  \n" + 
-				"  (object numberPrototypeConstructor\n" + 
+				"  (private-constructor numberPrototypeConstructor\n" + 
 				"    (function plus: number\n" + 
 				"      result: (vm add: number to: this)\n" + 
 				"    )\n" + 

@@ -100,7 +100,7 @@ public class CompileAstToOpCodesTest {
 	}
 	
 	@Test
-	public void shouldCreateEmptyFunction() {
+	public void shouldCreateEmptyPublicFunction() {
 		StatementContainingNode root = transformer.transform(
 				"(function functionName\n" +
 				")\n"
@@ -108,7 +108,6 @@ public class CompileAstToOpCodesTest {
 		
 		FunctionDOS function = compiler.compile(root);
 		assertThat(function.getOpCodes(), is(new OpCode[] {
-
 				new OpCode.SetObject(Symbol.get("listFactory")), // empty argument list
             	new OpCode.FunctionCall(Symbol.get("newList")),
             	new OpCode.PushSymbol(Symbol.get("__argument_list")),
@@ -125,6 +124,34 @@ public class CompileAstToOpCodesTest {
             	new OpCode.PushSymbol(Symbol.get("functionName")), // save into functions
 	            new OpCode.Push(Symbol.RESULT),
 	        	new OpCode.FunctionCall(Symbol.SET_LOCAL_FUNCTION_$_TO_$),
+		}));
+	}
+	
+	@Test
+	public void shouldCreateEmptyPrivateFunction() {
+		StatementContainingNode root = transformer.transform(
+				"(private-function functionName\n" +
+				")\n"
+			);
+		
+		FunctionDOS function = compiler.compile(root);
+		assertThat(function.getOpCodes(), is(new OpCode[] {
+				new OpCode.SetObject(Symbol.get("listFactory")), // empty argument list
+            	new OpCode.FunctionCall(Symbol.get("newList")),
+            	new OpCode.PushSymbol(Symbol.get("__argument_list")),
+            	new OpCode.Push(Symbol.RESULT),
+            	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
+            	
+            	new OpCode.StartOpCodeList(), // empty function body
+            	new OpCode.EndOpCodeList(),
+            	
+            	new OpCode.Push(Symbol.get("__argument_list")), // create function
+            	new OpCode.Push(Symbol.RESULT),
+            	new OpCode.FunctionCall(Symbol.CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$),
+	            
+            	new OpCode.PushSymbol(Symbol.get("functionName")), // save into slots
+	            new OpCode.Push(Symbol.RESULT),
+	        	new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
 		}));
 	}
 	
@@ -199,9 +226,9 @@ public class CompileAstToOpCodesTest {
 	}
 	
 	@Test
-	public void shouldCreateConstructorWithArguments() {
+	public void shouldCreatePublicConstructorWithArguments() {
 		StatementContainingNode root = transformer.transform(
-				"(object objectName: param1 requires: param2\n" +
+				"(constructor objectName: param1 requires: param2\n" +
 				"  function-WithParam: param1 andParam?: param2\n" +
 				")\n"
 			);
@@ -231,9 +258,40 @@ public class CompileAstToOpCodesTest {
             	
             	new OpCode.Push(Symbol.get("__argument_list")), // create constructor
             	new OpCode.Push(Symbol.RESULT),
-            	new OpCode.FunctionCall(Symbol.CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$)
+            	new OpCode.FunctionCall(Symbol.CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$),
+	            
+            	new OpCode.PushSymbol(Symbol.get("objectName:requires:")), // save into functions
+	            new OpCode.Push(Symbol.RESULT),
+	        	new OpCode.FunctionCall(Symbol.SET_LOCAL_FUNCTION_$_TO_$)
 		}));
 	}
 	
+	@Test
+	public void shouldCreatePrivateConstructor() {
+		StatementContainingNode root = transformer.transform(
+				"(private-constructor objectName\n" +
+				")\n"
+			);
+		
+		FunctionDOS function = compiler.compile(root);
+		assertThat(function.getOpCodes(), is(new OpCode[] {
 
+				new OpCode.SetObject(Symbol.get("listFactory")), // argument list
+            	new OpCode.FunctionCall(Symbol.get("newList")),
+            	new OpCode.PushSymbol(Symbol.get("__argument_list")),
+            	new OpCode.Push(Symbol.RESULT),
+            	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
+            	
+            	new OpCode.StartOpCodeList(), // constructor body	
+            	new OpCode.EndOpCodeList(),
+            	
+            	new OpCode.Push(Symbol.get("__argument_list")), // create constructor
+            	new OpCode.Push(Symbol.RESULT),
+            	new OpCode.FunctionCall(Symbol.CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$),
+	            
+            	new OpCode.PushSymbol(Symbol.get("objectName")), // save into slots
+	            new OpCode.Push(Symbol.RESULT),
+	        	new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$)
+		}));
+	}
 }
