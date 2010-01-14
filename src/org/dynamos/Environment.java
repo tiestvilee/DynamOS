@@ -27,7 +27,6 @@ public class Environment {
     private ObjectDOS undefined;
 	private ObjectDOS mirror;
 	private ObjectDOS booleanContainer;
-	private final OpCodeInterpreter interpreter;
 	private ObjectDOS listFactory;
 	private ObjectDOS functionPrototype;
 
@@ -40,9 +39,7 @@ public class Environment {
 	 *  number (including prototype)
 	 */
 
-	public Environment(OpCodeInterpreter interpreter) {
-		this.interpreter = interpreter;
-		
+	public Environment() {
 		rootObject = new ObjectDOS();
 
 		nullDOS = new NullDOS();
@@ -60,7 +57,7 @@ public class Environment {
 	
 	public void init() {
 		booleanContainer = BooleanDOS.initialiseBooleans(this);
-        numberFactory = NumberDOS.createNumberLibrary(interpreter, this);
+        numberFactory = NumberDOS.createNumberLibrary(this);
         listFactory = StandardObjects.createListLibrary(this);
         functionPrototype = FunctionWithContext.createFunctionPrototype(this);
     }

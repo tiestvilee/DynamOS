@@ -22,15 +22,15 @@ import org.dynamos.structures.VMObjectDOS;
  */
 public class NumberDOS {
 
-	public static ObjectDOS createNumberLibrary(final OpCodeInterpreter interpreter, Environment environment) {
+	public static ObjectDOS createNumberLibrary(Environment environment) {
 
-		ObjectDOS numberPrototype = createNumberPrototype(environment, interpreter);
-		ObjectDOS numberFactory = createNumberFactory(environment, interpreter, numberPrototype);
+		ObjectDOS numberPrototype = createNumberPrototype(environment);
+		ObjectDOS numberFactory = createNumberFactory(environment, numberPrototype);
 
 		return numberFactory;
 	}
 
-	private static ObjectDOS createNumberFactory(Environment environment, OpCodeInterpreter interpreter, ObjectDOS numberPrototype) {
+	private static ObjectDOS createNumberFactory(Environment environment, ObjectDOS numberPrototype) {
 		// createNumberFactory
 		Symbol numberPrototypeSymbol = Symbol.get("numberPrototype");
 		Symbol number = Symbol.get("number");
@@ -40,7 +40,7 @@ public class NumberDOS {
 		
 		numberFactory.setSlot(numberPrototypeSymbol, numberPrototype);
 		
-		Activation mirrorContext = interpreter.newActivation();
+		Activation mirrorContext = environment.getContextBuilder().createActivation();
 		mirrorContext.setSlot(mirror, environment.getMirror());
 		numberFactory.setSlot(numberPrototypeSymbol, numberPrototype);
 
@@ -61,12 +61,12 @@ public class NumberDOS {
 	}
 
 
-	private static ObjectDOS createNumberPrototype(Environment environment, OpCodeInterpreter interpreter) {
+	private static ObjectDOS createNumberPrototype(Environment environment) {
 		Symbol right = Symbol.get("right");
 		
 
 		// number library depends upon the VM, but that's all
-		Activation numberLibraryContext = interpreter.newActivation();
+		Activation numberLibraryContext = environment.getContextBuilder().createActivation();
 		numberLibraryContext.setSlot(VMObjectDOS.VM, environment.getVirtualMachine());
         
         // define the prototype for all numbers

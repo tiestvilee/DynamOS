@@ -21,7 +21,7 @@ public class OpCodeInterpreter {
 	Environment environment;
 	
 	public OpCodeInterpreter() {
-		environment = new Environment(this);
+		environment = new Environment();
 		environment.init();
 	}
 
