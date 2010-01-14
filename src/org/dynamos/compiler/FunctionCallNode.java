@@ -7,10 +7,9 @@ import java.util.List;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.Symbol;
 
-public class FunctionCallNode extends NamedNode {
+public class FunctionCallNode extends ChainedNode {
 	
 	private List<ASTNode> arguments = new ArrayList<ASTNode>();
-	private FunctionCallNode chain;
 	
 	public List<ASTNode> getArguments() {
 		return Collections.unmodifiableList(arguments);
@@ -18,14 +17,6 @@ public class FunctionCallNode extends NamedNode {
 
 	public void addParameter(ASTNode node) {
 		arguments.add(node);
-	}
-	
-	public void setChain(FunctionCallNode chain) {
-		this.chain = chain;
-	}
-
-	public FunctionCallNode getChain() {
-		return chain;
 	}
 	
 	public String toString() {
@@ -81,12 +72,12 @@ public class FunctionCallNode extends NamedNode {
 	}
 	
 	private void pushArguments(List<OpCode> opCodes, int tempNumber) {
-		List<SymbolNode> argumentSymbols = new ArrayList<SymbolNode>();
+		List<SymbolGetterNode> argumentSymbols = new ArrayList<SymbolGetterNode>();
 		int currentTempNumber = tempNumber;
 		
 		for(ASTNode argument : arguments) {
-			if(argument instanceof SymbolNode) {
-				argumentSymbols.add((SymbolNode) argument);
+			if(argument instanceof SymbolGetterNode) {
+				argumentSymbols.add((SymbolGetterNode) argument);
 			} else if (argument instanceof FunctionCallNode) {
 				currentTempNumber++;
 				argument.compile(opCodes, currentTempNumber);
@@ -94,11 +85,11 @@ public class FunctionCallNode extends NamedNode {
 				opCodes.add(new OpCode.Push(Symbol.RESULT));
 				opCodes.add(new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$));
 
-				argumentSymbols.add(new SymbolNode("__temp" + currentTempNumber));
+				argumentSymbols.add(new SymbolGetterNode("__temp" + currentTempNumber));
 			}
 		}
 		
-		for(SymbolNode argument : argumentSymbols) {
+		for(SymbolGetterNode argument : argumentSymbols) {
 			argument.compile(opCodes, tempNumber);
 		}
 	}

@@ -45,6 +45,7 @@ public class TransformStringToAST {
 	
 	/*
 	 * FunctionBody => (FunctionCall
+	 *              |  GetterCall
 	 *              |  SlotDefinition '\n'
 	 *              |  FunctionDefinition
 	 *              |  ObjectDefinition
@@ -55,6 +56,8 @@ public class TransformStringToAST {
 		while(true) {
 			if(stream.matchesIdentifier()) {
 				node.addStatement(functionCall(stream));
+			} else if (stream.matchesSlotDiscriminator()) {
+				node.addStatement(getterCall(stream));
 			} else if(stream.matchesSlotStart()) {
 				slotDefinition(node, stream);
 			} else if(stream.matchesFunctionStart()) {
@@ -70,6 +73,28 @@ public class TransformStringToAST {
 			}
 		}
 	}
+
+	/*
+	 * GetterCall => '/' Identifier FunctionCall?
+	 */
+	private ASTNode getterCall(Stream stream) {
+		stream.consumeSlotDiscriminator();
+		
+		String identifier = stream.consumeIdentifier();
+		
+		if(stream.matchesColon()) {
+			stream.consumeColon();
+			SymbolSetterNode node = new SymbolSetterNode(identifier);
+			functionCallParameter(stream, node);
+			return node;
+		}
+
+		SymbolGetterNode node = new SymbolGetterNode(identifier);
+		if(stream.matchesIdentifier()) {
+			node.setChain(functionCall(stream));
+		}
+		return node;
+	}
 	
 	/*
 	 * 
@@ -77,9 +102,7 @@ public class TransformStringToAST {
 	 * 
 	 */
 	public FunctionCallNode functionCall(Stream stream) {
-		FunctionCallNode call = new FunctionCallNode();
-	
-		call.appendToName(stream.consumeIdentifier());
+		FunctionCallNode call = microCall(stream);
 		
 		if(stream.matchesColon()) {
 			do {
@@ -105,6 +128,7 @@ public class TransformStringToAST {
 	/*
 	 * FunctionCallParameter => '(' FunctionCall ')'
 	 *                       |  Identifier
+	 *                       |  '/' Identifier
 	 *                       |  '#' [0-9]+
 	 *                       |  String
 	 *                       |  Closure
@@ -112,10 +136,17 @@ public class TransformStringToAST {
 	private void functionCallParameter(Stream stream, FunctionCallNode call) {
 		if (stream.matchesLeftBracket()) {
 			stream.consumeLeftBracket();
-			call.addParameter(functionCall(stream));
+			if(stream.matchesSlotDiscriminator()) {
+				call.addParameter(getterCall(stream));
+			} else {
+				call.addParameter(functionCall(stream));
+			}
 			stream.consumeRightBracket();
 		} else if(stream.matchesIdentifier()) {
-			call.addParameter(new SymbolNode(stream.consumeIdentifier()));
+			call.addParameter(microCall(stream));
+		} else if(stream.matchesSlotDiscriminator()) {
+			stream.consumeSlotDiscriminator();
+			call.addParameter(new SymbolGetterNode(stream.consumeIdentifier()));
 		} else if(stream.matchesHash()) {
 			stream.consumeHash();
 			call.addParameter(new NumberNode(stream.consumeDigits()));
@@ -125,6 +156,12 @@ public class TransformStringToAST {
 			closure(call, stream);
 		}
 	}
+
+	private FunctionCallNode microCall(Stream stream) {
+		FunctionCallNode newCall = new FunctionCallNode();
+		newCall.appendToName(stream.consumeIdentifier());
+		return newCall;
+	}
 	
 	/*
 	 * SlotDefinition => '(slot' Identifier ')' '\n'
@@ -133,7 +170,7 @@ public class TransformStringToAST {
 		StatementContainingNode fnode = (StatementContainingNode) node;
 
 		stream.consumeLocalStart();
-		fnode.addSlot(new SymbolNode(stream.consumeIdentifier()));
+		fnode.addSlot(new SymbolGetterNode(stream.consumeIdentifier()));
 		stream.consumeRightBracket();
 		stream.consumeNewLine();
 	}
@@ -305,6 +342,14 @@ public class TransformStringToAST {
 			throw new RuntimeException("colon not found at [" + getRemainder());
 		}
 
+		public boolean matchesSlotDiscriminator() {
+			return testMatch("\\$");
+		}
+
+		public String consumeSlotDiscriminator() {
+			return consumeMatchWithPreceedingWhitespace("Slot discriminator", "\\$");
+		}
+		
 		public boolean matchesIdentifier() {
 			return testMatch("[a-zA-Z_\\-0-9?]+");
 		}

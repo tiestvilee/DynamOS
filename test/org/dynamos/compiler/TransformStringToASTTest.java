@@ -61,43 +61,96 @@ public class TransformStringToASTTest {
 	@Test
 	public void shouldCreateFunctionCall() {
 		StatementContainingNode root = transformer.transform(
-			"function-WithParam: param1 andParam?: param2\n"
+			"functionCall\n"
+		);
+
+		ChainedNode call = ((ChainedNode) root.getStatements().get(0));
+
+		assertThat(call.getName(), is("functionCall"));
+	}
+	
+	@Test
+	public void shouldCreateFunctionCallWithSlotParameters() {
+		StatementContainingNode root = transformer.transform(
+			"function-WithParam: $param1 andParam?: $param2\n"
 		);
 
 		FunctionCallNode call = ((FunctionCallNode) root.getStatements().get(0));
 
 		assertThat(call.getName(), is("function-WithParam:andParam?:"));
-		assertThat(((SymbolNode) call.getArguments().get(0)).getName(), is("param1"));
-		assertThat(((SymbolNode) call.getArguments().get(1)).getName(), is("param2"));
+		
+		SymbolGetterNode param1Symbol = (SymbolGetterNode) call.getArguments().get(0);
+		assertThat(param1Symbol.getName(), is("param1"));
+		
+		SymbolGetterNode param2Symbol = (SymbolGetterNode) call.getArguments().get(1);
+		assertThat(param2Symbol.getName(), is("param2"));
 	}
 	
 	@Test
 	public void shouldCreateNestedFunctionCall() {
 		StatementContainingNode root = transformer.transform(
-			"function-WithParam: (function1) andParam?: (function2: param1)\n"
+			"function-WithParam: function1 andParam?: (function2: $param1)\n"
 		);
 
 		FunctionCallNode call = ((FunctionCallNode) root.getStatements().get(0));
 
 		assertThat(call.getName(), is("function-WithParam:andParam?:"));
-		assertThat(((FunctionCallNode) call.getArguments().get(0)).getName(), is("function1"));
-		assertThat(((FunctionCallNode) call.getArguments().get(1)).getName(), is("function2:"));
-		assertThat( ((SymbolNode) ((FunctionCallNode) call.getArguments().get(1)).getArguments().get(0)).getName(), is("param1"));
+		assertThat(((ChainedNode) call.getArguments().get(0)).getName(), is("function1"));
+		assertThat(((ChainedNode) call.getArguments().get(1)).getName(), is("function2:"));
+		SymbolGetterNode param1Symbol = (SymbolGetterNode) ((FunctionCallNode) call.getArguments().get(1)).getArguments().get(0);
+		assertThat( param1Symbol.getName(), is("param1"));
 	}
 	
 	@Test
 	public void shouldChainParameterlessCalls() {
 		StatementContainingNode root = transformer.transform(
-			"accessor1 accessor2 function1: (function2: param1) // a comment, just to see\n"
+			"accessor1 accessor2 function1: (function2: $param1) // a comment, just to see\n"
 		);
 		
-		FunctionCallNode call = ((FunctionCallNode) root.getStatements().get(0));
+		ChainedNode call = ((ChainedNode) root.getStatements().get(0));
 
 		assertThat(call.getName(), is("accessor1"));
 		assertThat(call.getChain().getName(), is("accessor2"));
 		assertThat(call.getChain().getChain().getName(), is("function1:"));
-		assertThat( ((FunctionCallNode) call.getChain().getChain().getArguments().get(0)).getName(), is("function2:"));
-		assertThat( ((SymbolNode) ((FunctionCallNode) call.getChain().getChain().getArguments().get(0)).getArguments().get(0)).getName(), is("param1"));
+		assertThat( ((ChainedNode) call.getChain().getChain().getArguments().get(0)).getName(), is("function2:"));
+		assertThat( ((SymbolGetterNode) ((FunctionCallNode) call.getChain().getChain().getArguments().get(0)).getArguments().get(0)).getName(), is("param1"));
+	}
+	
+	@Test
+	public void shouldChainSlotGetter() {
+		StatementContainingNode root = transformer.transform(
+			"$slotName functionName\n"
+		);
+		
+		SymbolGetterNode call = ((SymbolGetterNode) root.getStatements().get(0));
+
+		assertThat(call.getName(), is("slotName"));
+		assertThat(call.getChain().getName(), is("functionName"));
+	}
+	
+	@Test
+	public void shouldChainSlotGetterInSubCall() {
+		StatementContainingNode root = transformer.transform(
+			"doSomething: ($slotName functionName)\n"
+		);
+		
+		FunctionCallNode call = (FunctionCallNode) root.getStatements().get(0);
+		SymbolGetterNode slotName = (SymbolGetterNode) call.getArguments().get(0);
+
+		assertThat(slotName.getName(), is("slotName"));
+		assertThat(slotName.getChain().getName(), is("functionName"));
+	}
+	
+	@Test
+	public void shouldSetSlot() {
+		StatementContainingNode root = transformer.transform(
+			"$slotName: (functionName: param1 and: $param2)\n"
+		);
+		
+		SymbolSetterNode call = ((SymbolSetterNode) root.getStatements().get(0));
+
+		assertThat(call.getName(), is("slotName"));
+		assertThat(((FunctionCallNode) call.getArguments().get(0)).getName(), is("functionName:and:"));
 	}
 	
 	@Test
@@ -164,7 +217,7 @@ public class TransformStringToASTTest {
 		
 		MessageNode node = (MessageNode) root.getStatements().get(0);
 
-		List<SymbolNode> slots = node.getSlots();
+		List<SymbolGetterNode> slots = node.getSlots();
 		
 		assertThat(slots.get(0).getName(), is("aLocal"));
 	}
@@ -174,7 +227,7 @@ public class TransformStringToASTTest {
 		StatementContainingNode root = transformer.transform(
 			"(constructor test\n" +
 			"  (function nestedFunction: param1\n" +
-			"    result: param1\n" +
+			"    result: $param1\n" +
 			"  )\n" +
 			")"
 		);
@@ -188,7 +241,7 @@ public class TransformStringToASTTest {
 		
 		FunctionCallNode call = (FunctionCallNode) nested.getStatements().get(0);
 		assertThat(call.getName(), is("result:"));
-		assertThat( ((SymbolNode) call.getArguments().get(0)).getName(), is("param1"));
+		assertThat( ((SymbolGetterNode) call.getArguments().get(0)).getName(), is("param1"));
 	}
 	
 	@Test
@@ -212,7 +265,7 @@ public class TransformStringToASTTest {
 				"(constructor test\n" +
 				"  (constructor aLocal\n" +
 				"    (function afunc: theParam\n" +
-				"      result: theParam\n" +
+				"      result: $theParam\n" +
 				"    )\n" +
 				"  )\n" +
 				")"
@@ -229,7 +282,7 @@ public class TransformStringToASTTest {
 		
 		FunctionCallNode call = (FunctionCallNode) fnode.getStatements().get(0);
 		assertThat(call.getName(), is("result:"));
-		assertThat(((SymbolNode) call.getArguments().get(0)).getName(), is("theParam"));
+		assertThat(((SymbolGetterNode) call.getArguments().get(0)).getName(), is("theParam"));
 	}
 //	
 //	

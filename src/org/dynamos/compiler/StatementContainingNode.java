@@ -9,7 +9,7 @@ import org.dynamos.structures.OpCode;
 public class StatementContainingNode extends NamedNode {
 	
 	List<ASTNode> statements = new ArrayList<ASTNode>();
-	private List<SymbolNode> slots = new ArrayList<SymbolNode>();
+	private List<SymbolGetterNode> slots = new ArrayList<SymbolGetterNode>();
 	
 	public void addStatement(ASTNode node) {
 		statements.add(node);
@@ -19,11 +19,11 @@ public class StatementContainingNode extends NamedNode {
 		return Collections.unmodifiableList(statements);
 	}
 	
-	public void addSlot(SymbolNode symbol) {
+	public void addSlot(SymbolGetterNode symbol) {
 		slots.add(symbol);
 	}
 	
-	public List<SymbolNode> getSlots() {
+	public List<SymbolGetterNode> getSlots() {
 		return Collections.unmodifiableList(slots);
 	}
 

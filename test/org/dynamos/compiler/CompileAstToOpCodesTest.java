@@ -23,7 +23,7 @@ public class CompileAstToOpCodesTest {
 	@Test
 	public void shouldCreateFunctionCall() {
 		StatementContainingNode root = transformer.transform(
-				"function-WithParam: param1 andParam?: param2\n"
+				"function-WithParam: $param1 andParam?: $param2\n"
 			);
 		
 		FunctionDOS function = compiler.compile(root);
@@ -37,7 +37,7 @@ public class CompileAstToOpCodesTest {
 	@Test
 	public void shouldCreateChainedFunctionCall() {
 		StatementContainingNode root = transformer.transform(
-				"object1 object2 function-WithParam: param1 andParam?: param2\n"
+				"object1 object2 function-WithParam: $param1 andParam?: $param2\n"
 			);
 		
 		FunctionDOS function = compiler.compile(root);
@@ -61,9 +61,55 @@ public class CompileAstToOpCodesTest {
 	}
 	
 	@Test
+	public void shouldCreateChainedFunctionCallStartingWithSlot() {
+		StatementContainingNode root = transformer.transform(
+				"$slot object1 function-WithParam: $param1 andParam?: $param2\n"
+			);
+		
+		FunctionDOS function = compiler.compile(root);
+		assertThat(function.getOpCodes(), is(new OpCode[] {
+				new OpCode.PushSymbol(Symbol.get("slot")), // TODO would obviously like to get rid of next 5 lines! 
+				new OpCode.FunctionCall(Symbol.GET_SLOT_$),
+				
+				new OpCode.PushSymbol(Symbol.get("__temp1")),
+				new OpCode.Push(Symbol.RESULT),
+				new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
+				
+				new OpCode.SetObject(Symbol.get("__temp1")),
+				new OpCode.FunctionCall(Symbol.get("object1")),
+				
+				new OpCode.PushSymbol(Symbol.get("__temp2")),
+				new OpCode.Push(Symbol.RESULT),
+				new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
+				
+				new OpCode.Push(Symbol.get("param1")),
+				new OpCode.Push(Symbol.get("param2")),
+				new OpCode.SetObject(Symbol.get("__temp2")),
+				new OpCode.FunctionCall(Symbol.get("function-WithParam:andParam?:"))				
+		}));
+	}
+	
+	@Test
+	public void shouldSetFunctionResultToSlot() {
+		StatementContainingNode root = transformer.transform(
+				"$slot: (function-WithParam: $param1)\n"
+			);
+		
+		FunctionDOS function = compiler.compile(root);
+		assertThat(function.getOpCodes(), is(new OpCode[] {
+				new OpCode.Push(Symbol.get("param1")),
+				new OpCode.FunctionCall(Symbol.get("function-WithParam:")),
+				
+				new OpCode.PushSymbol(Symbol.get("slot")),
+				new OpCode.Push(Symbol.RESULT),
+				new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
+		}));
+	}
+	
+	@Test
 	public void shouldCreateFunctionCallWithSubFunctionCalls() {
 		StatementContainingNode root = transformer.transform(
-				"function-WithParam: (anotherFunction: param1) andParam?: (object1 aThirdFunction: (subsubfunction: param2)) finalParam: param3\n"
+				"function-WithParam: (anotherFunction: $param1) andParam?: (object1 aThirdFunction: (subsubfunction: $param2)) finalParam: $param3\n"
 			);
 		
 		FunctionDOS function = compiler.compile(root);
@@ -159,7 +205,7 @@ public class CompileAstToOpCodesTest {
 	public void shouldCreateSimpleFunctionWithNoArguments() {
 		StatementContainingNode root = transformer.transform(
 				"(function functionName\n" +
-				"  function-WithParam: param1 andParam?: param2\n" +
+				"  function-WithParam: $param1 andParam?: $param2\n" +
 				")\n"
 			);
 		
@@ -229,7 +275,7 @@ public class CompileAstToOpCodesTest {
 	public void shouldCreatePublicConstructorWithArguments() {
 		StatementContainingNode root = transformer.transform(
 				"(constructor objectName: param1 requires: param2\n" +
-				"  function-WithParam: param1 andParam?: param2\n" +
+				"  function-WithParam: $param1 andParam?: $param2\n" +
 				")\n"
 			);
 		
@@ -293,5 +339,49 @@ public class CompileAstToOpCodesTest {
 	            new OpCode.Push(Symbol.RESULT),
 	        	new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$)
 		}));
+	}
+
+	@Test
+	public void shouldCompileNumberLibrary() {
+		StatementContainingNode root = transformer.transform(
+				"(constructor numberFactoryConstructor: vm and: listFactory\n" + 
+				"  \n" + 
+				"  (constructor numberPrototypeConstructor: listFactory\n" + 
+				"    (function plus: number\n" + 
+				"      $result: ($vm add: $number to: $this)\n" + 
+				"    )\n" + 
+				"    \n" + 
+				"    (function minus: number\n" + 
+				"      $result: ($vm subtract: $number from: $this)\n" + 
+				"    )\n" + 
+				"    \n" + 
+				"    (function isLessThan: number\n" + 
+				"      $result: ($vm value: $this isLessThan: $number)\n" + 
+				"    )\n" + 
+				"  )\n" +
+				"  $numberPrototype: (numberPrototypeConstructor: $listFactory)\n" + 
+				"  \n" + 
+				"  (function numberFrom: value\n" + 
+				"     $value parent: $numberPrototype\n" + 
+				"  )\n" + 
+				"  \n" +
+				") \n "
+		);
+		
+		FunctionDOS function = compiler.compile(root);
+		
+		String indent = "";
+		for(OpCode opCode : function.getOpCodes()) {
+			if(opCode instanceof OpCode.EndOpCodeList) {
+				indent = indent.substring(2);
+			}
+			System.out.println(indent + opCode);
+			if(opCode instanceof OpCode.FunctionCall) {
+				System.out.println();
+			}
+			if(opCode instanceof OpCode.StartOpCodeList) {
+				indent += "  ";
+			}
+		}
 	}
 }
