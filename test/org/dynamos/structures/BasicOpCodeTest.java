@@ -39,7 +39,7 @@ public class BasicOpCodeTest {
 
     @Test
     public void shouldCreateValueObject() {
-    	boolean newStackFrame = new OpCode.CreateValueObject(interpreter, 345).execute(context, stackFrame);
+    	boolean newStackFrame = new OpCode.CreateValueObject(345).execute(interpreter, context, stackFrame);
     	
     	assertThat(newStackFrame, is(false));
     	assertThat(((ValueObject) context.getSlot(Symbol.RESULT)).getValue(), is(345));
@@ -51,7 +51,7 @@ public class BasicOpCodeTest {
 
     	context.setSlot(local, expectedObject);
     	
-    	boolean newStackFrame = new OpCode.SetObject(local).execute(context, stackFrame);
+    	boolean newStackFrame = new OpCode.SetObject(local).execute(interpreter, context, stackFrame);
 
     	assertThat(newStackFrame, is(false));
     	assertThat(stackFrame.getObject(), is(expectedObject));
@@ -63,7 +63,7 @@ public class BasicOpCodeTest {
 
     	context.setSlot(local, expectedObject);
     	
-    	boolean newStackFrame = new OpCode.Push(local).execute(context, stackFrame);
+    	boolean newStackFrame = new OpCode.Push(local).execute(interpreter, context, stackFrame);
 
     	assertThat(newStackFrame, is(false));
     	assertThat(stackFrame.getArguments().getRawList().get(0), is(expectedObject));
@@ -72,7 +72,7 @@ public class BasicOpCodeTest {
     @Test
     public void shouldPushSymbolOntoStackFrame() {
     	
-    	boolean newStackFrame = new OpCode.PushSymbol(local).execute(context, stackFrame);
+    	boolean newStackFrame = new OpCode.PushSymbol(local).execute(interpreter, context, stackFrame);
 
     	assertThat(newStackFrame, is(false));
     	assertThat(((SymbolWrapper) stackFrame.getArguments().getRawList().get(0)).getSymbol(), is(local));
@@ -80,13 +80,13 @@ public class BasicOpCodeTest {
     
     @Test
     public void shouldDoNothingWhenStartingOpcodeList() {
-    	boolean newStackFrame = new OpCode.StartOpCodeList().execute(null, null);
+    	boolean newStackFrame = new OpCode.StartOpCodeList().execute(null, null, null);
     	assertThat(newStackFrame, is(false));
     }
 
     @Test
     public void shouldDoNothingWhenEndingOpcodeList() {
-    	boolean newStackFrame = new OpCode.EndOpCodeList().execute(null, null);
+    	boolean newStackFrame = new OpCode.EndOpCodeList().execute(null, null, null);
     	assertThat(newStackFrame, is(false));
     }
 }

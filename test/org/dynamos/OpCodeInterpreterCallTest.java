@@ -61,7 +61,7 @@ public class OpCodeInterpreterCallTest {
 
         interpreter.interpret(context, opCodes);
 
-        verify(function).execute(argThat(is(context)), argThat(matchArgumentListTo(expectedArgumentList)));
+        verify(function).execute(argThat(is(interpreter)), argThat(is(context)), argThat(matchArgumentListTo(expectedArgumentList)));
     }
 
     @Test
@@ -77,7 +77,7 @@ public class OpCodeInterpreterCallTest {
         interpreter.interpret(context, opCodes);
 
         expectedArgumentList.add(theObject);
-        verify(function).execute(argThat(is(context)), argThat(matchArgumentListTo(expectedArgumentList)));
+        verify(function).execute(argThat(is(interpreter)), argThat(is(context)), argThat(matchArgumentListTo(expectedArgumentList)));
     }
 
     @Test
@@ -92,7 +92,7 @@ public class OpCodeInterpreterCallTest {
 
         interpreter.interpret(context, opCodes);
 
-        verify(function).execute(argThat(is(theObject)), argThat(matchArgumentListTo(expectedArgumentList)));
+        verify(function).execute(argThat(is(interpreter)), argThat(is(theObject)), argThat(matchArgumentListTo(expectedArgumentList)));
     }
 
     @Test
@@ -111,7 +111,7 @@ public class OpCodeInterpreterCallTest {
         interpreter.interpret(context, opCodes);
 
         expectedArgumentList.add(expectedArgument);
-        verify(function).execute(argThat(is(theObject)), argThat(matchArgumentListTo(expectedArgumentList)));
+        verify(function).execute(argThat(is(interpreter)), argThat(is(theObject)), argThat(matchArgumentListTo(expectedArgumentList)));
     }
 
     @Test
@@ -128,7 +128,7 @@ public class OpCodeInterpreterCallTest {
 
         interpreter.interpret(context, opCodes);
 
-        verify(function).execute(argThat(is(theObject)), argThat(matchArgumentListTo(expectedArgumentList)));
+        verify(function).execute(argThat(is(interpreter)), argThat(is(theObject)), argThat(matchArgumentListTo(expectedArgumentList)));
     }
     
     private Matcher<ListDOS> matchArgumentListTo(final ListDOS expected) {

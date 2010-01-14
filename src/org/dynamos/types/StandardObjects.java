@@ -46,7 +46,7 @@ public class StandardObjects {
 		listFactory.setFunction(Symbol.get("newList"), new ExecutableDOS() {
 
 			@Override
-			public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+			public ObjectDOS execute(org.dynamos.OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
 				return new ListDOS();
 			}
 			

@@ -123,13 +123,13 @@ public class NumberDOS {
 
 	}
 
-	public static ObjectDOS numberDOS(Environment env, int number) {
-		ObjectDOS result = env.createNewValueObject(number);
-		ExecutableDOS numberFromFunction = env.getNumberFactory().getFunction(
+	public static ObjectDOS numberDOS(OpCodeInterpreter interpreter, int number) {
+		ObjectDOS result = interpreter.getEnvironment().createNewValueObject(number);
+		ExecutableDOS numberFromFunction = interpreter.getEnvironment().getNumberFactory().getFunction(
 				Symbol.get("numberFrom:"));
 		ListDOS arguments = new ListDOS();
 		arguments.add(result);
-		numberFromFunction.execute(env.getNumberFactory(), arguments);
+		numberFromFunction.execute(interpreter, interpreter.getEnvironment().getNumberFactory(), arguments);
 		return result;
 	}
 }

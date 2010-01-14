@@ -6,6 +6,7 @@
 package org.dynamos.structures;
 
 import org.dynamos.Environment;
+import org.dynamos.OpCodeInterpreter;
 
 
 /**
@@ -137,7 +138,7 @@ public class Activation extends ObjectDOS {
 	    
 	    private static ExecutableDOS SET_LOCAL_FUNCTION_$_TO_$_EXEC = new ExecutableDOS() {
 			@Override
-			public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+			public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
 				theObject.setFunction(((SymbolWrapper) arguments.at(0)).getSymbol(), (ExecutableDOS) arguments.at(1));
 				return theObject;
 			}
@@ -145,7 +146,7 @@ public class Activation extends ObjectDOS {
 	    
 	    private static ExecutableDOS SET_SLOT_$_TO_$_EXEC = new ExecutableDOS() {
 	    	@Override
-	    	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+	    	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
 	    		Symbol symbol = ((SymbolWrapper) arguments.at(0)).getSymbol();
 	    		ObjectDOS value = arguments.at(1);
 	    		
@@ -183,7 +184,7 @@ public class Activation extends ObjectDOS {
 	    
 	    private static ExecutableDOS SET_LOCAL_SLOT_$_TO_$_EXEC = new ExecutableDOS() {
 	    	@Override
-	    	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+	    	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
 	    		Symbol symbol = ((SymbolWrapper) arguments.at(0)).getSymbol();
 	    		ObjectDOS value = arguments.at(1);
 	    		
@@ -200,7 +201,7 @@ public class Activation extends ObjectDOS {
 	    
 	    private static ExecutableDOS GET_SLOT_$_EXEC = new ExecutableDOS() {
 			@Override
-			public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+			public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
 	    		Symbol symbol = ((SymbolWrapper) arguments.at(0)).getSymbol();
 				return theObject.getSlot(symbol);
 			}

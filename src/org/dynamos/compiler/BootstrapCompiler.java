@@ -40,6 +40,6 @@ public class BootstrapCompiler {
 	private FunctionDOS constructFunctionDefinition(OpCodeInterpreter interpreter, List<Symbol> arguments, List<OpCode> opcodes) {
 		Symbol[] argumentsArray = arguments.toArray(new Symbol[] {});
 		OpCode[] opCodeArray = opcodes.toArray(new OpCode[] {});
-		return new FunctionDOS(interpreter, argumentsArray, opCodeArray);
+		return new FunctionDOS(argumentsArray, opCodeArray);
 	}
 }

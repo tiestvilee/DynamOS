@@ -37,7 +37,7 @@ public class ObjectDOSBuiltInFunctionsTest {
     public void shouldSetSlotInCurrentFunction() {
     	FunctionDOS function = createFunctionThatSetsAndReturnsValueToLocal();
 
-    	ObjectDOS result = function.execute(object, new ListDOS());
+    	ObjectDOS result = function.execute(interpreter, object, new ListDOS());
     	
     	assertThat(((ValueObject) result).getValue(), is(1234));
     }
@@ -49,7 +49,7 @@ public class ObjectDOSBuiltInFunctionsTest {
     			createFunctionThatSetsAndReturnsValueToLocal(),
     			context);
 
-    	ObjectDOS result = function.execute(object, new ListDOS());
+    	ObjectDOS result = function.execute(interpreter, object, new ListDOS());
     	
     	assertThat(((ValueObject) result).getValue(), is(1234));
     	assertThat(context.getSlot(local), is(environment.getUndefined()));
@@ -60,7 +60,7 @@ public class ObjectDOSBuiltInFunctionsTest {
     	context.setSlot(local, environment.getUndefined());
     	
     	FunctionWithContext function = createFunctionWithContextThatSetsLocalToValue(context);
-    	function.execute(object, new ListDOS());
+    	function.execute(interpreter, object, new ListDOS());
     	
     	assertThat(((ValueObject) context.getSlot(local)).getValue(), is(1234));
     }
@@ -70,7 +70,7 @@ public class ObjectDOSBuiltInFunctionsTest {
     	object.setSlot(local, environment.getUndefined());
 
     	FunctionWithContext function = createFunctionWithContextThatSetsLocalToValue(context);
-    	function.execute(object, new ListDOS());
+    	function.execute(interpreter, object, new ListDOS());
 
     	assertThat(context.getSlot(local), is(environment.getUndefined()));
     	assertThat(((ValueObject) object.getSlot(local)).getValue(), is(1234));
@@ -80,7 +80,7 @@ public class ObjectDOSBuiltInFunctionsTest {
 		FunctionWithContext function = environment.createFunctionWithContext(
     			new Symbol[] {},
     			new OpCode[] {
-        			new OpCode.CreateValueObject(interpreter, 1234),
+        			new OpCode.CreateValueObject(1234),
     				new OpCode.PushSymbol(local),
     				new OpCode.Push(Symbol.RESULT),
     				new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$)
@@ -93,7 +93,7 @@ public class ObjectDOSBuiltInFunctionsTest {
 		FunctionDOS function = environment.createFunction(
     			new Symbol[] {},
     			new OpCode[] {
-        			new OpCode.CreateValueObject(interpreter, 1234),
+        			new OpCode.CreateValueObject(1234),
     				new OpCode.PushSymbol(local),
     				new OpCode.Push(Symbol.RESULT),
     				new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),

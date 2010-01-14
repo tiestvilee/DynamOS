@@ -6,6 +6,7 @@
 package org.dynamos.structures;
 
 import org.dynamos.Environment;
+import org.dynamos.OpCodeInterpreter;
 import org.dynamos.types.NumberDOS.ValueObject;
 
 
@@ -25,7 +26,7 @@ public class VMObjectDOS {
     public static ObjectDOS getVMObject(final Environment environment) {
         ExecutableDOS PRINT_FUNCTION = new ExecutableDOS() {
             @Override
-            public ObjectDOS execute(ObjectDOS object, ListDOS arguments) {
+            public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS object, ListDOS arguments) {
                 System.out.println(arguments.at(0));
                 return environment.getNull();
             }
@@ -33,7 +34,7 @@ public class VMObjectDOS {
 
         ExecutableDOS ADD_EXEC = new ExecutableDOS() {
         	@Override
-        	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+        	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
         		int right = ((ValueObject) arguments.at(0)).getValue();
                 int left = ((ValueObject) arguments.at(1)).getValue();
                 return environment.createNewValueObject(left + right);
@@ -42,7 +43,7 @@ public class VMObjectDOS {
         
         ExecutableDOS SUB_EXEC = new ExecutableDOS() {
         	@Override
-        	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+        	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
         		int right = ((ValueObject) arguments.at(0)).getValue();
                 int left = ((ValueObject) arguments.at(1)).getValue();
                 return environment.createNewValueObject(left - right);
@@ -51,7 +52,7 @@ public class VMObjectDOS {
         
         ExecutableDOS IS_LESS_THAN_EXEC = new ExecutableDOS() {
         	@Override
-        	public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+        	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
                 int left = ((ValueObject) arguments.at(0)).getValue();
                 int right = ((ValueObject) arguments.at(1)).getValue();
                 return left < right ? environment.getTrue() : environment.getFalse();

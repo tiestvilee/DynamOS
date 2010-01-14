@@ -110,7 +110,7 @@ public class MessageLookupTest {
 		
 		List<OpCode> customMessageOpCodes = new ArrayList<OpCode>();
 		Collections.addAll(customMessageOpCodes,
-			new OpCode.CreateValueObject(interpreter, 8901),
+			new OpCode.CreateValueObject(8901),
 			new OpCode.PushSymbol(obj0slot),
 			new OpCode.Push(Symbol.RESULT),
 			new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
@@ -149,7 +149,7 @@ public class MessageLookupTest {
 		
 		List<OpCode> customMessageOpCodes = new ArrayList<OpCode>();
 		Collections.addAll(customMessageOpCodes,
-			new OpCode.CreateValueObject(interpreter, 3456),
+			new OpCode.CreateValueObject(3456),
 			new OpCode.PushSymbol(obj0slot),
 			new OpCode.Push(Symbol.RESULT),
 			new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
@@ -173,7 +173,7 @@ public class MessageLookupTest {
 		
 		List<OpCode> customMessageOpCodes = new ArrayList<OpCode>();
 		Collections.addAll(customMessageOpCodes,
-			new OpCode.CreateValueObject(interpreter, 4567),
+			new OpCode.CreateValueObject(4567),
 			new OpCode.PushSymbol(obj1slot),
 			new OpCode.Push(Symbol.RESULT),
 			new OpCode.SetObject(Symbol.CURRENT_CONTEXT),
@@ -201,7 +201,7 @@ public class MessageLookupTest {
 		
 		List<OpCode> customMessageOpCodes = new ArrayList<OpCode>();
 		Collections.addAll(customMessageOpCodes,
-			new OpCode.CreateValueObject(interpreter, 3456),
+			new OpCode.CreateValueObject(3456),
 			new OpCode.PushSymbol(obj1slot),
 			new OpCode.Push(Symbol.RESULT),
 			new OpCode.SetObject(Symbol.THIS),
@@ -307,7 +307,7 @@ public class MessageLookupTest {
 		newObject0.setFunction(obj0setter, interpreter.getEnvironment().createFunction(
 				new Symbol[] {}, 
 				new OpCode[] {
-					new OpCode.CreateValueObject(interpreter, 9012),
+					new OpCode.CreateValueObject(9012),
 					new OpCode.PushSymbol(obj0slot),
 					new OpCode.Push(Symbol.RESULT),
 					new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
@@ -329,7 +329,7 @@ public class MessageLookupTest {
 			new OpCode.FunctionCall(Symbol.PARENT_$),
 				
 			// set up obj1slot
-			new OpCode.CreateValueObject(interpreter, 1234),
+			new OpCode.CreateValueObject(1234),
 			new OpCode.PushSymbol(obj1slot),
 			new OpCode.Push(Symbol.RESULT),
 			new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
@@ -342,7 +342,7 @@ public class MessageLookupTest {
         	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
         	
         	new OpCode.StartOpCodeList(),
-        		new OpCode.CreateValueObject(interpreter, 2345),
+        		new OpCode.CreateValueObject(2345),
 				new OpCode.PushSymbol(obj1slot),
 				new OpCode.Push(Symbol.RESULT),
 				new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),

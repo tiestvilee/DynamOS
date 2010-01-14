@@ -24,8 +24,8 @@ public abstract class MessageNode extends StatementContainingNode {
 		return isPrivate;
 	}
 	
-	public void isPrivate(boolean isPrivate) {
-		this.isPrivate = isPrivate ;
+	public void isPrivate(boolean isPrivateValue) {
+		this.isPrivate = isPrivateValue ;
 	}
 	
 	public abstract String type();

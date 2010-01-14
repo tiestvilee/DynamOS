@@ -157,15 +157,15 @@ public class FibonacciTestOriginal {
 
         ObjectDOS application = environment.createNewObject();
 
-        application.setSlot(one, NumberDOS.numberDOS(interpreter.getEnvironment(), 1));
-        application.setSlot(two, NumberDOS.numberDOS(interpreter.getEnvironment(), 2));
+        application.setSlot(one, NumberDOS.numberDOS(interpreter, 1));
+        application.setSlot(two, NumberDOS.numberDOS(interpreter, 2));
         application.setSlot(anon1, anon1Function);
         application.setSlot(anon2, anon2Function);
         application.setFunction(fibonacci$, fibonacciFunction);
         
         Activation activation = interpreter.newActivation();
         activation.setSlot(applicationObject, application);
-        activation.setSlot(sequenceIndexSymbol, NumberDOS.numberDOS(interpreter.getEnvironment(), sequenceIndex));
+        activation.setSlot(sequenceIndexSymbol, NumberDOS.numberDOS(interpreter, sequenceIndex));
         
         interpreter.interpret(activation, new OpCode[] {
         	new OpCode.Push(sequenceIndexSymbol),

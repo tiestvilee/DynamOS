@@ -132,7 +132,6 @@ public class Environment {
 
 	public FunctionDOS createFunction(Symbol[] arguments, OpCode[] opCodes) {
 		FunctionDOS functionDefinition = new FunctionDOS(
-				interpreter, 
 				arguments,
 				opCodes);
 		functionDefinition.setParent(rootObject);
@@ -141,7 +140,6 @@ public class Environment {
 
 	public ConstructorDOS createConstructor(Symbol[] arguments, OpCode[] opCodes) {
 		FunctionDOS functionDefinition = new FunctionDOS(
-				interpreter, 
 				arguments,
 				opCodes);
 		functionDefinition.setParent(rootObject);

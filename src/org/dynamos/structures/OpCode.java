@@ -15,7 +15,7 @@ import org.dynamos.types.NumberDOS.ValueObject;
 public class OpCode {
 
 
-	public boolean execute(@SuppressWarnings("unused") ObjectDOS self, @SuppressWarnings("unused") StackFrame stackFrame) {
+	public boolean execute(@SuppressWarnings("unused") OpCodeInterpreter interpreter, @SuppressWarnings("unused") ObjectDOS self, @SuppressWarnings("unused") StackFrame stackFrame) {
         // NOOP
         return false;
     }
@@ -48,7 +48,7 @@ public class OpCode {
         }
 
         @Override
-        public boolean execute(ObjectDOS self, StackFrame stackFrame) {
+        public boolean execute(OpCodeInterpreter interpreter, ObjectDOS self, StackFrame stackFrame) {
         	ObjectDOS target = self;
         	if(stackFrame.getObject() != null) {
         		target = stackFrame.getObject();
@@ -57,7 +57,7 @@ public class OpCode {
 			ExecutableDOS function = target.getFunction(symbol);
 			// TODO AAAAA the following always executes with target, but what if the function was on the real parent object, 
 			// rather than the current activation
-        	ObjectDOS result = function.execute(target, stackFrame.getArguments());
+        	ObjectDOS result = function.execute(interpreter, target, stackFrame.getArguments());
 
         	self.setSlot(Symbol.RESULT, result);
             return true;
@@ -71,7 +71,7 @@ public class OpCode {
         }
 
         @Override
-        public boolean execute(ObjectDOS self, StackFrame stackFrame) {
+        public boolean execute(OpCodeInterpreter interpreter, ObjectDOS self, StackFrame stackFrame) {
             ObjectDOS object = self.getSlot(symbol);
             stackFrame.setObject(object);
             return false;
@@ -85,7 +85,7 @@ public class OpCode {
         }
 
         @Override
-        public boolean execute(ObjectDOS self, StackFrame stackFrame) {
+        public boolean execute(OpCodeInterpreter interpreter, ObjectDOS self, StackFrame stackFrame) {
             ObjectDOS argument = self.getSlot(symbol);
             stackFrame.pushArgument(argument);
             return false;
@@ -99,7 +99,7 @@ public class OpCode {
         }
 
         @Override
-        public boolean execute(ObjectDOS self, StackFrame stackFrame) {
+        public boolean execute(OpCodeInterpreter interpreter, ObjectDOS self, StackFrame stackFrame) {
             stackFrame.pushArgument(new SymbolWrapper(symbol));
             return false;
         }
@@ -108,15 +108,13 @@ public class OpCode {
 
     public static class CreateValueObject extends OpCode {
         private final int value;
-		private final OpCodeInterpreter interpreter;
 
-		public CreateValueObject(OpCodeInterpreter interpreter, int value) {
-			this.interpreter = interpreter; // TODO this sux
+		public CreateValueObject(int value) {
 			this.value = value;
 		}
 
         @Override
-        public boolean execute(ObjectDOS self, StackFrame stackFrame) {
+        public boolean execute(OpCodeInterpreter interpreter, ObjectDOS self, StackFrame stackFrame) {
         	self.setSlot(Symbol.RESULT, interpreter.getEnvironment().createNewValueObject(value));
             return false;
         }
@@ -141,7 +139,7 @@ public class OpCode {
         }
 
         @Override
-        public boolean execute(ObjectDOS self, StackFrame stackFrame) {
+        public boolean execute(OpCodeInterpreter interpreter, ObjectDOS self, StackFrame stackFrame) {
         	if(symbol == Symbol.PARENT) {
         		System.out.println(message + " parent of " + self + " is " + self.getTrait("parent"));
         	} else {

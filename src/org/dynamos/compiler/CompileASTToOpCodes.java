@@ -15,7 +15,7 @@ public class CompileASTToOpCodes {
 
 		root.compile(opCodes, 0);
 		
-		return new FunctionDOS(null, arguments.toArray(new Symbol[] {}), opCodes.toArray(new OpCode[] {}));
+		return new FunctionDOS(arguments.toArray(new Symbol[] {}), opCodes.toArray(new OpCode[] {}));
 	}
 
 }

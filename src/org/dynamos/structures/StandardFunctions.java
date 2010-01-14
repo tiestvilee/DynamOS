@@ -1,5 +1,7 @@
 package org.dynamos.structures;
 
+import org.dynamos.OpCodeInterpreter;
+
 
 public class StandardFunctions {
 
@@ -11,7 +13,7 @@ public class StandardFunctions {
 		}
 		
 		@Override
-		public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+		public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
 			return theObject.getSlot(symbol);
 		}
 
@@ -28,7 +30,7 @@ public class StandardFunctions {
 		}
 		
 		@Override
-		public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
+		public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
 			theObject.setSlot(symbol, arguments.at(0));
 			return arguments.at(0);
 		}

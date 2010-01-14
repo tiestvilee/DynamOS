@@ -46,7 +46,7 @@ public class FunctionDOSTest {
     	when(environment.getUndefined()).thenReturn(undefined);
     	
     	context = new Activation();
-        function = new FunctionDOS(interpreter, new Symbol[] {}, new OpCode[] {});
+        function = new FunctionDOS(new Symbol[] {}, new OpCode[] {});
         
         arguments = new ListDOS();
         object = new ObjectDOS();
@@ -56,7 +56,7 @@ public class FunctionDOSTest {
     public void shouldCallFunctionWithArgumentsAndObject() {
         FunctionWithContext contextualFunction = new FunctionWithContext(function, context);
 
-        contextualFunction.execute(object, arguments);
+        contextualFunction.execute(interpreter, object, arguments);
 
         verify(interpreter).interpret(argThat(matchesContextWithValues(arguments, object, context)), (OpCode[]) anyObject());
     }
@@ -65,9 +65,9 @@ public class FunctionDOSTest {
     public void shouldInterpretOpcodes() {
         OpCode[] opCodes = new OpCode[] {};
         
-        FunctionDOS actualFunction = new FunctionDOS(interpreter, new Symbol[] {}, opCodes);
+        FunctionDOS actualFunction = new FunctionDOS(new Symbol[] {}, opCodes);
 
-        actualFunction.execute(context);
+        actualFunction.execute(interpreter, context);
 
         verify(interpreter).interpret(context, opCodes);
     }
@@ -79,9 +79,9 @@ public class FunctionDOSTest {
 		context.setArguments(arguments);
 		
     	Symbol argument = Symbol.get("argument");
-        FunctionDOS actualFunction = new FunctionDOS(interpreter, new Symbol[] {argument}, null);
+        FunctionDOS actualFunction = new FunctionDOS(new Symbol[] {argument}, null);
 		
-        actualFunction.execute(context);
+        actualFunction.execute(interpreter, context);
 		
         assertThat(context.getSlot(argument), is(value));
         assertThat(((ListDOS) context.getSlot(Symbol.ARGUMENTS)).at(0), is(value));
@@ -92,9 +92,9 @@ public class FunctionDOSTest {
 		context.setArguments(arguments);
 		
     	Symbol argument = Symbol.get("argument");
-        FunctionDOS actualFunction = new FunctionDOS(interpreter, new Symbol[] {argument}, null);
+        FunctionDOS actualFunction = new FunctionDOS(new Symbol[] {argument}, null);
 		
-        actualFunction.execute(context);
+        actualFunction.execute(interpreter, context);
 		
         assertThat(context.getSlot(argument), is(undefined));
         assertThat(((ListDOS) context.getSlot(Symbol.ARGUMENTS)).size(), is(0));
@@ -106,9 +106,9 @@ public class FunctionDOSTest {
 		arguments.add(value);
 		context.setArguments(arguments);
 		
-        FunctionDOS actualFunction = new FunctionDOS(interpreter, new Symbol[] {}, null);
+        FunctionDOS actualFunction = new FunctionDOS(new Symbol[] {}, null);
 		
-        actualFunction.execute(context);
+        actualFunction.execute(interpreter, context);
 		
         assertThat(((ListDOS) context.getSlot(Symbol.ARGUMENTS)).at(0), is(value));
     }

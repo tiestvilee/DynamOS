@@ -52,7 +52,7 @@ public class FunctionCallOpCodeTest {
     	object = mock(ObjectDOS.class);
     	when(object.getFunction(symbol)).thenReturn(aFunction);
     	
-    	new OpCode.FunctionCall(symbol).execute(object, stackFrame);
+    	new OpCode.FunctionCall(symbol).execute(interpreter, object, stackFrame);
     }
     
     @Test
@@ -61,7 +61,7 @@ public class FunctionCallOpCodeTest {
     	when(object.getFunction(symbol)).thenReturn(aFunction);
     	stackFrame.setObject(object);
     	
-    	new OpCode.FunctionCall(symbol).execute(context, stackFrame);
+    	new OpCode.FunctionCall(symbol).execute(interpreter, context, stackFrame);
     }
     
     @Test
@@ -69,9 +69,9 @@ public class FunctionCallOpCodeTest {
     	context = mock(Activation.class);
     	when(context.getFunction(symbol)).thenReturn(aFunction);
 
-    	new OpCode.FunctionCall(symbol).execute(context, stackFrame);
+    	new OpCode.FunctionCall(symbol).execute(interpreter, context, stackFrame);
     	
-    	verify(aFunction).execute(context, stackFrame.arguments);
+    	verify(aFunction).execute(interpreter, context, stackFrame.arguments);
     }
     
     @Test
@@ -79,9 +79,9 @@ public class FunctionCallOpCodeTest {
     	context = interpreter.newActivation();
     	context.setFunction(symbol, aFunction);
 
-    	when(aFunction.execute((ObjectDOS)anyObject(), (ListDOS)anyObject())).thenReturn(object);
+    	when(aFunction.execute((OpCodeInterpreter)anyObject(), (ObjectDOS)anyObject(), (ListDOS)anyObject())).thenReturn(object);
 
-    	boolean shouldContinue = new OpCode.FunctionCall(symbol).execute(context, stackFrame);
+    	boolean shouldContinue = new OpCode.FunctionCall(symbol).execute(interpreter, context, stackFrame);
     	
     	assertThat(shouldContinue, is(true));
     	assertThat(context.getSlot(Symbol.RESULT), is(object));

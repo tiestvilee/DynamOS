@@ -54,8 +54,8 @@ public class OpCodeInterpreterParameterTest {
 		argument3 = interpreter.getEnvironment().createNewObject();
         
 		emptyObject = interpreter.getEnvironment().createNewObject();
-		emptyObject.setSlot(zeroSymbol, NumberDOS.numberDOS(interpreter.getEnvironment(), 0));
-		emptyObject.setSlot(oneSymbol, NumberDOS.numberDOS(interpreter.getEnvironment(), 1));
+		emptyObject.setSlot(zeroSymbol, NumberDOS.numberDOS(interpreter, 0));
+		emptyObject.setSlot(oneSymbol, NumberDOS.numberDOS(interpreter, 1));
 		
         context = interpreter.newActivation();
 		context.setSlot(local1Symbol, argument1);
@@ -85,7 +85,7 @@ public class OpCodeInterpreterParameterTest {
         };
 		Symbol[] argumentSymbols = new Symbol[] {argument1Symbol, argument2Symbol};
 		
-		FunctionDOS receiverFunction = new FunctionDOS(interpreter, argumentSymbols, receiverOpCodes);
+		FunctionDOS receiverFunction = new FunctionDOS(argumentSymbols, receiverOpCodes);
 		emptyObject.setFunction(functionName2, receiverFunction);
 		
 		OpCode[] callerOpCodes = new OpCode[] {
@@ -147,7 +147,7 @@ public class OpCodeInterpreterParameterTest {
 	}
     
 	private void setUpReceiverFunctionWith(Symbol[] argumentSymbols, OpCode[] receiverOpCodes) {
-		FunctionDOS receiverFunction = new FunctionDOS(interpreter, argumentSymbols, receiverOpCodes);
+		FunctionDOS receiverFunction = new FunctionDOS(argumentSymbols, receiverOpCodes);
 		emptyObject.setFunction(functionName2, receiverFunction);
 	}
 

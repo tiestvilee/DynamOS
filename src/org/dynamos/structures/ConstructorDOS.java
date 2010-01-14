@@ -3,6 +3,8 @@
  */
 package org.dynamos.structures;
 
+import org.dynamos.OpCodeInterpreter;
+
 public class ConstructorDOS extends ExecutableDOS {
     protected FunctionDOS function;
 
@@ -13,15 +15,15 @@ public class ConstructorDOS extends ExecutableDOS {
         setFunction(Symbol.EXECUTE, new ExecuteFunction());
     }
 
-    public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
-        return function.construct(arguments);
+    public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
+        return function.construct(interpreter, arguments);
     }
     
     class ExecuteFunction extends ExecutableDOS {
 
 		@Override
-		public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
-			return ConstructorDOS.this.execute(theObject, arguments);
+		public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
+			return ConstructorDOS.this.execute(interpreter, theObject, arguments);
 		}
     	
     }

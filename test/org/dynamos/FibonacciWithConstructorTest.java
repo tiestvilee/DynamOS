@@ -113,7 +113,7 @@ public class FibonacciWithConstructorTest {
 		ConstructorDOS fibonacciLibrary = environment.createConstructor(new Symbol[] {numberFactory, listFactory}, new OpCode[] {
             	new OpCode.Debug("creating fibonacci library", numberFactory),
             	
-            	new OpCode.CreateValueObject(interpreter, 1),  // create constant for '1'
+            	new OpCode.CreateValueObject(1),  // create constant for '1'
             	new OpCode.Push(Symbol.RESULT),
             	new OpCode.SetObject(numberFactory),
             	new OpCode.FunctionCall(numberFrom$),
@@ -122,7 +122,7 @@ public class FibonacciWithConstructorTest {
             	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
 	            new OpCode.Debug("one", one), 
 
-            	new OpCode.CreateValueObject(interpreter, 2),  // create constant for '2'
+            	new OpCode.CreateValueObject(2),  // create constant for '2'
             	new OpCode.Push(Symbol.RESULT),
             	new OpCode.SetObject(numberFactory),
             	new OpCode.FunctionCall(numberFrom$),
@@ -258,7 +258,7 @@ public class FibonacciWithConstructorTest {
         applicationContext.setSlot(fibonacciLibrarySlot, environment.getNull());
 
         interpreter.interpret(applicationContext, new OpCode[] {
-        	new OpCode.CreateValueObject(interpreter, sequenceIndex), // set up the index we want to get fibonacci for
+        	new OpCode.CreateValueObject(sequenceIndex), // set up the index we want to get fibonacci for
         	new OpCode.Push(Symbol.RESULT),
         	new OpCode.SetObject(numberFactory),
         	new OpCode.FunctionCall(numberFrom$),

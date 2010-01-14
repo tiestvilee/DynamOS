@@ -31,7 +31,7 @@ public class OpCodeInterpreter {
 			if(opCodes[i] instanceof OpCode.StartOpCodeList) {
 				i = storeOpCodesInList(context, opCodes, i);
         	}
-			else if(opCodes[i].execute(context, stackFrame)) {
+			else if(opCodes[i].execute(this, context, stackFrame)) {
                 stackFrame = new StackFrame();
             }
         }

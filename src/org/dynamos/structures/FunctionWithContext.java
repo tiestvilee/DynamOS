@@ -4,6 +4,7 @@
 package org.dynamos.structures;
 
 import org.dynamos.Environment;
+import org.dynamos.OpCodeInterpreter;
 
 public class FunctionWithContext extends ExecutableDOS {
     protected FunctionDOS function;
@@ -21,17 +22,17 @@ public class FunctionWithContext extends ExecutableDOS {
         setFunction(Symbol.EXECUTE, new ExecuteFunction());
     }
 
-    public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
-        Activation activation = function.newActivation(context, arguments, theObject);
-        function.execute(activation);
+    public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
+        Activation activation = function.newActivation(interpreter, context, arguments, theObject);
+        function.execute(interpreter, activation);
         return activation.getSlot(Symbol.RESULT);
     }
     
     class ExecuteFunction extends ExecutableDOS {
 
 		@Override
-		public ObjectDOS execute(ObjectDOS theObject, ListDOS arguments) {
-			return FunctionWithContext.this.execute(theObject, arguments);
+		public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
+			return FunctionWithContext.this.execute(interpreter, theObject, arguments);
 		}
     	
     }
