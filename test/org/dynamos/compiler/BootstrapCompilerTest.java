@@ -1,18 +1,9 @@
 package org.dynamos.compiler;
 
-import org.junit.Before;
-import org.junit.Test;
 import org.dynamos.OpCodeInterpreter;
-import org.dynamos.compiler.BootstrapCompiler;
-import org.dynamos.structures.Activation;
-import org.dynamos.structures.ConstructorDOS;
-import org.dynamos.structures.FunctionDOS;
 import org.dynamos.structures.ObjectDOS;
-import org.dynamos.structures.OpCode;
 import org.dynamos.structures.Symbol;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import org.junit.Before;
 
 public class BootstrapCompilerTest {
 	

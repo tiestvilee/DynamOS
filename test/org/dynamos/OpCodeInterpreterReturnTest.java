@@ -10,8 +10,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import org.dynamos.structures.Activation;
-import org.dynamos.structures.FunctionWithContext;
 import org.dynamos.structures.FunctionDOS;
+import org.dynamos.structures.FunctionWithContext;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.Symbol;
