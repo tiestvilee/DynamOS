@@ -281,7 +281,7 @@ public class FibonacciWithConstructorTest {
         	new OpCode.FunctionCall(fibonacci$)
         });
         
-        assertThat(((NumberDOS.ValueObject) applicationContext.getSlot(Symbol.RESULT)).getValue(), is(expectedResult));
+        assertThat(((NumberDOS.ValueObject) applicationContext.getSlot(Symbol.RESULT).getSlot(Symbol.get("value"))).getValue(), is(expectedResult));
 	}
 
 }

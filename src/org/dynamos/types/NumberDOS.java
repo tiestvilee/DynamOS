@@ -29,13 +29,13 @@ public class NumberDOS {
 		String libraryProgram = 
 			"(constructor numberFactoryConstructor: vm and: listFactory\n" + 
 			"  \n" + 
-			"  (constructor numberPrototypeConstructor: vm and: listFactory\n" + 
+			"  (constructor numberPrototypeConstructor: vm and: listFactory and: numberFactory\n" + 
 			"    (function plus: number\n" + 
-			"      $vm add: $number to: $value\n" + 
+			"      $numberFactory numberFrom: ($vm add: ($number value) to: $value)\n" + 
 			"    )\n" + 
 			"    \n" + 
 			"    (function minus: number\n" + 
-			"      $vm subtract: $number from: $value\n" + 
+			"      $numberFactory numberFrom: ($vm subtract: ($number value) from: $value)\n" + 
 			"    )\n" + 
 			"    \n" + 
 			"    (function isLessThan: number\n" + 
@@ -43,10 +43,10 @@ public class NumberDOS {
 			"    )\n" + 
 			"    \n" + // fuck
 			"    (function value\n" + 
-			"      result: $value\n" + 
+			"      $value\n" + 
 			"    )\n" + 
 			"  )\n" +
-			"  $numberPrototype: (numberPrototypeConstructor: $vm and: $listFactory)\n" + 
+			"  $numberPrototype: (numberPrototypeConstructor: $vm and: $listFactory and: $this)\n" + 
 			"  \n" + 
 			"  (constructor numberConstructor: value prototype: numberPrototype\n" +
 			"     parent: $numberPrototype\n" + 

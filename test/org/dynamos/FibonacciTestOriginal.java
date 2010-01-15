@@ -175,7 +175,7 @@ public class FibonacciTestOriginal {
         	new OpCode.Debug("shell finished", Symbol.RESULT),
         });
         
-        assertThat(((NumberDOS.ValueObject) activation.getSlot(Symbol.RESULT)).getValue(), is(expectedResult));
+        assertThat(((NumberDOS.ValueObject) activation.getSlot(Symbol.RESULT).getSlot(Symbol.get("value"))).getValue(), is(expectedResult));
 	}
 
 }
