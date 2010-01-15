@@ -16,6 +16,10 @@ public class ConstructorDOS extends ExecutableDOS {
     }
 
     public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
+        return execute(interpreter, arguments);
+    }
+    
+    public ObjectDOS execute(OpCodeInterpreter interpreter, ListDOS arguments) {
         return function.construct(interpreter, arguments);
     }
     

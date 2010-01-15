@@ -51,6 +51,7 @@ public class OpCode {
         public boolean execute(OpCodeInterpreter interpreter, ObjectDOS self, StackFrame stackFrame) {
         	ObjectDOS target = self;
         	if(stackFrame.getObject() != null) {
+        		System.out.println("object was set...");
         		target = stackFrame.getObject();
         	}
 			System.out.println("find and execute " + symbol + " on " + target + "\n....with " + stackFrame.getArguments().getRawList());
@@ -73,6 +74,7 @@ public class OpCode {
         @Override
         public boolean execute(OpCodeInterpreter interpreter, ObjectDOS self, StackFrame stackFrame) {
             ObjectDOS object = self.getSlot(symbol);
+    		System.out.println("setting object");
             stackFrame.setObject(object);
             return false;
         }
@@ -147,7 +149,7 @@ public class OpCode {
 	            if(argument instanceof ValueObject) {
 	            	System.out.println(message + " " + ((ValueObject) argument).getValue() + "@" + argument + " parent " + argument.getTrait("parent"));
 	            } else  {
-	            	System.out.println(message + " " + argument);
+	            	System.out.println(message + " " + argument + " parent " + argument.getParent());
 	            }
         	}
             return false;
@@ -181,5 +183,22 @@ public class OpCode {
 			return obj instanceof EndOpCodeList;
 		}
 	}
+	
+	public static void printOpCodes(OpCode[] opCodes) {
+		String indent = "";
+		for(OpCode opCode : opCodes) {
+			if(opCode instanceof OpCode.EndOpCodeList) {
+				indent = indent.substring(2);
+			}
+			System.out.println(indent + opCode);
+			if(opCode instanceof OpCode.FunctionCall) {
+				System.out.println();
+			}
+			if(opCode instanceof OpCode.StartOpCodeList) {
+				indent += "  ";
+			}
+		}
+	}
+
 
 }

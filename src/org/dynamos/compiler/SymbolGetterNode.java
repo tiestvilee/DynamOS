@@ -13,18 +13,16 @@ public class SymbolGetterNode extends ChainedNode {
 
 	@Override
 	public void compile(List<OpCode> opCodes, int tempNumber) {
+		opCodes.add(new OpCode.PushSymbol(getSymbol())); 
+		opCodes.add(new OpCode.FunctionCall(Symbol.GET_SLOT_$));
+
 		if(getChain() != null) {
-			opCodes.add(new OpCode.PushSymbol(getSymbol())); 
-			opCodes.add(new OpCode.FunctionCall(Symbol.GET_SLOT_$));
-			
 			int newTempNumber = tempNumber + 1;
 			opCodes.add(new OpCode.PushSymbol(Symbol.get("__temp" + newTempNumber)));
 			opCodes.add(new OpCode.Push(Symbol.RESULT));
 			opCodes.add(new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$));
-
+			
 			getChain().compileChain(opCodes, newTempNumber);
-		} else {
-			opCodes.add(new OpCode.Push( getSymbol() ));
 		}
 	}
 }

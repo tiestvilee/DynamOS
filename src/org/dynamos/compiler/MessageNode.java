@@ -42,7 +42,6 @@ public abstract class MessageNode extends StatementContainingNode {
 		return indent + "(" + type() + " " + getName() + "{\n" + indent + "  " + statementsAsString + "\n" + indent + "})\n";
 	}
 
-
 	@Override
 	public void compile(List<OpCode> opCodes, int tempNumber) {
 		setupArgumentList(opCodes);
@@ -62,7 +61,7 @@ public abstract class MessageNode extends StatementContainingNode {
 		opCodes.add(new OpCode.FunctionCall(Symbol.get("newList")));
 		opCodes.add(new OpCode.PushSymbol(Symbol.get("__argument_list")));
 		opCodes.add(new OpCode.Push(Symbol.RESULT));
-		opCodes.add(new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$));
+		opCodes.add(new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$));
 		
 		for(String argument : getArguments()) {
 			opCodes.add(new OpCode.PushSymbol(Symbol.get(argument)));
@@ -77,7 +76,7 @@ public abstract class MessageNode extends StatementContainingNode {
 		if(isPrivate) {
 			opCodes.add(new OpCode.PushSymbol(Symbol.get(getName()))); // save into functions with correct name
 			opCodes.add(new OpCode.Push(Symbol.RESULT));
-			opCodes.add(new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$));
+			opCodes.add(new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$));
 		} else {
 			opCodes.add(new OpCode.PushSymbol(Symbol.get(getName()))); // save into functions with correct name
 			opCodes.add(new OpCode.Push(Symbol.RESULT));

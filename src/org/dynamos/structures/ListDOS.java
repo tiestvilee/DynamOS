@@ -34,7 +34,7 @@ public class ListDOS extends ObjectDOS {
 	class AtFunction extends ExecutableDOS {
 		@Override
 		public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
-			ValueObject index = (ValueObject) arguments.getRawList().get(0);
+			ValueObject index = (ValueObject) (arguments.getRawList().get(0).getSlot(Symbol.get("value")));
 			System.out.println("made it! " + index.getValue() +  " " + list.get(index.getValue()));
 			return list.get(index.getValue());
 		}

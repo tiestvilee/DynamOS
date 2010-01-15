@@ -22,7 +22,7 @@ public class OpCodeInterpreter {
 	
 	public OpCodeInterpreter() {
 		environment = new Environment();
-		environment.init();
+		environment.init(this);
 	}
 
     public void interpret(ObjectDOS context, OpCode[] opCodes) {

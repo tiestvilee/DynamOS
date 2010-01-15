@@ -56,6 +56,7 @@ public class ObjectDOS {
 	    if(function != null) {
 	    	return function;
 	    }
+	    System.out.println(traits);
 		for(ObjectDOS trait : traits.values()) {
 			function = trait.getFunction(symbol);
 			if(function != null) {

@@ -28,8 +28,22 @@ public class CompileAstToOpCodesTest {
 		
 		FunctionDOS function = compiler.compile(root);
 		assertThat(function.getOpCodes(), is(new OpCode[] {
-				new OpCode.Push(Symbol.get("param1")),
-				new OpCode.Push(Symbol.get("param2")),
+				new OpCode.PushSymbol(Symbol.get("param1")),
+				new OpCode.FunctionCall(Symbol.GET_SLOT_$),
+				
+				new OpCode.PushSymbol(Symbol.get("__temp1")),
+				new OpCode.Push(Symbol.RESULT),
+				new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
+				
+				new OpCode.PushSymbol(Symbol.get("param2")),
+				new OpCode.FunctionCall(Symbol.GET_SLOT_$),
+				
+				new OpCode.PushSymbol(Symbol.get("__temp2")),
+				new OpCode.Push(Symbol.RESULT),
+				new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
+				
+				new OpCode.Push(Symbol.get("__temp1")),
+				new OpCode.Push(Symbol.get("__temp2")),
 				new OpCode.FunctionCall(Symbol.get("function-WithParam:andParam?:"))				
 		}));
 	}
@@ -53,8 +67,22 @@ public class CompileAstToOpCodesTest {
 				new OpCode.Push(Symbol.RESULT),
 				new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
 				
-				new OpCode.Push(Symbol.get("param1")),
-				new OpCode.Push(Symbol.get("param2")),
+				new OpCode.PushSymbol(Symbol.get("param1")),
+				new OpCode.FunctionCall(Symbol.GET_SLOT_$),
+				
+				new OpCode.PushSymbol(Symbol.get("__temp3")),
+				new OpCode.Push(Symbol.RESULT),
+				new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
+				
+				new OpCode.PushSymbol(Symbol.get("param2")),
+				new OpCode.FunctionCall(Symbol.GET_SLOT_$),
+				
+				new OpCode.PushSymbol(Symbol.get("__temp4")),
+				new OpCode.Push(Symbol.RESULT),
+				new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
+				
+				new OpCode.Push(Symbol.get("__temp3")),
+				new OpCode.Push(Symbol.get("__temp4")),
 				new OpCode.SetObject(Symbol.get("__temp2")),
 				new OpCode.FunctionCall(Symbol.get("function-WithParam:andParam?:"))				
 		}));
@@ -68,7 +96,7 @@ public class CompileAstToOpCodesTest {
 		
 		FunctionDOS function = compiler.compile(root);
 		assertThat(function.getOpCodes(), is(new OpCode[] {
-				new OpCode.PushSymbol(Symbol.get("slot")), // TODO would obviously like to get rid of next 5 lines! 
+				new OpCode.PushSymbol(Symbol.get("slot")), 
 				new OpCode.FunctionCall(Symbol.GET_SLOT_$),
 				
 				new OpCode.PushSymbol(Symbol.get("__temp1")),
@@ -82,8 +110,22 @@ public class CompileAstToOpCodesTest {
 				new OpCode.Push(Symbol.RESULT),
 				new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
 				
-				new OpCode.Push(Symbol.get("param1")),
-				new OpCode.Push(Symbol.get("param2")),
+				new OpCode.PushSymbol(Symbol.get("param1")),  // param1
+				new OpCode.FunctionCall(Symbol.GET_SLOT_$),
+				
+				new OpCode.PushSymbol(Symbol.get("__temp3")),
+				new OpCode.Push(Symbol.RESULT),
+				new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
+				
+				new OpCode.PushSymbol(Symbol.get("param2")), // param2
+				new OpCode.FunctionCall(Symbol.GET_SLOT_$),
+				
+				new OpCode.PushSymbol(Symbol.get("__temp4")),
+				new OpCode.Push(Symbol.RESULT),
+				new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
+				
+				new OpCode.Push(Symbol.get("__temp3")),
+				new OpCode.Push(Symbol.get("__temp4")),
 				new OpCode.SetObject(Symbol.get("__temp2")),
 				new OpCode.FunctionCall(Symbol.get("function-WithParam:andParam?:"))				
 		}));
@@ -97,12 +139,67 @@ public class CompileAstToOpCodesTest {
 		
 		FunctionDOS function = compiler.compile(root);
 		assertThat(function.getOpCodes(), is(new OpCode[] {
-				new OpCode.Push(Symbol.get("param1")),
+				new OpCode.PushSymbol(Symbol.get("param1")),  // param1
+				new OpCode.FunctionCall(Symbol.GET_SLOT_$),
+				
+				new OpCode.PushSymbol(Symbol.get("__temp1")),
+				new OpCode.Push(Symbol.RESULT),
+				new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
+
+				new OpCode.Push(Symbol.get("__temp1")),
 				new OpCode.FunctionCall(Symbol.get("function-WithParam:")),
 				
 				new OpCode.PushSymbol(Symbol.get("slot")),
 				new OpCode.Push(Symbol.RESULT),
+				new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
+		}));
+	}
+	
+	@Test
+	public void shouldSetResultToSlot() {
+		StatementContainingNode root = transformer.transform(
+				"$slot\n"
+			);
+		
+		FunctionDOS function = compiler.compile(root);
+		assertThat(function.getOpCodes(), is(new OpCode[] {
+				new OpCode.PushSymbol(Symbol.get("slot")),
+				new OpCode.FunctionCall(Symbol.GET_SLOT_$)
+		}));
+	}
+	
+	@Test
+	public void shouldChainSlotInSubCall() {
+		StatementContainingNode root = transformer.transform(
+				"$slot1 function: ($slot2 function2)\n"
+			);
+		
+		FunctionDOS function = compiler.compile(root);
+		assertThat(function.getOpCodes(), is(new OpCode[] {
+				new OpCode.PushSymbol(Symbol.get("slot1")), 
+				new OpCode.FunctionCall(Symbol.GET_SLOT_$),
+				
+				new OpCode.PushSymbol(Symbol.get("__temp1")),
+				new OpCode.Push(Symbol.RESULT),
 				new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
+				
+				new OpCode.PushSymbol(Symbol.get("slot2")), 
+				new OpCode.FunctionCall(Symbol.GET_SLOT_$),
+				
+				new OpCode.PushSymbol(Symbol.get("__temp3")),
+				new OpCode.Push(Symbol.RESULT),
+				new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
+
+				new OpCode.SetObject(Symbol.get("__temp3")),
+				new OpCode.FunctionCall(Symbol.get("function2")),
+
+				new OpCode.PushSymbol(Symbol.get("__temp2")),
+				new OpCode.Push(Symbol.RESULT),
+				new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
+
+				new OpCode.Push(Symbol.get("__temp2")),
+				new OpCode.SetObject(Symbol.get("__temp1")),
+				new OpCode.FunctionCall(Symbol.get("function:")),				
 		}));
 	}
 	
@@ -114,7 +211,14 @@ public class CompileAstToOpCodesTest {
 		
 		FunctionDOS function = compiler.compile(root);
 		assertThat(function.getOpCodes(), is(new OpCode[] {
-				new OpCode.Push(Symbol.get("param1")),
+				new OpCode.PushSymbol(Symbol.get("param1")),
+				new OpCode.FunctionCall(Symbol.GET_SLOT_$),
+				
+				new OpCode.PushSymbol(Symbol.get("__temp2")),
+				new OpCode.Push(Symbol.RESULT),
+				new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
+				
+				new OpCode.Push(Symbol.get("__temp2")),
 				new OpCode.FunctionCall(Symbol.get("anotherFunction:")),
 				new OpCode.PushSymbol(Symbol.get("__temp1")),
 				new OpCode.Push(Symbol.RESULT),
@@ -125,7 +229,14 @@ public class CompileAstToOpCodesTest {
 				new OpCode.Push(Symbol.RESULT),
 				new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
 
-				new OpCode.Push(Symbol.get("param2")),
+				new OpCode.PushSymbol(Symbol.get("param2")),
+				new OpCode.FunctionCall(Symbol.GET_SLOT_$),
+				
+				new OpCode.PushSymbol(Symbol.get("__temp5")),
+				new OpCode.Push(Symbol.RESULT),
+				new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
+				
+				new OpCode.Push(Symbol.get("__temp5")),
 				new OpCode.FunctionCall(Symbol.get("subsubfunction:")),
 				new OpCode.PushSymbol(Symbol.get("__temp4")),
 				new OpCode.Push(Symbol.RESULT),
@@ -138,9 +249,16 @@ public class CompileAstToOpCodesTest {
 				new OpCode.Push(Symbol.RESULT),
 				new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
 				
+				new OpCode.PushSymbol(Symbol.get("param3")),
+				new OpCode.FunctionCall(Symbol.GET_SLOT_$),
+				
+				new OpCode.PushSymbol(Symbol.get("__temp3")),
+				new OpCode.Push(Symbol.RESULT),
+				new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
+				
 				new OpCode.Push(Symbol.get("__temp1")),
 				new OpCode.Push(Symbol.get("__temp2")),
-				new OpCode.Push(Symbol.get("param3")),
+				new OpCode.Push(Symbol.get("__temp3")),
 				new OpCode.FunctionCall(Symbol.get("function-WithParam:andParam?:finalParam:")),				
 		}));
 	}
@@ -158,7 +276,7 @@ public class CompileAstToOpCodesTest {
             	new OpCode.FunctionCall(Symbol.get("newList")),
             	new OpCode.PushSymbol(Symbol.get("__argument_list")),
             	new OpCode.Push(Symbol.RESULT),
-            	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
+            	new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
             	
             	new OpCode.StartOpCodeList(), // empty function body
             	new OpCode.EndOpCodeList(),
@@ -186,7 +304,7 @@ public class CompileAstToOpCodesTest {
             	new OpCode.FunctionCall(Symbol.get("newList")),
             	new OpCode.PushSymbol(Symbol.get("__argument_list")),
             	new OpCode.Push(Symbol.RESULT),
-            	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
+            	new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
             	
             	new OpCode.StartOpCodeList(), // empty function body
             	new OpCode.EndOpCodeList(),
@@ -197,7 +315,7 @@ public class CompileAstToOpCodesTest {
 	            
             	new OpCode.PushSymbol(Symbol.get("functionName")), // save into slots
 	            new OpCode.Push(Symbol.RESULT),
-	        	new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
+	        	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
 		}));
 	}
 	
@@ -216,11 +334,25 @@ public class CompileAstToOpCodesTest {
             	new OpCode.FunctionCall(Symbol.get("newList")),
             	new OpCode.PushSymbol(Symbol.get("__argument_list")),
             	new OpCode.Push(Symbol.RESULT),
-            	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
+            	new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
             	
             	new OpCode.StartOpCodeList(), // function body
-					new OpCode.Push(Symbol.get("param1")),
-					new OpCode.Push(Symbol.get("param2")),
+					new OpCode.PushSymbol(Symbol.get("param1")),
+					new OpCode.FunctionCall(Symbol.GET_SLOT_$),
+					
+					new OpCode.PushSymbol(Symbol.get("__temp1")),
+					new OpCode.Push(Symbol.RESULT),
+					new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
+
+					new OpCode.PushSymbol(Symbol.get("param2")),
+					new OpCode.FunctionCall(Symbol.GET_SLOT_$),
+					
+					new OpCode.PushSymbol(Symbol.get("__temp2")),
+					new OpCode.Push(Symbol.RESULT),
+					new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
+					
+					new OpCode.Push(Symbol.get("__temp1")),
+					new OpCode.Push(Symbol.get("__temp2")),
 					new OpCode.FunctionCall(Symbol.get("function-WithParam:andParam?:")),		
             	new OpCode.EndOpCodeList(),
             	
@@ -248,7 +380,7 @@ public class CompileAstToOpCodesTest {
             	new OpCode.FunctionCall(Symbol.get("newList")),
             	new OpCode.PushSymbol(Symbol.get("__argument_list")),
             	new OpCode.Push(Symbol.RESULT),
-            	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
+            	new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
             	
             	new OpCode.PushSymbol(Symbol.get("param1")),
             	new OpCode.SetObject(Symbol.get("__argument_list")),
@@ -286,7 +418,7 @@ public class CompileAstToOpCodesTest {
             	new OpCode.FunctionCall(Symbol.get("newList")),
             	new OpCode.PushSymbol(Symbol.get("__argument_list")),
             	new OpCode.Push(Symbol.RESULT),
-            	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
+            	new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
             	
             	new OpCode.PushSymbol(Symbol.get("param1")),
             	new OpCode.SetObject(Symbol.get("__argument_list")),
@@ -297,8 +429,22 @@ public class CompileAstToOpCodesTest {
             	new OpCode.FunctionCall(Symbol.get("add:")),
             	
             	new OpCode.StartOpCodeList(), // constructor body
-					new OpCode.Push(Symbol.get("param1")),
-					new OpCode.Push(Symbol.get("param2")),
+					new OpCode.PushSymbol(Symbol.get("param1")),
+					new OpCode.FunctionCall(Symbol.GET_SLOT_$),
+					
+					new OpCode.PushSymbol(Symbol.get("__temp1")),
+					new OpCode.Push(Symbol.RESULT),
+					new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
+					
+					new OpCode.PushSymbol(Symbol.get("param2")),
+					new OpCode.FunctionCall(Symbol.GET_SLOT_$),
+					
+					new OpCode.PushSymbol(Symbol.get("__temp2")),
+					new OpCode.Push(Symbol.RESULT),
+					new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
+					
+					new OpCode.Push(Symbol.get("__temp1")),
+					new OpCode.Push(Symbol.get("__temp2")),
 					new OpCode.FunctionCall(Symbol.get("function-WithParam:andParam?:")),		
             	new OpCode.EndOpCodeList(),
             	
@@ -326,7 +472,7 @@ public class CompileAstToOpCodesTest {
             	new OpCode.FunctionCall(Symbol.get("newList")),
             	new OpCode.PushSymbol(Symbol.get("__argument_list")),
             	new OpCode.Push(Symbol.RESULT),
-            	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
+            	new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
             	
             	new OpCode.StartOpCodeList(), // constructor body	
             	new OpCode.EndOpCodeList(),
@@ -337,7 +483,7 @@ public class CompileAstToOpCodesTest {
 	            
             	new OpCode.PushSymbol(Symbol.get("objectName")), // save into slots
 	            new OpCode.Push(Symbol.RESULT),
-	        	new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$)
+	        	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$)
 		}));
 	}
 
@@ -370,18 +516,8 @@ public class CompileAstToOpCodesTest {
 		
 		FunctionDOS function = compiler.compile(root);
 		
-		String indent = "";
-		for(OpCode opCode : function.getOpCodes()) {
-			if(opCode instanceof OpCode.EndOpCodeList) {
-				indent = indent.substring(2);
-			}
-			System.out.println(indent + opCode);
-			if(opCode instanceof OpCode.FunctionCall) {
-				System.out.println();
-			}
-			if(opCode instanceof OpCode.StartOpCodeList) {
-				indent += "  ";
-			}
-		}
+		OpCode[] opCodes = function.getOpCodes();
+		OpCode.printOpCodes(opCodes);
 	}
+
 }

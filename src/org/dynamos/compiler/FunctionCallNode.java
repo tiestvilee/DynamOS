@@ -76,21 +76,17 @@ public class FunctionCallNode extends ChainedNode {
 		int currentTempNumber = tempNumber;
 		
 		for(ASTNode argument : arguments) {
-			if(argument instanceof SymbolGetterNode) {
-				argumentSymbols.add((SymbolGetterNode) argument);
-			} else if (argument instanceof FunctionCallNode) {
-				currentTempNumber++;
-				argument.compile(opCodes, currentTempNumber);
-				opCodes.add(new OpCode.PushSymbol(Symbol.get("__temp" + currentTempNumber)));
-				opCodes.add(new OpCode.Push(Symbol.RESULT));
-				opCodes.add(new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$));
+			currentTempNumber++;
+			argument.compile(opCodes, currentTempNumber);
+			opCodes.add(new OpCode.PushSymbol(Symbol.get("__temp" + currentTempNumber)));
+			opCodes.add(new OpCode.Push(Symbol.RESULT));
+			opCodes.add(new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$));
 
-				argumentSymbols.add(new SymbolGetterNode("__temp" + currentTempNumber));
-			}
+			argumentSymbols.add(new SymbolGetterNode("__temp" + currentTempNumber));
 		}
 		
 		for(SymbolGetterNode argument : argumentSymbols) {
-			argument.compile(opCodes, tempNumber);
+			opCodes.add(new OpCode.Push(Symbol.get(argument.getName())));
 		}
 	}
 	

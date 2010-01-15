@@ -55,10 +55,10 @@ public class Environment {
 		contextBuilder = Activation.initializeContext(this);
 	}
 	
-	public void init() {
+	public void init(OpCodeInterpreter interpreter) {
 		booleanContainer = BooleanDOS.initialiseBooleans(this);
-        numberFactory = NumberDOS.createNumberLibrary(this);
-        listFactory = StandardObjects.createListLibrary(this);
+		listFactory = StandardObjects.createListLibrary(this);
+        numberFactory = NumberDOS.createNumberLibrary(interpreter, this);
         functionPrototype = FunctionWithContext.createFunctionPrototype(this);
     }
 	

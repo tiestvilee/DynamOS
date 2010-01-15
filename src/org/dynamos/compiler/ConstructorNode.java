@@ -12,6 +12,16 @@ public class ConstructorNode extends MessageNode {
 		return "object";
 	}
 
+
+	public void compile(List<OpCode> opCodes, List<Symbol> arguments) {
+		for(String argument : getArguments()) {
+			arguments.add(Symbol.get(argument));
+		}
+		for(ASTNode node : statements) {
+			node.compile(opCodes, 0);
+		}
+	}
+
 	void createFunction(List<OpCode> opCodes) {
 		opCodes.add(new OpCode.Push(Symbol.get("__argument_list"))); // create function
 		opCodes.add(new OpCode.Push(Symbol.RESULT));

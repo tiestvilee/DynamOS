@@ -156,6 +156,7 @@ public class Mirror {
     private static ExecutableDOS SET_PARENT_TO_$_ON_$_EXEC = new ExecutableDOS() {
 		@Override
 		public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
+			System.out.println("************* setting parent on " + arguments.at(1) + " to " + arguments.at(0));
 			arguments.at(1).setParent(arguments.at(0));
 			return arguments.at(1); // never return the mirror - just in case
 		}

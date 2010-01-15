@@ -17,6 +17,6 @@ public class SymbolSetterNode extends FunctionCallNode {
 		
 		opCodes.add(new OpCode.PushSymbol(getSymbol()));
 		opCodes.add(new OpCode.Push(Symbol.RESULT));
-		opCodes.add(new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$));
+		opCodes.add(new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$));
 	}
 }

@@ -188,14 +188,15 @@ public class Activation extends ObjectDOS {
 	    		Symbol symbol = ((SymbolWrapper) arguments.at(0)).getSymbol();
 	    		ObjectDOS value = arguments.at(1);
 	    		
-	    		if(theObject instanceof Activation) {
+//	    		if(theObject instanceof Activation) {
+	    			// TODO this is wrong, but how do we know if we're in a constructor?  where this sort of thing is fine...
 	    			/* implicit call */
 	    			theObject.setSlot(symbol, value);
 		        	System.out.println("+++|| set slot " + symbol + " on " + theObject + " to " + value + " -> " + theObject.getSlot(symbol));
 		        	return theObject;
-	    		}
-	    		/* explicit call */
-	    		throw new RuntimeException("Can't set a slot directly on an object, only within that object's functions");
+//	    		}
+//	    		/* explicit call */
+//	    		throw new RuntimeException("Can't set a slot directly on an object, only within that object's functions " + theObject);
 	    	}
 	    };
 	    
@@ -203,7 +204,9 @@ public class Activation extends ObjectDOS {
 			@Override
 			public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
 	    		Symbol symbol = ((SymbolWrapper) arguments.at(0)).getSymbol();
-				return theObject.getSlot(symbol);
+				ObjectDOS slot = theObject.getSlot(symbol);
+				System.out.println("got slot " + slot);
+				return slot;
 			}
 	    };
 
