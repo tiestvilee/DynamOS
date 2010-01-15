@@ -5,6 +5,9 @@
 
 package org.dynamos.types;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.dynamos.Environment;
 import org.dynamos.OpCodeInterpreter;
 import org.dynamos.compiler.BootstrapCompiler;
@@ -22,37 +25,8 @@ public class NumberDOS {
 
 	public static ObjectDOS createNumberLibrary(OpCodeInterpreter interpreter, Environment environment) {
 
-		String libraryProgram = 
-			"(constructor numberFactoryConstructor: vm and: listFactory\n" + 
-			"  \n" + 
-			"  (constructor numberPrototypeConstructor: vm and: listFactory and: numberFactory\n" + 
-			"    (function plus: number\n" + 
-			"      $numberFactory numberFrom: ($vm add: ($number value) to: $value)\n" + 
-			"    )\n" + 
-			"    \n" + 
-			"    (function minus: number\n" + 
-			"      $numberFactory numberFrom: ($vm subtract: ($number value) from: $value)\n" + 
-			"    )\n" + 
-			"    \n" + 
-			"    (function isLessThan: number\n" + 
-			"      $vm value: $value isLessThan: ($number value)\n" + // not compiling
-			"    )\n" + 
-			"    \n" + // fuck
-			"    (function value\n" + 
-			"      $value\n" + 
-			"    )\n" + 
-			"  )\n" +
-			"  $numberPrototype: (numberPrototypeConstructor: $vm and: $listFactory and: $this)\n" + 
-			"  \n" + 
-			"  (constructor numberConstructor: value prototype: numberPrototype\n" +
-			"     parent: $numberPrototype\n" + 
-			"  )\n" +
-			"  \n" + 
-			"  (function numberFrom: value\n" + 
-			"     numberConstructor: $value prototype: $numberPrototype\n" + 
-			"  )\n" + 
-			"  \n" +
-			") \n ";
+		String filename = "NumberDOS.oc";
+		String libraryProgram = loadFile(filename);
 		
 		ConstructorDOS libraryConstructor = new BootstrapCompiler().compile(libraryProgram);
 		
@@ -61,6 +35,36 @@ public class NumberDOS {
 		arguments.add(environment.getListFactory());
 		
 		return libraryConstructor.execute(interpreter, arguments);
+	}
+
+	private static String loadFile(String filename) {
+		String libraryProgram = "";
+		try {
+			byte[] buf = new byte[12*1000];
+			InputStream in = NumberDOS.class.getResourceAsStream(filename);
+			
+            if (in != null) {
+                try {
+                    int total = 0;
+                    while (true) {
+                        int numRead = in.read(buf,
+                                total, buf.length-total);
+                        if (numRead <= 0) {
+                            break;
+                        }
+                        total += numRead;
+                    }
+                    byte[] stringBuf = new byte[total];
+                    System.arraycopy(buf, 0, stringBuf, 0, total);
+                    libraryProgram = new String(stringBuf);
+                } catch (Exception e) {} finally {
+                    in.close();
+                }
+            }
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return libraryProgram;
 	}
 
 
