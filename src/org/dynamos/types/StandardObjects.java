@@ -43,7 +43,7 @@ public class StandardObjects {
 		ObjectDOS listFactory = environment.createNewObject();
 		
 		// add appropriate function to the prototype
-		listFactory.setFunction(Symbol.get("newList"), new ExecutableDOS() {
+		listFactory.setFunction(Symbol.NEW_LIST, new ExecutableDOS() {
 
 			@Override
 			public ObjectDOS execute(org.dynamos.OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {

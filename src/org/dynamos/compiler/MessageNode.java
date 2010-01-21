@@ -57,8 +57,7 @@ public abstract class MessageNode extends StatementContainingNode {
 	}
 
 	private void setupArgumentList(List<OpCode> opCodes) {
-		opCodes.add(new OpCode.SetObject(Symbol.get("listFactory"))); // argument list
-		opCodes.add(new OpCode.FunctionCall(Symbol.get("newList")));
+		opCodes.add(new OpCode.FunctionCall(Symbol.NEW_LIST));
 		opCodes.add(new OpCode.PushSymbol(Symbol.get("__argument_list")));
 		opCodes.add(new OpCode.Push(Symbol.RESULT));
 		opCodes.add(new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$));

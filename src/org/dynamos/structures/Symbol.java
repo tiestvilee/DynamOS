@@ -47,6 +47,7 @@ public class Symbol {
 	public static final Symbol SET_LOCAL_SLOT_$_TO_$ = Symbol.get("setLocalSlot:to:");
 	public static final Symbol SET_TRAIT_$_TO_$ = Symbol.get("setTrait:to:");
 	public static final Symbol GET_TRAIT_$ = Symbol.get("getTrait:");
+	public static final Symbol NEW_LIST = Symbol.get("newList");
 	
 	public static final Symbol MIRROR = Symbol.get("mirror");
 	public static final Symbol NEW_OBJECT = Mirror.NEW_OBJECT;

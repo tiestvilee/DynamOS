@@ -51,9 +51,6 @@ public class FibonacciWithConstructorTest {
     Symbol numberFrom$ = Symbol.get("numberFrom:");
     Symbol add$ = Symbol.get("add:");
     
-	Symbol listFactory = Symbol.get("listFactory");
-	Symbol newList = Symbol.get("newList");
-	
 	Symbol fibonacciLibrarySlot = Symbol.get("fibonacciLibrary");
 	Symbol fibonacciLibraryDefinition = Symbol.get("fibonacciLibraryDefinition");
 	Symbol fibonacciDefinition = Symbol.get("fibonacciDefinition");
@@ -110,7 +107,7 @@ public class FibonacciWithConstructorTest {
         Environment environment = interpreter.getEnvironment();
         
         // new Symbol[] {one, two, temp1, fibonacciLibrarySlot, argumentList, locals, opcodes, anon1, anon2}, 
-		ConstructorDOS fibonacciLibrary = environment.createConstructor(new Symbol[] {numberFactory, listFactory}, new OpCode[] {
+		ConstructorDOS fibonacciLibrary = environment.createConstructor(new Symbol[] {numberFactory}, new OpCode[] {
             	new OpCode.Debug("creating fibonacci library", numberFactory),
             	
             	new OpCode.CreateValueObject(1),  // create constant for '1'
@@ -131,8 +128,7 @@ public class FibonacciWithConstructorTest {
             	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
 
             	// create second anonymous function
-            	new OpCode.SetObject(listFactory), // empty symbol list
-            	new OpCode.FunctionCall(newList),
+            	new OpCode.FunctionCall(Symbol.NEW_LIST),
             	new OpCode.PushSymbol(argumentList),
             	new OpCode.Push(Symbol.RESULT), // copy into arguments
             	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
@@ -176,8 +172,7 @@ public class FibonacciWithConstructorTest {
 	        	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
 
             	// Create fibonacci function
-            	new OpCode.SetObject(listFactory), // empty symbol list
-            	new OpCode.FunctionCall(newList),
+            	new OpCode.FunctionCall(Symbol.NEW_LIST),
             	new OpCode.PushSymbol(argumentList),
             	new OpCode.Push(Symbol.RESULT), // copy into arguments
             	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
@@ -191,8 +186,7 @@ public class FibonacciWithConstructorTest {
 	            	new OpCode.Debug("in fibonacci with argument", index),
 	            	new OpCode.Debug("******************************", numberFactory),
 	            
-	            	new OpCode.SetObject(listFactory), // empty symbol list
-	            	new OpCode.FunctionCall(newList),
+	            	new OpCode.FunctionCall(Symbol.NEW_LIST),
 	            	new OpCode.PushSymbol(argumentList),
 	            	new OpCode.Push(Symbol.RESULT), // copy into arguments
 	            	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
@@ -252,7 +246,6 @@ public class FibonacciWithConstructorTest {
         Activation applicationContext = interpreter.newActivation();
         applicationContext.setVictim(application);
 		applicationContext.setSlot(numberFactory, environment.getNumberFactory());
-		applicationContext.setSlot(listFactory, environment.getListFactory());
 		applicationContext.setFunction(fibonacciLibraryDefinition, fibonacciLibrary);
         applicationContext.setSlot(sequenceIndexSymbol, environment.getNull());
         applicationContext.setSlot(fibonacciLibrarySlot, environment.getNull());
@@ -268,7 +261,6 @@ public class FibonacciWithConstructorTest {
         	
         	new OpCode.Debug("about to create fibonacci library", fibonacciLibraryDefinition),
         	new OpCode.Push(numberFactory),  // initialise the fibonacciLibrary
-        	new OpCode.Push(listFactory),
         	new OpCode.FunctionCall(fibonacciLibraryDefinition),
         	
         	new OpCode.PushSymbol(fibonacciLibrarySlot),

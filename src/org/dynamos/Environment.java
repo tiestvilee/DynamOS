@@ -18,7 +18,7 @@ import org.dynamos.types.StandardObjects.UndefinedDOS;
 
 public class Environment {
 
-	private Activation.ActivationBuilder contextBuilder;
+	private Activation.ActivationBuilder activationBuilder;
 	private ObjectDOS virtualMachine;
 	private ObjectDOS rootObject;
 	private ObjectDOS numberFactory;
@@ -52,12 +52,12 @@ public class Environment {
 		mirror = Mirror.initialiseMirror(this);
 		
 		virtualMachine = VMObjectDOS.getVMObject(this);
-		contextBuilder = Activation.initializeContext(this);
+		listFactory = StandardObjects.createListLibrary(this);
+		activationBuilder = Activation.initializeActivation(this);
 	}
 	
 	public void init(OpCodeInterpreter interpreter) {
 		booleanContainer = BooleanDOS.initialiseBooleans(this);
-		listFactory = StandardObjects.createListLibrary(this);
         numberFactory = NumberDOS.createNumberLibrary(interpreter, this);
         functionPrototype = FunctionWithContext.createFunctionPrototype(this);
     }
@@ -67,7 +67,7 @@ public class Environment {
 	}
 
 	public ActivationBuilder getContextBuilder() {
-		return contextBuilder;
+		return activationBuilder;
 	}
 	
 	public ObjectDOS getMirror() {

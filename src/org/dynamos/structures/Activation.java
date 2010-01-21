@@ -15,7 +15,7 @@ import org.dynamos.OpCodeInterpreter;
  */
 public class Activation extends ObjectDOS {
 	
-	public static ActivationBuilder initializeContext(Environment environment) {
+	public static ActivationBuilder initializeActivation(Environment environment) {
 		return new ActivationBuilder(environment);
 	}
 	
@@ -40,6 +40,8 @@ public class Activation extends ObjectDOS {
 	        Activation contextContainingVM = createActivation();
 	        // because the mirror is in the context, not a trait, we must delegate to its functions
 	        contextContainingVM.setSlot(Symbol.MIRROR, environment.getMirror());
+	        
+	        activationPrototype.setFunction(Symbol.NEW_LIST, environment.getListFactory().getFunction(Symbol.NEW_LIST));
 	        
 	        activationPrototype.setFunction(Symbol.CONTEXTUALIZE_FUNCTION_$_IN_$, 
 	        		environment.createFunctionWithContext(
