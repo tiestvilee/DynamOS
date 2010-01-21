@@ -272,7 +272,6 @@ public class CompileAstToOpCodesTest {
 		
 		FunctionDOS function = compiler.compile(root);
 		assertThat(function.getOpCodes(), is(new OpCode[] {
-				new OpCode.SetObject(Symbol.get("listFactory")), // empty argument list
             	new OpCode.FunctionCall(Symbol.get("newList")),
             	new OpCode.PushSymbol(Symbol.get("__argument_list")),
             	new OpCode.Push(Symbol.RESULT),
@@ -300,7 +299,6 @@ public class CompileAstToOpCodesTest {
 		
 		FunctionDOS function = compiler.compile(root);
 		assertThat(function.getOpCodes(), is(new OpCode[] {
-				new OpCode.SetObject(Symbol.get("listFactory")), // empty argument list
             	new OpCode.FunctionCall(Symbol.get("newList")),
             	new OpCode.PushSymbol(Symbol.get("__argument_list")),
             	new OpCode.Push(Symbol.RESULT),
@@ -330,7 +328,6 @@ public class CompileAstToOpCodesTest {
 		FunctionDOS function = compiler.compile(root);
 		assertThat(function.getOpCodes(), is(new OpCode[] {
 
-				new OpCode.SetObject(Symbol.get("listFactory")), // empty argument list
             	new OpCode.FunctionCall(Symbol.get("newList")),
             	new OpCode.PushSymbol(Symbol.get("__argument_list")),
             	new OpCode.Push(Symbol.RESULT),
@@ -376,7 +373,6 @@ public class CompileAstToOpCodesTest {
 		FunctionDOS function = compiler.compile(root);
 		assertThat(function.getOpCodes(), is(new OpCode[] {
 
-				new OpCode.SetObject(Symbol.get("listFactory")), // argument list
             	new OpCode.FunctionCall(Symbol.get("newList")),
             	new OpCode.PushSymbol(Symbol.get("__argument_list")),
             	new OpCode.Push(Symbol.RESULT),
@@ -414,7 +410,6 @@ public class CompileAstToOpCodesTest {
 		FunctionDOS function = compiler.compile(root);
 		assertThat(function.getOpCodes(), is(new OpCode[] {
 
-				new OpCode.SetObject(Symbol.get("listFactory")), // argument list
             	new OpCode.FunctionCall(Symbol.get("newList")),
             	new OpCode.PushSymbol(Symbol.get("__argument_list")),
             	new OpCode.Push(Symbol.RESULT),
@@ -468,7 +463,6 @@ public class CompileAstToOpCodesTest {
 		FunctionDOS function = compiler.compile(root);
 		assertThat(function.getOpCodes(), is(new OpCode[] {
 
-				new OpCode.SetObject(Symbol.get("listFactory")), // argument list
             	new OpCode.FunctionCall(Symbol.get("newList")),
             	new OpCode.PushSymbol(Symbol.get("__argument_list")),
             	new OpCode.Push(Symbol.RESULT),
