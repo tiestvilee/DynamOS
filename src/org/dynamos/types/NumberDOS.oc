@@ -1,0 +1,33 @@
+(constructor numberFactoryConstructor: vm
+   
+  (constructor numberPrototypeConstructor: vm and: numberFactory 
+    (function addValue: addedValue 
+      $numberFactory numberFrom: ($vm add: $addedValue to: $value) 
+    ) 
+     
+    (function plus: number 
+      addValue: ($number value) 
+    ) 
+     
+    (function minus: number 
+      $numberFactory numberFrom: ($vm subtract: ($number value) from: $value) 
+    ) 
+     
+    (function isLessThan: number 
+      $vm value: $value isLessThan: ($number value)
+    ) 
+    
+    (function value 
+      $value 
+    ) 
+  )
+  $numberPrototype: (numberPrototypeConstructor: $vm and: $this) 
+   
+  (constructor numberConstructor: value prototype: numberPrototype
+     parent: $numberPrototype 
+  )
+   
+  (function numberFrom: value 
+     numberConstructor: $value prototype: $numberPrototype 
+  ) 
+)
