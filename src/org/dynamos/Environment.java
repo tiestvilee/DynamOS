@@ -21,7 +21,7 @@ public class Environment {
 	private Activation.ActivationBuilder activationBuilder;
 	private ObjectDOS virtualMachine;
 	private ObjectDOS rootObject;
-	private ObjectDOS numberFactory;
+	private ObjectDOS zero;
     
 	private ObjectDOS nullDOS;
     private ObjectDOS undefined;
@@ -58,7 +58,7 @@ public class Environment {
 	
 	public void init(OpCodeInterpreter interpreter) {
 		booleanContainer = BooleanDOS.initialiseBooleans(this);
-        numberFactory = NumberDOS.createNumberLibrary(interpreter, this);
+        zero = NumberDOS.createZero(interpreter, this);
         functionPrototype = FunctionWithContext.createFunctionPrototype(this);
     }
 	
@@ -74,8 +74,8 @@ public class Environment {
 		return mirror;
 	}
 	
-	public ObjectDOS getNumberFactory() {
-		return numberFactory;
+	public ObjectDOS getZero() {
+		return zero;
 	}
 	
 	public ObjectDOS getListFactory() {

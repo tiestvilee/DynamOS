@@ -186,6 +186,17 @@ public class TransformStringToASTTest {
 	}
 	
 	@Test
+	public void shouldDefineValueObject() {
+		StatementContainingNode root = transformer.transform(
+			"function-WithParam: .2345\n"
+		);
+		
+		FunctionCallNode call = ((FunctionCallNode) root.getStatements().get(0));
+
+		assertThat(((ValueNode) call.getArguments().get(0)).getValue(), is(2345));
+	}
+	
+	@Test
 	public void shouldDefineNumberConstant() {
 		StatementContainingNode root = transformer.transform(
 			"function-WithParam: #1234\n"

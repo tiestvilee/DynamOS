@@ -264,6 +264,25 @@ public class CompileAstToOpCodesTest {
 	}
 	
 	@Test
+	public void shouldCreateFunctionCallWithValueObject() {
+		StatementContainingNode root = transformer.transform(
+				"function-WithParam: .3456\n"
+			);
+		
+		FunctionDOS function = compiler.compile(root);
+		assertThat(function.getOpCodes(), is(new OpCode[] {
+				new OpCode.CreateValueObject(3456),
+				
+				new OpCode.PushSymbol(Symbol.get("__temp1")),
+				new OpCode.Push(Symbol.RESULT),
+				new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
+				
+				new OpCode.Push(Symbol.get("__temp1")),
+				new OpCode.FunctionCall(Symbol.get("function-WithParam:"))				
+		}));
+	}
+	
+	@Test
 	public void shouldCreateEmptyPublicFunction() {
 		StatementContainingNode root = transformer.transform(
 				"(function functionName\n" +

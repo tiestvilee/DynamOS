@@ -128,7 +128,8 @@ public class TransformStringToAST {
 	/*
 	 * FunctionCallParameter => '(' FunctionCall ')'
 	 *                       |  Identifier
-	 *                       |  '/' Identifier
+	 *                       |  '$' Identifier
+	 *                       |  '.' [0-9]+
 	 *                       |  '#' [0-9]+
 	 *                       |  String
 	 *                       |  Closure
@@ -147,6 +148,9 @@ public class TransformStringToAST {
 		} else if(stream.matchesSlotDiscriminator()) {
 			stream.consumeSlotDiscriminator();
 			call.addParameter(new SymbolGetterNode(stream.consumeIdentifier()));
+		} else if(stream.matchesFullStop()) {
+			stream.consumeFullStop();
+			call.addParameter(new ValueNode(stream.consumeDigits()));
 		} else if(stream.matchesHash()) {
 			stream.consumeHash();
 			call.addParameter(new NumberNode(stream.consumeDigits()));
@@ -260,6 +264,14 @@ public class TransformStringToAST {
 
 		public void consumeObjectConstructorStart() {
 			consumeMatchWithPreceedingWhitespace("Constructor start", "\\((private-)?constructor ");
+		}
+
+		public boolean matchesFullStop() {
+			return testMatch("\\.");
+		}
+
+		public void consumeFullStop() {
+			consumeMatchWithPreceedingWhitespace("Hash", "\\.");
 		}
 
 		public boolean matchesHash() {

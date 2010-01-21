@@ -29,5 +29,8 @@
    
   (function numberFrom: value 
      numberConstructor: $value prototype: $numberPrototype 
-  ) 
+  )
+
+  $value: .0
+  parent: $numberPrototype
 )

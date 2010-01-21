@@ -47,8 +47,8 @@ public class FibonacciWithConstructorTest {
     Symbol temp1 = Symbol.get("temp1");
     Symbol temp2 = Symbol.get("temp2");
 
-    Symbol numberFactory = Symbol.get("numberFactory");
-    Symbol numberFrom$ = Symbol.get("numberFrom:");
+    Symbol zero = Symbol.get("zero");
+    Symbol addValue$ = Symbol.get("addValue:");
     Symbol add$ = Symbol.get("add:");
     
 	Symbol fibonacciLibrarySlot = Symbol.get("fibonacciLibrary");
@@ -107,13 +107,13 @@ public class FibonacciWithConstructorTest {
         Environment environment = interpreter.getEnvironment();
         
         // new Symbol[] {one, two, temp1, fibonacciLibrarySlot, argumentList, locals, opcodes, anon1, anon2}, 
-		ConstructorDOS fibonacciLibrary = environment.createConstructor(new Symbol[] {numberFactory}, new OpCode[] {
-            	new OpCode.Debug("creating fibonacci library", numberFactory),
+		ConstructorDOS fibonacciLibrary = environment.createConstructor(new Symbol[] {zero}, new OpCode[] {
+            	new OpCode.Debug("creating fibonacci library", zero),
             	
             	new OpCode.CreateValueObject(1),  // create constant for '1'
             	new OpCode.Push(Symbol.RESULT),
-            	new OpCode.SetObject(numberFactory),
-            	new OpCode.FunctionCall(numberFrom$),
+            	new OpCode.SetObject(zero),
+            	new OpCode.FunctionCall(addValue$),
             	new OpCode.PushSymbol(one),
             	new OpCode.Push(Symbol.RESULT),
             	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
@@ -121,8 +121,8 @@ public class FibonacciWithConstructorTest {
 
             	new OpCode.CreateValueObject(2),  // create constant for '2'
             	new OpCode.Push(Symbol.RESULT),
-            	new OpCode.SetObject(numberFactory),
-            	new OpCode.FunctionCall(numberFrom$),
+            	new OpCode.SetObject(zero),
+            	new OpCode.FunctionCall(addValue$),
             	new OpCode.PushSymbol(two),
             	new OpCode.Push(Symbol.RESULT),
             	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
@@ -184,7 +184,7 @@ public class FibonacciWithConstructorTest {
 	            	// create first anonymous function
             		// mainly here to make sure the nesting of op code lists works, otherwise would be in top context
 	            	new OpCode.Debug("in fibonacci with argument", index),
-	            	new OpCode.Debug("******************************", numberFactory),
+	            	new OpCode.Debug("******************************", zero),
 	            
 	            	new OpCode.FunctionCall(Symbol.NEW_LIST),
 	            	new OpCode.PushSymbol(argumentList),
@@ -245,7 +245,7 @@ public class FibonacciWithConstructorTest {
         ObjectDOS application = interpreter.newObject();
         Activation applicationContext = interpreter.newActivation();
         applicationContext.setVictim(application);
-		applicationContext.setSlot(numberFactory, environment.getNumberFactory());
+		applicationContext.setSlot(zero, environment.getZero());
 		applicationContext.setFunction(fibonacciLibraryDefinition, fibonacciLibrary);
         applicationContext.setSlot(sequenceIndexSymbol, environment.getNull());
         applicationContext.setSlot(fibonacciLibrarySlot, environment.getNull());
@@ -253,14 +253,14 @@ public class FibonacciWithConstructorTest {
         interpreter.interpret(applicationContext, new OpCode[] {
         	new OpCode.CreateValueObject(sequenceIndex), // set up the index we want to get fibonacci for
         	new OpCode.Push(Symbol.RESULT),
-        	new OpCode.SetObject(numberFactory),
-        	new OpCode.FunctionCall(numberFrom$),
+        	new OpCode.SetObject(zero),
+        	new OpCode.FunctionCall(addValue$),
         	new OpCode.PushSymbol(Symbol.get("sequenceIndex")),
         	new OpCode.Push(Symbol.RESULT),
         	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
         	
         	new OpCode.Debug("about to create fibonacci library", fibonacciLibraryDefinition),
-        	new OpCode.Push(numberFactory),  // initialise the fibonacciLibrary
+        	new OpCode.Push(zero),  // initialise the fibonacciLibrary
         	new OpCode.FunctionCall(fibonacciLibraryDefinition),
         	
         	new OpCode.PushSymbol(fibonacciLibrarySlot),

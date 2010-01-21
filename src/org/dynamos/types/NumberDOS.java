@@ -23,7 +23,7 @@ import org.dynamos.structures.Symbol;
  */
 public class NumberDOS {
 
-	public static ObjectDOS createNumberLibrary(OpCodeInterpreter interpreter, Environment environment) {
+	public static ObjectDOS createZero(OpCodeInterpreter interpreter, Environment environment) {
 
 		String filename = "NumberDOS.oc";
 		String libraryProgram = loadFile(filename);
@@ -82,11 +82,10 @@ public class NumberDOS {
 	}
 
 	public static ObjectDOS numberDOS(OpCodeInterpreter interpreter, int number) {
-		ObjectDOS result = interpreter.getEnvironment().createNewValueObject(number);
-		ExecutableDOS numberFromFunction = interpreter.getEnvironment().getNumberFactory().getFunction(
-				Symbol.get("numberFrom:"));
+		ObjectDOS valueObject = interpreter.getEnvironment().createNewValueObject(number);
+		ObjectDOS zero = interpreter.getEnvironment().getZero();
 		ListDOS arguments = new ListDOS();
-		arguments.add(result);
-		return numberFromFunction.execute(interpreter, interpreter.getEnvironment().getNumberFactory(), arguments);
+		arguments.add(valueObject);
+		return zero.getFunction(Symbol.get("addValue:")).execute(interpreter, interpreter.getEnvironment().getZero(), arguments);
 	}
 }
