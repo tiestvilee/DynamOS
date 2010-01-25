@@ -37,7 +37,7 @@ public class OpCode {
 		
 		@Override
 		public String toString() {
-			return getClass().getSimpleName() + ":" + symbol.toString();
+			return getClass().getSimpleName() + ">" + symbol.toString();
 		}
 
     }
@@ -49,12 +49,14 @@ public class OpCode {
 
         @Override
         public boolean execute(OpCodeInterpreter interpreter, ObjectDOS self, StackFrame stackFrame) {
+        	System.out.println(this);
+        	
         	ObjectDOS target = self;
         	if(stackFrame.getObject() != null) {
         		System.out.println("object was set...");
         		target = stackFrame.getObject();
         	}
-			System.out.println("find and execute " + symbol + " on " + target + "\n....with " + stackFrame.getArguments().getRawList());
+			System.out.println("find and execute " + symbol + " on " + target + "\n....with " + stackFrame.getArguments());
 			ExecutableDOS function = target.getFunction(symbol);
 			// TODO AAAAA the following always executes with target, but what if the function was on the real parent object, 
 			// rather than the current activation
@@ -73,6 +75,8 @@ public class OpCode {
 
         @Override
         public boolean execute(OpCodeInterpreter interpreter, ObjectDOS self, StackFrame stackFrame) {
+        	System.out.println(this);
+
             ObjectDOS object = self.getSlot(symbol);
     		System.out.println("setting object");
             stackFrame.setObject(object);
@@ -88,6 +92,8 @@ public class OpCode {
 
         @Override
         public boolean execute(OpCodeInterpreter interpreter, ObjectDOS self, StackFrame stackFrame) {
+        	System.out.println(this);
+
             ObjectDOS argument = self.getSlot(symbol);
             stackFrame.pushArgument(argument);
             return false;
@@ -102,6 +108,8 @@ public class OpCode {
 
         @Override
         public boolean execute(OpCodeInterpreter interpreter, ObjectDOS self, StackFrame stackFrame) {
+        	System.out.println(this);
+
             stackFrame.pushArgument(new SymbolWrapper(symbol));
             return false;
         }
@@ -117,6 +125,8 @@ public class OpCode {
 
         @Override
         public boolean execute(OpCodeInterpreter interpreter, ObjectDOS self, StackFrame stackFrame) {
+        	System.out.println(this);
+
         	self.setSlot(Symbol.RESULT, interpreter.getEnvironment().createNewValueObject(value));
             return false;
         }
@@ -142,6 +152,8 @@ public class OpCode {
 
         @Override
         public boolean execute(OpCodeInterpreter interpreter, ObjectDOS self, StackFrame stackFrame) {
+        	System.out.println(this);
+
         	if(symbol == Symbol.PARENT) {
         		System.out.println(message + " parent of " + self + " is " + self.getTrait("parent"));
         	} else {
@@ -154,6 +166,11 @@ public class OpCode {
         	}
             return false;
         }
+		
+		@Override
+		public String toString() {
+			return getClass().getSimpleName() + ":" + symbol.toString();
+		}
     }
     
 	public static class StartOpCodeList extends OpCode {

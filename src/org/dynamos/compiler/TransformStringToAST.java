@@ -49,6 +49,7 @@ public class TransformStringToAST {
 	 *              |  SlotDefinition '\n'
 	 *              |  FunctionDefinition
 	 *              |  ObjectDefinition
+	 *              |  Debug
 	 *              |  '\n')+
 	 *              
 	 */
@@ -64,6 +65,8 @@ public class TransformStringToAST {
 				node.addStatement(functionDefinition(stream));
 			} else if(stream.matchesObjectConstructorStart()) {
 				node.addStatement(objectDefinition(stream));
+			} else if(stream.matchesBackTick()) {
+				node.addStatement(debug(stream));
 			} else if(stream.matchesNewLine()) {
 				stream.consumeNewLine();
 			} else if(stream.matchesRightBracket() || stream.matchesRightBrace() || stream.eos()) {
@@ -222,6 +225,12 @@ public class TransformStringToAST {
 		}
 	}
 
+	private DebugNode debug(Stream stream) {
+		stream.consumeBackTick();
+		DebugNode debugNode = new DebugNode(stream.consumeIdentifier());
+		stream.consumeNewLine();
+		return debugNode;
+	}
 	
 	static class Stream {
 		private final String program;
@@ -271,7 +280,15 @@ public class TransformStringToAST {
 		}
 
 		public void consumeFullStop() {
-			consumeMatchWithPreceedingWhitespace("Hash", "\\.");
+			consumeMatchWithPreceedingWhitespace("FullStop", "\\.");
+		}
+		
+		public boolean matchesBackTick() {
+			return testMatch("`");
+		}
+
+		public void consumeBackTick() {
+			consumeMatchWithPreceedingWhitespace("BackTick", "`");
 		}
 
 		public boolean matchesHash() {

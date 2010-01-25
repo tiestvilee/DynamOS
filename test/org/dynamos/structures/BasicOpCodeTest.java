@@ -22,7 +22,6 @@ public class BasicOpCodeTest {
 
     FunctionDOS function;
     Activation context;
-    ListDOS arguments;
     ObjectDOS object;
     OpCodeInterpreter interpreter;
 	Symbol local;
@@ -66,7 +65,7 @@ public class BasicOpCodeTest {
     	boolean newStackFrame = new OpCode.Push(local).execute(interpreter, context, stackFrame);
 
     	assertThat(newStackFrame, is(false));
-    	assertThat(stackFrame.getArguments().getRawList().get(0), is(expectedObject));
+    	assertThat(stackFrame.getArguments().get(0), is(expectedObject));
     }
 
     @Test
@@ -75,7 +74,7 @@ public class BasicOpCodeTest {
     	boolean newStackFrame = new OpCode.PushSymbol(local).execute(interpreter, context, stackFrame);
 
     	assertThat(newStackFrame, is(false));
-    	assertThat(((SymbolWrapper) stackFrame.getArguments().getRawList().get(0)).getSymbol(), is(local));
+    	assertThat(((SymbolWrapper) stackFrame.getArguments().get(0)).getSymbol(), is(local));
     }
     
     @Test

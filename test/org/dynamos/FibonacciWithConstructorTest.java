@@ -49,7 +49,7 @@ public class FibonacciWithConstructorTest {
 
     Symbol zero = Symbol.get("zero");
     Symbol addValue$ = Symbol.get("addValue:");
-    Symbol add$ = Symbol.get("add:");
+    Symbol prepend$ = Symbol.get("prepend:");
     
 	Symbol fibonacciLibrarySlot = Symbol.get("fibonacciLibrary");
 	Symbol fibonacciLibraryDefinition = Symbol.get("fibonacciLibraryDefinition");
@@ -128,7 +128,8 @@ public class FibonacciWithConstructorTest {
             	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
 
             	// create second anonymous function
-            	new OpCode.FunctionCall(Symbol.NEW_LIST),
+            	new OpCode.PushSymbol(Symbol.EMPTY_LIST),
+            	new OpCode.FunctionCall(Symbol.GET_SLOT_$),
             	new OpCode.PushSymbol(argumentList),
             	new OpCode.Push(Symbol.RESULT), // copy into arguments
             	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
@@ -172,13 +173,14 @@ public class FibonacciWithConstructorTest {
 	        	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
 
             	// Create fibonacci function
-            	new OpCode.FunctionCall(Symbol.NEW_LIST),
+            	new OpCode.PushSymbol(Symbol.EMPTY_LIST),
+            	new OpCode.FunctionCall(Symbol.GET_SLOT_$),
+            	new OpCode.PushSymbol(index), // add 'index' parameter
+            	new OpCode.SetObject(Symbol.RESULT),
+            	new OpCode.FunctionCall(prepend$),
             	new OpCode.PushSymbol(argumentList),
             	new OpCode.Push(Symbol.RESULT), // copy into arguments
             	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
-            	new OpCode.PushSymbol(index), // add 'index' parameter
-            	new OpCode.SetObject(argumentList),
-            	new OpCode.FunctionCall(add$),
             	
             	new OpCode.StartOpCodeList(),
 	            	// create first anonymous function
@@ -186,7 +188,8 @@ public class FibonacciWithConstructorTest {
 	            	new OpCode.Debug("in fibonacci with argument", index),
 	            	new OpCode.Debug("******************************", zero),
 	            
-	            	new OpCode.FunctionCall(Symbol.NEW_LIST),
+	            	new OpCode.PushSymbol(Symbol.EMPTY_LIST),
+	            	new OpCode.FunctionCall(Symbol.GET_SLOT_$),
 	            	new OpCode.PushSymbol(argumentList),
 	            	new OpCode.Push(Symbol.RESULT), // copy into arguments
 	            	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),

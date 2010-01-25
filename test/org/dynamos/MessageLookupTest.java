@@ -35,7 +35,7 @@ public class MessageLookupTest {
 	Symbol obj1custom = Symbol.get("obj1custom");
 	
 	Symbol listFactory = Symbol.get("listFactory");
-	Symbol newList = Symbol.get("newList");
+	Symbol emptyList = Symbol.get("emptyList");
 	Symbol argumentList = Symbol.get("argumentList");
 
 	Symbol obj1ConstructorSymbol = Symbol.get("obj1WithParent:listFactory:");
@@ -223,8 +223,8 @@ public class MessageLookupTest {
 		List<OpCode> customOpCodes = new ArrayList<OpCode>();
 		Collections.addAll(customOpCodes,
 				// set up obj1slot accessor
-	        	new OpCode.SetObject(listFactory), // empty symbol list
-	        	new OpCode.FunctionCall(newList),
+	        	new OpCode.PushSymbol(emptyList), // empty symbol list
+	        	new OpCode.FunctionCall(Symbol.GET_SLOT_$),
 	        	new OpCode.PushSymbol(argumentList),
 	        	new OpCode.Push(Symbol.RESULT),
 	        	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
@@ -242,9 +242,9 @@ public class MessageLookupTest {
 	            new OpCode.Push(Symbol.RESULT),
 	            new OpCode.FunctionCall(Symbol.SET_LOCAL_FUNCTION_$_TO_$)
 			);
-		System.out.println(opCodeList.size());
+		System.out.println("before append " + opCodeList.size());
 		updateOpcodeList(opCodeList, END_OF_OBJ1_CONSTRUCTOR, customOpCodes);
-		System.out.println(opCodeList.size());
+		System.out.println("after " + opCodeList.size() + "\n" + opCodeList);
 	}
 
 	private void updateShellToCallCustomMethod() {
@@ -274,7 +274,7 @@ public class MessageLookupTest {
 
 		Activation shell = interpreter.newActivation();
 		shell.setSlot(obj0, object0);
-		shell.setSlot(listFactory, interpreter.getEnvironment().getListFactory());
+		shell.setSlot(listFactory, interpreter.getEnvironment().getEmptyList());
 		shell.setFunction(obj1ConstructorSymbol, obj1Constructor);
 
 		OpCode[] shellOpCodes = opCodeShellList.toArray(new OpCode[0]);
@@ -335,8 +335,8 @@ public class MessageLookupTest {
 			new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
 			
 			// set up obj1message
-        	new OpCode.SetObject(listFactory), // empty symbol list
-        	new OpCode.FunctionCall(newList),
+        	new OpCode.PushSymbol(emptyList), // empty symbol list
+        	new OpCode.FunctionCall(Symbol.GET_SLOT_$),
         	new OpCode.PushSymbol(argumentList),
         	new OpCode.Push(Symbol.RESULT),
         	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
@@ -357,8 +357,8 @@ public class MessageLookupTest {
             new OpCode.FunctionCall(Symbol.SET_LOCAL_FUNCTION_$_TO_$),
             
 			// set up obj1slot accessor
-        	new OpCode.SetObject(listFactory), // empty symbol list
-        	new OpCode.FunctionCall(newList),
+        	new OpCode.PushSymbol(emptyList), // empty symbol list
+        	new OpCode.FunctionCall(Symbol.GET_SLOT_$),
         	new OpCode.PushSymbol(argumentList),
         	new OpCode.Push(Symbol.RESULT),
         	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),

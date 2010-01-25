@@ -7,8 +7,10 @@ package org.dynamos.structures;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import org.dynamos.Environment;
+import org.dynamos.types.StandardObjects;
 
 /**
  *
@@ -98,8 +100,8 @@ public class ObjectDOS {
     	return slots.get(symbol);
     }
 
-    public void setArguments(ListDOS arguments) {
-	    setSlot(Symbol.ARGUMENTS, arguments);
+    public void setArguments(List<ObjectDOS> arguments) {
+	    setSlot(Symbol.ARGUMENTS, StandardObjects.toDOSList(arguments));
 	}
 
     /* Runtime Definition of Object */

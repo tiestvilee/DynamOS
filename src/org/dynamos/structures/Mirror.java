@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.dynamos.Environment;
 import org.dynamos.OpCodeInterpreter;
+import org.dynamos.types.StandardObjects;
 
 public class Mirror {
 
@@ -29,20 +30,20 @@ public class Mirror {
 
         ExecutableDOS CONTEXTUALIZE_FUNCTION_EXEC = new ExecutableDOS() {
         	@Override
-        	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
-        		FunctionDOS function = (FunctionDOS) arguments.at(0);
-        		Activation context = (Activation) arguments.at(1);
+        	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> arguments) {
+        		FunctionDOS function = (FunctionDOS) arguments.get(0);
+        		Activation context = (Activation) arguments.get(1);
         		return environment.createFunctionWithContext(function, context);
         	}
         };
 
         ExecutableDOS CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$_EXEC = new ExecutableDOS() {
         	@Override
-        	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
-        		List<ObjectDOS> argumentList = ((ListDOS) arguments.at(0)).getRawList();
-        		List<ObjectDOS> opCodes = ((ListDOS) arguments.at(1)).getRawList();
+        	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> arguments) {
+        		List<ObjectDOS> argumentList = StandardObjects.toJavaList(arguments.get(0));
+        		List<ObjectDOS> opCodes = StandardObjects.toJavaList(arguments.get(1));
         		
-        		System.out.println("... creating funciton with " + argumentList + " " + opCodes);
+        		System.out.println("... creating funciton with \n\t" + argumentList + " \n\t" + opCodes);
 
 				Symbol[] nativeArguments = copyListOfSymbolWrappersToArrayOfSymbols(argumentList);
 				OpCode[] nativeOpCodes = copyListOfOpcodeWrappersToArrayOfOpcodes(opCodes);
@@ -53,9 +54,9 @@ public class Mirror {
 
         ExecutableDOS CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$_EXEC = new ExecutableDOS() {
         	@Override
-        	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
-        		List<ObjectDOS> argumentList = ((ListDOS) arguments.at(0)).getRawList();
-        		List<ObjectDOS> opCodes = ((ListDOS) arguments.at(1)).getRawList();
+        	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> arguments) {
+        		List<ObjectDOS> argumentList = StandardObjects.toJavaList(arguments.get(0));
+        		List<ObjectDOS> opCodes = StandardObjects.toJavaList(arguments.get(1));
         		
         		System.out.println("... creating constructor with " + argumentList + " " + opCodes);
 
@@ -82,17 +83,17 @@ public class Mirror {
 
     private static ExecutableDOS SET_FUNCTION_$_TO_$_EXEC = new ExecutableDOS() {
 		@Override
-		public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
-			theObject.setFunction(((SymbolWrapper) arguments.at(0)).getSymbol(), (ExecutableDOS) arguments.at(1));
+		public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> arguments) {
+			theObject.setFunction(((SymbolWrapper) arguments.get(0)).getSymbol(), (ExecutableDOS) arguments.get(1));
 			return theObject;
 		}
     };
     
     private static ExecutableDOS SET_SLOT_$_TO_$_EXEC = new ExecutableDOS() {
     	@Override
-    	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
-    		Symbol symbol = ((SymbolWrapper) arguments.at(0)).getSymbol();
-    		ObjectDOS value = arguments.at(1);
+    	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> arguments) {
+    		Symbol symbol = ((SymbolWrapper) arguments.get(0)).getSymbol();
+    		ObjectDOS value = arguments.get(1);
     		
         	ObjectDOS objectWithSlot;
     		if(theObject instanceof Activation) {
@@ -128,9 +129,9 @@ public class Mirror {
     
     private static ExecutableDOS SET_LOCAL_SLOT_$_TO_$_EXEC = new ExecutableDOS() {
     	@Override
-    	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
-    		Symbol symbol = ((SymbolWrapper) arguments.at(0)).getSymbol();
-    		ObjectDOS value = arguments.at(1);
+    	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> arguments) {
+    		Symbol symbol = ((SymbolWrapper) arguments.get(0)).getSymbol();
+    		ObjectDOS value = arguments.get(1);
     		
     		if(theObject instanceof Activation) {
     			/* implicit call */
@@ -145,8 +146,8 @@ public class Mirror {
     
     private static ExecutableDOS GET_SLOT_$_EXEC = new ExecutableDOS() {
 		@Override
-		public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
-    		Symbol symbol = ((SymbolWrapper) arguments.at(0)).getSymbol();
+		public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> arguments) {
+    		Symbol symbol = ((SymbolWrapper) arguments.get(0)).getSymbol();
 			return theObject.getSlot(symbol);
 		}
     };
@@ -155,32 +156,32 @@ public class Mirror {
 	
     private static ExecutableDOS SET_PARENT_TO_$_ON_$_EXEC = new ExecutableDOS() {
 		@Override
-		public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
-			System.out.println("************* setting parent on " + arguments.at(1) + " to " + arguments.at(0));
-			arguments.at(1).setParent(arguments.at(0));
-			return arguments.at(1); // never return the mirror - just in case
+		public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> arguments) {
+			System.out.println("************* setting parent on " + arguments.get(1) + " to " + arguments.get(0));
+			arguments.get(1).setParent(arguments.get(0));
+			return arguments.get(1); // never return the mirror - just in case
 		}
     };
     
     private static ExecutableDOS GET_PARENT_ON_$_EXEC = new ExecutableDOS() {
 		@Override
-		public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
-			return arguments.at(0).getParent();
+		public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> arguments) {
+			return arguments.get(0).getParent();
 		}
     };
     
     private static ExecutableDOS SET_TRAIT_$_TO_$_ON_$_EXEC = new ExecutableDOS() {
 		@Override
-		public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS  theObject, ListDOS arguments) {
-			arguments.at(2).setTrait(arguments.at(0).toString(), arguments.at(1));
-			return arguments.at(2); // never return the mirror - just in case
+		public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS  theObject, List<ObjectDOS> arguments) {
+			arguments.get(2).setTrait(arguments.get(0).toString(), arguments.get(1));
+			return arguments.get(2); // never return the mirror - just in case
 		}
     };
     
     private static ExecutableDOS GET_TRAIT_$_ON_$_EXEC = new ExecutableDOS() {
 		@Override
-		public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
-			return arguments.at(1).getTrait(arguments.at(0).toString());
+		public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> arguments) {
+			return arguments.get(1).getTrait(arguments.get(0).toString());
 		}
     };
     

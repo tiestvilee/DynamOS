@@ -3,6 +3,8 @@ package org.dynamos.structures;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.ArrayList;
+
 import org.dynamos.Environment;
 import org.dynamos.OpCodeInterpreter;
 import org.dynamos.types.NumberDOS.ValueObject;
@@ -15,7 +17,6 @@ public class ObjectDOSBuiltInFunctionsTest {
 	ObjectDOS vm;
 	ObjectDOS object;
 	ObjectDOS value;
-	ListDOS arguments;
 	Symbol local = Symbol.get("local");
 	private OpCodeInterpreter interpreter;
 	private Environment environment;
@@ -28,7 +29,6 @@ public class ObjectDOSBuiltInFunctionsTest {
 		vm = VMObjectDOS.getVMObject(environment);
 		object = environment.createNewObject();
 		value = environment.createNewObject();
-		arguments = new ListDOS();
     	context = interpreter.newActivation();
     	context.setVictim(environment.createNewObject());
 	}
@@ -37,7 +37,7 @@ public class ObjectDOSBuiltInFunctionsTest {
     public void shouldSetSlotInCurrentFunction() {
     	FunctionDOS function = createFunctionThatSetsAndReturnsValueToLocal();
 
-    	ObjectDOS result = function.execute(interpreter, object, new ListDOS());
+    	ObjectDOS result = function.execute(interpreter, object, new ArrayList<ObjectDOS>());
     	
     	assertThat(((ValueObject) result).getValue(), is(1234));
     }
@@ -49,7 +49,7 @@ public class ObjectDOSBuiltInFunctionsTest {
     			createFunctionThatSetsAndReturnsValueToLocal(),
     			context);
 
-    	ObjectDOS result = function.execute(interpreter, object, new ListDOS());
+    	ObjectDOS result = function.execute(interpreter, object, new ArrayList<ObjectDOS>());
     	
     	assertThat(((ValueObject) result).getValue(), is(1234));
     	assertThat(context.getSlot(local), is(environment.getUndefined()));
@@ -60,7 +60,7 @@ public class ObjectDOSBuiltInFunctionsTest {
     	context.setSlot(local, environment.getUndefined());
     	
     	FunctionWithContext function = createFunctionWithContextThatSetsLocalToValue(context);
-    	function.execute(interpreter, object, new ListDOS());
+    	function.execute(interpreter, object, new ArrayList<ObjectDOS>());
     	
     	assertThat(((ValueObject) context.getSlot(local)).getValue(), is(1234));
     }
@@ -70,7 +70,7 @@ public class ObjectDOSBuiltInFunctionsTest {
     	object.setSlot(local, environment.getUndefined());
 
     	FunctionWithContext function = createFunctionWithContextThatSetsLocalToValue(context);
-    	function.execute(interpreter, object, new ListDOS());
+    	function.execute(interpreter, object, new ArrayList<ObjectDOS>());
 
     	assertThat(context.getSlot(local), is(environment.getUndefined()));
     	assertThat(((ValueObject) object.getSlot(local)).getValue(), is(1234));

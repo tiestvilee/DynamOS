@@ -5,6 +5,9 @@
 
 package org.dynamos.structures;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  *
@@ -13,7 +16,7 @@ package org.dynamos.structures;
 public class StackFrame {
 
     ObjectDOS object;
-    ListDOS arguments = new ListDOS();
+    List<ObjectDOS> arguments = new ArrayList<ObjectDOS>();
 
     public void setObject(ObjectDOS object) {
         this.object = object;
@@ -27,7 +30,7 @@ public class StackFrame {
         arguments.add(argument);
     }
 
-    public ListDOS getArguments() {
+    public List<ObjectDOS> getArguments() {
         return arguments;
 
     }

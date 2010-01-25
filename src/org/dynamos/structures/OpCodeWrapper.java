@@ -11,4 +11,8 @@ public class OpCodeWrapper extends ObjectDOS {
 	public OpCode getOpCode() {
 		return opCode;
 	}
+	
+	public String toString() {
+		return opCode.toString();
+	}
 }

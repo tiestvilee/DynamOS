@@ -5,6 +5,8 @@
 
 package org.dynamos.structures;
 
+import java.util.List;
+
 import org.dynamos.Environment;
 import org.dynamos.OpCodeInterpreter;
 
@@ -33,7 +35,10 @@ public class Activation extends ObjectDOS {
         private final Symbol argumentList = Symbol.get("argumentList");
         private final Symbol opcodes = Symbol.get("opcodes");
         
+        private Environment environment;
+        
 		protected ActivationBuilder(Environment environment) {
+			this.environment = environment;
 			activationPrototype = environment.createNewObject();
 			activationPrototype.setSlot(Symbol.RESULT, environment.getUndefined());
 			
@@ -41,7 +46,15 @@ public class Activation extends ObjectDOS {
 	        // because the mirror is in the context, not a trait, we must delegate to its functions
 	        contextContainingVM.setSlot(Symbol.MIRROR, environment.getMirror());
 	        
-	        activationPrototype.setFunction(Symbol.NEW_LIST, environment.getListFactory().getFunction(Symbol.NEW_LIST));
+	        activationPrototype.setSlot(Symbol.EMPTY_LIST, environment.getEmptyList());
+	        activationPrototype.setFunction(Symbol.EMPTY_LIST, 
+	        		environment.createFunctionWithContext(
+       				new Symbol[] {},
+	        		new OpCode[] {
+	        				new OpCode.PushSymbol(Symbol.EMPTY_LIST),
+	        				new OpCode.FunctionCall(Symbol.GET_SLOT_$)
+	        		},
+	        		contextContainingVM));
 	        
 	        activationPrototype.setFunction(Symbol.CONTEXTUALIZE_FUNCTION_$_IN_$, 
 	        		environment.createFunctionWithContext(
@@ -140,17 +153,17 @@ public class Activation extends ObjectDOS {
 	    
 	    private static ExecutableDOS SET_LOCAL_FUNCTION_$_TO_$_EXEC = new ExecutableDOS() {
 			@Override
-			public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
-				theObject.setFunction(((SymbolWrapper) arguments.at(0)).getSymbol(), (ExecutableDOS) arguments.at(1));
+			public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> arguments) {
+				theObject.setFunction(((SymbolWrapper) arguments.get(0)).getSymbol(), (ExecutableDOS) arguments.get(1));
 				return theObject;
 			}
 	    };
 	    
 	    private static ExecutableDOS SET_SLOT_$_TO_$_EXEC = new ExecutableDOS() {
 	    	@Override
-	    	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
-	    		Symbol symbol = ((SymbolWrapper) arguments.at(0)).getSymbol();
-	    		ObjectDOS value = arguments.at(1);
+	    	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> arguments) {
+	    		Symbol symbol = ((SymbolWrapper) arguments.get(0)).getSymbol();
+	    		ObjectDOS value = arguments.get(1);
 	    		
 	        	ObjectDOS objectWithSlot;
 	    		if(theObject instanceof Activation) {
@@ -186,9 +199,9 @@ public class Activation extends ObjectDOS {
 	    
 	    private static ExecutableDOS SET_LOCAL_SLOT_$_TO_$_EXEC = new ExecutableDOS() {
 	    	@Override
-	    	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
-	    		Symbol symbol = ((SymbolWrapper) arguments.at(0)).getSymbol();
-	    		ObjectDOS value = arguments.at(1);
+	    	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> arguments) {
+	    		Symbol symbol = ((SymbolWrapper) arguments.get(0)).getSymbol();
+	    		ObjectDOS value = arguments.get(1);
 	    		
 //	    		if(theObject instanceof Activation) {
 	    			// TODO this is wrong, but how do we know if we're in a constructor?  where this sort of thing is fine...
@@ -204,25 +217,24 @@ public class Activation extends ObjectDOS {
 	    
 	    private static ExecutableDOS GET_SLOT_$_EXEC = new ExecutableDOS() {
 			@Override
-			public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
-	    		Symbol symbol = ((SymbolWrapper) arguments.at(0)).getSymbol();
+			public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> arguments) {
+	    		Symbol symbol = ((SymbolWrapper) arguments.get(0)).getSymbol();
 				ObjectDOS slot = theObject.getSlot(symbol);
 				System.out.println("got slot " + slot);
 				return slot;
 			}
 	    };
 
-
 		public Activation createActivation() {
-			Activation result = new Activation();
+			Activation result = new Activation(environment.getEmptyList());
 			result.setParent(activationPrototype);
 			return result;
 		}
 		
 	}
     
-    public Activation() {
-        setSlot(Symbol.ARGUMENTS, new ListDOS());
+    public Activation(ObjectDOS list) {
+        setSlot(Symbol.ARGUMENTS, list);
         setSlot(Symbol.CURRENT_CONTEXT, this);
     }
     

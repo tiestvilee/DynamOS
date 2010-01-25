@@ -9,6 +9,8 @@ package org.dynamos;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.List;
+
 import org.dynamos.structures.Activation;
 import org.dynamos.structures.FunctionDOS;
 import org.dynamos.structures.FunctionWithContext;
@@ -63,8 +65,8 @@ public class OpCodeInterpreterReturnTest {
         
         FunctionDOS functionThatSetsupReturnSlot = new FunctionDOS(null, null) {
         	@Override
-            public void execute(OpCodeInterpreter interpreterParam, Activation functionContext) {
-            	functionContext.setSlot(Symbol.RESULT, result);
+            public void execute(OpCodeInterpreter interpreter, List<ObjectDOS> suppliedArguments, Activation activation) {
+        		activation.setSlot(Symbol.RESULT, result);
             }
         };
         context.setFunction(functionName, new FunctionWithContext(functionThatSetsupReturnSlot, context));

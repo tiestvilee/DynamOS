@@ -5,13 +5,16 @@
 
 package org.dynamos;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.dynamos.structures.Activation;
-import org.dynamos.structures.ListDOS;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.OpCodeWrapper;
 import org.dynamos.structures.StackFrame;
 import org.dynamos.structures.Symbol;
+import org.dynamos.types.StandardObjects;
 
 /**
  *
@@ -39,7 +42,7 @@ public class OpCodeInterpreter {
 
 	private int storeOpCodesInList(ObjectDOS context, OpCode[] opCodes, int index) {
 		int opcodeListDepth = 1;
-		ListDOS opcodeList = new ListDOS();
+		List<ObjectDOS> opcodeList = new ArrayList<ObjectDOS>();
 		int i = index + 1;
 		for(;i<opCodes.length && opcodeListDepth > 0;i++) {
 			if(opCodes[i] instanceof OpCode.StartOpCodeList) {
@@ -50,8 +53,9 @@ public class OpCodeInterpreter {
 			}
 			opcodeList.add(new OpCodeWrapper(opCodes[i]));
 		}
-		opcodeList.getRawList().remove(opcodeList.getRawList().size() - 1); // get rid of last endopcode - not needed
-		context.setSlot(Symbol.RESULT, opcodeList);
+		opcodeList.remove(opcodeList.size() - 1); // get rid of last endopcode - not needed
+		ObjectDOS opcodeDOSList = StandardObjects.toDOSList(opcodeList);
+		context.setSlot(Symbol.RESULT, opcodeDOSList);
 		return i - 1;
 	}
 

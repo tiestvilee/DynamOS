@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.dynamos.structures.ConstructorDOS;
+import org.dynamos.structures.ExecutableDOS;
 import org.dynamos.structures.FunctionDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.Symbol;
@@ -11,29 +12,44 @@ import org.dynamos.structures.Symbol;
 public class BootstrapCompiler {
 
 	public ConstructorDOS compile(String program) {
-		StatementContainingNode ast = transformStringToAST(program);
-		return transformASTToFunctionDefinition(ast);
+		return (ConstructorDOS) transformASTToDefinition(transform(program), "constructor");
+	}
+
+	public FunctionDOS compileFunction(String program) {
+		return (FunctionDOS) transformASTToDefinition(transform(program), "function");
 	}
 
 	private StatementContainingNode transformStringToAST(String program) {
 		return new TransformStringToAST().transform(program);
 	}
 	
-	private ConstructorDOS transformASTToFunctionDefinition(StatementContainingNode ast) {
+	private ExecutableDOS transformASTToDefinition(StatementContainingNode ast, String type) {
 		List<Symbol> arguments = new ArrayList<Symbol>();
 		List<OpCode> opCodes = new ArrayList<OpCode>();
 
-		((ConstructorNode) ast.getStatements().get(0)).compile(opCodes, arguments);
+		((MessageNode) ast.getStatements().get(0)).compile(opCodes, arguments);
 		
-		return constructFunctionDefinition(arguments, opCodes);
+		FunctionDOS function = constructFunction(arguments, opCodes);
+		if(type == "constructor") {
+			return new ConstructorDOS(function);
+		}
+		return function;
 	}
 
-	private ConstructorDOS constructFunctionDefinition(List<Symbol> arguments, List<OpCode> opcodes) {
+	private FunctionDOS constructFunction(List<Symbol> arguments,
+			List<OpCode> opcodes) {
 		Symbol[] argumentsArray = arguments.toArray(new Symbol[] {});
 		OpCode[] opCodeArray = opcodes.toArray(new OpCode[] {});
 		
+		System.out.println("*************** COMPILED *****************\n");
+		System.out.println("args " + arguments);
 		OpCode.printOpCodes(opCodeArray);
 		
-		return new ConstructorDOS(new FunctionDOS(argumentsArray, opCodeArray));
+		
+		return new FunctionDOS(argumentsArray, opCodeArray);
+	}
+
+	public StatementContainingNode transform(String program) {
+		return transformStringToAST(program);
 	}
 }

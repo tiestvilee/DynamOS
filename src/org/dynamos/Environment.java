@@ -27,7 +27,7 @@ public class Environment {
     private ObjectDOS undefined;
 	private ObjectDOS mirror;
 	private ObjectDOS booleanContainer;
-	private ObjectDOS listFactory;
+	private ObjectDOS emptyList;
 	private ObjectDOS functionPrototype;
 
     /*
@@ -52,7 +52,7 @@ public class Environment {
 		mirror = Mirror.initialiseMirror(this);
 		
 		virtualMachine = VMObjectDOS.getVMObject(this);
-		listFactory = StandardObjects.createListLibrary(this);
+		emptyList = StandardObjects.createEmptyList(this);
 		activationBuilder = Activation.initializeActivation(this);
 	}
 	
@@ -78,8 +78,8 @@ public class Environment {
 		return zero;
 	}
 	
-	public ObjectDOS getListFactory() {
-		return listFactory;
+	public ObjectDOS getEmptyList() {
+		return emptyList;
 	}
 	
 	public ObjectDOS getUndefined() {

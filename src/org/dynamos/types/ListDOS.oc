@@ -1,0 +1,41 @@
+(constructor emptyList
+
+	(local head)
+	(local tail)
+
+	// function start
+	(function prepend: object
+		newListWithHead: $object tail: $this
+	)
+	// function end
+	
+	// function start
+	(function newListWithHead: head tail: tail
+		listConstructor: $head tail: $tail prototype: $this
+	)
+	// function end
+
+	// constructor start
+	(constructor listConstructor: head tail: tail prototype: listPrototype
+	  parent: $listPrototype 
+	)
+	// constructor end
+	
+	// function start
+	(function head
+		$head
+	)
+	// function end
+	
+	// function start
+	(function tail
+		$tail
+	)
+	// function end
+	
+	// function start
+	(function at: index
+		$head // obviously wrong!
+	)
+	// function end
+)

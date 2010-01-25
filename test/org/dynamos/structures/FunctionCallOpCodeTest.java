@@ -12,6 +12,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
+
 import org.dynamos.Environment;
 import org.dynamos.OpCodeInterpreter;
 import org.junit.Before;
@@ -28,7 +30,6 @@ public class FunctionCallOpCodeTest {
     ExecutableDOS anotherFunction;
 	
     Activation context;
-    ListDOS arguments;
     ObjectDOS object;
     OpCodeInterpreter interpreter;
 	Symbol symbol;
@@ -79,7 +80,7 @@ public class FunctionCallOpCodeTest {
     	context = interpreter.newActivation();
     	context.setFunction(symbol, aFunction);
 
-    	when(aFunction.execute((OpCodeInterpreter)anyObject(), (ObjectDOS)anyObject(), (ListDOS)anyObject())).thenReturn(object);
+    	when(aFunction.execute((OpCodeInterpreter)anyObject(), (ObjectDOS)anyObject(), (List<ObjectDOS>)anyObject())).thenReturn(object);
 
     	boolean shouldContinue = new OpCode.FunctionCall(symbol).execute(interpreter, context, stackFrame);
     	

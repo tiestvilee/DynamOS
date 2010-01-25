@@ -5,6 +5,8 @@
 
 package org.dynamos.structures;
 
+import java.util.List;
+
 import org.dynamos.Environment;
 import org.dynamos.OpCodeInterpreter;
 import org.dynamos.types.NumberDOS.ValueObject;
@@ -26,35 +28,35 @@ public class VMObjectDOS {
     public static ObjectDOS getVMObject(final Environment environment) {
         ExecutableDOS PRINT_FUNCTION = new ExecutableDOS() {
             @Override
-            public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS object, ListDOS arguments) {
-                System.out.println(arguments.at(0));
+            public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS object, List<ObjectDOS> arguments) {
+                System.out.println(arguments.get(0));
                 return environment.getNull();
             }
         };
 
         ExecutableDOS ADD_EXEC = new ExecutableDOS() {
         	@Override
-        	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
-        		int right = ((ValueObject) arguments.at(0)).getValue();
-                int left = ((ValueObject) arguments.at(1)).getValue();
+        	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> arguments) {
+        		int right = ((ValueObject) arguments.get(0)).getValue();
+                int left = ((ValueObject) arguments.get(1)).getValue();
                 return environment.createNewValueObject(left + right);
         	}
         };
         
         ExecutableDOS SUB_EXEC = new ExecutableDOS() {
         	@Override
-        	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
-        		int right = ((ValueObject) arguments.at(0)).getValue();
-                int left = ((ValueObject) arguments.at(1)).getValue();
+        	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> arguments) {
+        		int right = ((ValueObject) arguments.get(0)).getValue();
+                int left = ((ValueObject) arguments.get(1)).getValue();
                 return environment.createNewValueObject(left - right);
         	}
         };
         
         ExecutableDOS IS_LESS_THAN_EXEC = new ExecutableDOS() {
         	@Override
-        	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, ListDOS arguments) {
-                int left = ((ValueObject) arguments.at(0)).getValue();
-                int right = ((ValueObject) arguments.at(1)).getValue();
+        	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> arguments) {
+                int left = ((ValueObject) arguments.get(0)).getValue();
+                int right = ((ValueObject) arguments.get(1)).getValue();
                 return left < right ? environment.getTrue() : environment.getFalse();
         	}
         };

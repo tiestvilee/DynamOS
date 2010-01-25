@@ -57,16 +57,20 @@ public abstract class MessageNode extends StatementContainingNode {
 	}
 
 	private void setupArgumentList(List<OpCode> opCodes) {
-		opCodes.add(new OpCode.FunctionCall(Symbol.NEW_LIST));
+		opCodes.add(new OpCode.PushSymbol(Symbol.EMPTY_LIST));
+		opCodes.add(new OpCode.FunctionCall(Symbol.GET_SLOT_$));
+		
+		for(int i = getArguments().size(); i>0;) {
+			i--;
+			String argument = getArguments().get(i);
+			opCodes.add(new OpCode.PushSymbol(Symbol.get(argument)));
+			opCodes.add(new OpCode.SetObject(Symbol.RESULT));
+			opCodes.add(new OpCode.FunctionCall(Symbol.get("prepend:")));
+		}
+
 		opCodes.add(new OpCode.PushSymbol(Symbol.get("__argument_list")));
 		opCodes.add(new OpCode.Push(Symbol.RESULT));
 		opCodes.add(new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$));
-		
-		for(String argument : getArguments()) {
-			opCodes.add(new OpCode.PushSymbol(Symbol.get(argument)));
-			opCodes.add(new OpCode.SetObject(Symbol.get("__argument_list")));
-			opCodes.add(new OpCode.FunctionCall(Symbol.get("add:")));
-		}
 	}
 	
 	abstract void createFunction(List<OpCode> opCodes);
@@ -80,6 +84,15 @@ public abstract class MessageNode extends StatementContainingNode {
 			opCodes.add(new OpCode.PushSymbol(Symbol.get(getName()))); // save into functions with correct name
 			opCodes.add(new OpCode.Push(Symbol.RESULT));
 			opCodes.add(new OpCode.FunctionCall(Symbol.SET_LOCAL_FUNCTION_$_TO_$));
+		}
+	}
+
+	public void compile(List<OpCode> opCodes, List<Symbol> messageArguments) {
+		for(String argument : getArguments()) {
+			messageArguments.add(Symbol.get(argument));
+		}
+		for(ASTNode node : statements) {
+			node.compile(opCodes, 0);
 		}
 	}
 
