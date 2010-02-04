@@ -10,7 +10,7 @@ public class TransformStringToAST {
 	 * ObjectDefinition => '(object' MessageDefinition FunctionBody ')'
 	 */
 	public ASTNode objectDefinition( Stream stream) {
-		MessageNode objectConstructor = new ConstructorNode();
+		NamedFunctionNode objectConstructor = new ConstructorNode();
 
 		objectConstructor.isPrivate(stream.matchesPrivate());
 		stream.consumeObjectConstructorStart();
@@ -25,7 +25,7 @@ public class TransformStringToAST {
 	/*
 	 * MessageDefinition => Identifier [ ':' Identifier (Identifier ':' Identifier)* ] '\n'
 	 */
-	public void messageDefinition(MessageNode fnode, Stream stream) {
+	public void messageDefinition(AnonymousFunctionNode fnode, Stream stream) {
 		
 		fnode.appendToName(stream.consumeIdentifier());
 		
@@ -115,7 +115,7 @@ public class TransformStringToAST {
 				
 				if(stream.matchesIdentifier()) {
 					call.appendToName(stream.consumeIdentifier());
-				} else if (stream.matchesRightBracket()) {
+				} else if (stream.matchesRightBracket() || stream.matchesRightBrace()) {
 					return call;
 				} else {
 					stream.consumeNewLine();
@@ -186,7 +186,7 @@ public class TransformStringToAST {
 	 * FunctionDefinition => '(function' MessageDefinition FunctionBody ')\n'
 	 */
 	public ASTNode functionDefinition(Stream stream) {
-		MessageNode fnode = new FunctionNode();
+		NamedFunctionNode fnode = new FunctionNode();
 		
 		fnode.isPrivate(stream.matchesPrivate());
 		stream.consumeFunctionStart();
@@ -202,7 +202,7 @@ public class TransformStringToAST {
 	 * Closure => '[' ClosureParameters '|' FunctionBody ']'
 	 */
 	public void closure(FunctionCallNode node, Stream stream) {
-		ClosureNode closure = new ClosureNode();
+		AnonymousFunctionNode closure = new AnonymousFunctionNode();
 		node.addParameter(closure);
 		
 		stream.consumeLeftBrace();
@@ -215,7 +215,7 @@ public class TransformStringToAST {
 	/*
 	 * ClosureParameters => [Identifier (',' Identifier)* ]
 	 */
-	private void closureParameters(Stream stream, ClosureNode closure) {
+	private void closureParameters(Stream stream, AnonymousFunctionNode closure) {
 		if(stream.matchesIdentifier()) {
 			closure.addParameter(stream.consumeIdentifier());
 			while(stream.matchesComma()) {

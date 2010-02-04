@@ -130,6 +130,56 @@ public class CompileAstToOpCodesTest {
 				new OpCode.FunctionCall(Symbol.get("function-WithParam:andParam?:"))				
 		}));
 	}
+
+	
+	@Test
+	public void shouldCreateFunctionCallWithClosure() {
+		StatementContainingNode root = transformer.transform(
+				"function-WithClosure: [param | doSomethingWith: $param ]\n"
+			);
+		
+		FunctionDOS function = compiler.compile(root);
+		assertThat(function.getOpCodes(), is(new OpCode[] {
+				
+            	new OpCode.PushSymbol(Symbol.get("emptyList")), // create argument list, 1 argument
+            	new OpCode.FunctionCall(Symbol.GET_SLOT_$),
+            	
+            	new OpCode.PushSymbol(Symbol.get("param")),
+            	new OpCode.SetObject(Symbol.RESULT),
+            	new OpCode.FunctionCall(Symbol.get("prepend:")),
+            	
+            	new OpCode.PushSymbol(Symbol.get("__argument_list")),
+            	new OpCode.Push(Symbol.RESULT),
+            	new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
+				
+				new OpCode.StartOpCodeList(), // function definition
+					new OpCode.PushSymbol(Symbol.get("param")),
+					new OpCode.FunctionCall(Symbol.GET_SLOT_$),
+					
+					new OpCode.PushSymbol(Symbol.get("__temp1")),
+					new OpCode.Push(Symbol.RESULT),
+					new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
+					
+					new OpCode.Push(Symbol.get("__temp1")),
+					new OpCode.FunctionCall(Symbol.get("doSomethingWith:")),
+				new OpCode.EndOpCodeList(),
+            	
+            	new OpCode.Push(Symbol.get("__argument_list")), // create function
+            	new OpCode.Push(Symbol.RESULT),
+            	new OpCode.FunctionCall(Symbol.CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$),
+				
+            	new OpCode.Push(Symbol.RESULT),
+            	new OpCode.Push(Symbol.CURRENT_CONTEXT),
+            	new OpCode.FunctionCall(Symbol.CONTEXTUALIZE_FUNCTION_$_IN_$),
+
+				new OpCode.PushSymbol(Symbol.get("__temp1")),
+				new OpCode.Push(Symbol.RESULT),
+				new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$),
+				
+				new OpCode.Push(Symbol.get("__temp1")),
+				new OpCode.FunctionCall(Symbol.get("function-WithClosure:"))				
+		}));
+	}
 	
 	@Test
 	public void shouldSetFunctionResultToSlot() {

@@ -27,7 +27,7 @@ public class BootstrapCompiler {
 		List<Symbol> arguments = new ArrayList<Symbol>();
 		List<OpCode> opCodes = new ArrayList<OpCode>();
 
-		((MessageNode) ast.getStatements().get(0)).compile(opCodes, arguments);
+		((AnonymousFunctionNode) ast.getStatements().get(0)).compile(opCodes, arguments);
 		
 		FunctionDOS function = constructFunction(arguments, opCodes);
 		if(type == "constructor") {

@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 
 import org.dynamos.Environment;
 import org.dynamos.compiler.BootstrapCompiler;
-import org.dynamos.compiler.MessageNode;
+import org.dynamos.compiler.AnonymousFunctionNode;
 import org.dynamos.compiler.StatementContainingNode;
 import org.dynamos.structures.ConstructorDOS;
 import org.dynamos.structures.FunctionDOS;
@@ -89,7 +89,7 @@ public class StandardObjects {
 	private static Symbol determineFunctionName(BootstrapCompiler compiler,
 			String functionString) {
 		StatementContainingNode ast = compiler.transform(functionString);
-		String name = ((MessageNode) ast.getStatements().get(0)).getName();
+		String name = ((AnonymousFunctionNode) ast.getStatements().get(0)).getName();
 		return Symbol.get(name);
 	}
 

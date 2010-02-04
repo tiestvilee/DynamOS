@@ -25,7 +25,7 @@ public class TransformStringToASTTest {
 			") \n"
 		);
 		
-		MessageNode node = (MessageNode) root.getStatements().get(0);
+		NamedFunctionNode node = (NamedFunctionNode) root.getStatements().get(0);
 		
 		assertThat(node.getName(), is("object-WithParam:andParam?:"));
 		assertThat(node.isPrivate(), is(false));
@@ -40,7 +40,7 @@ public class TransformStringToASTTest {
 			") \n"
 		);
 		
-		MessageNode node = (MessageNode) root.getStatements().get(0);
+		NamedFunctionNode node = (NamedFunctionNode) root.getStatements().get(0);
 		
 		assertThat(node.isPrivate(), is(true));
 	}
@@ -53,7 +53,7 @@ public class TransformStringToASTTest {
 			") \n "
 		);
 		
-		MessageNode node = (MessageNode) root.getStatements().get(0);
+		AnonymousFunctionNode node = (AnonymousFunctionNode) root.getStatements().get(0);
 
 		assertThat(node.getStatements().size(), is(0));
 	}
@@ -160,10 +160,24 @@ public class TransformStringToASTTest {
 		);
 		
 		FunctionCallNode call = ((FunctionCallNode) root.getStatements().get(0));
-		ClosureNode closure = ((ClosureNode) call.getArguments().get(0));
+		AnonymousFunctionNode closure = ((AnonymousFunctionNode) call.getArguments().get(0));
 
 		assertThat( closure.getArguments().get(0), is("param1"));
 		assertThat( closure.getArguments().get(1), is("param2"));
+	}
+	
+	@Test
+	public void shouldCreateClosureWithSimpleBody() {
+		StatementContainingNode root = transformer.transform(
+			"functionWithClosure: [| dosomething: param ]\n"
+		);
+		
+		FunctionCallNode call = ((FunctionCallNode) root.getStatements().get(0));
+		AnonymousFunctionNode closure = ((AnonymousFunctionNode) call.getArguments().get(0));
+
+		FunctionCallNode firstStatement = (FunctionCallNode) closure.getStatements().get(0);
+		assertThat( firstStatement.getName(), is("dosomething:"));
+		assertThat( ((FunctionCallNode) firstStatement.getArguments().get(0)).getName(), is("param"));
 	}
 	
 	@Test
@@ -177,10 +191,10 @@ public class TransformStringToASTTest {
 			")"
 		);
 		
-		MessageNode node = (MessageNode) root.getStatements().get(0);
+		AnonymousFunctionNode node = (AnonymousFunctionNode) root.getStatements().get(0);
 
 		FunctionCallNode call = ((FunctionCallNode) node.getStatements().get(0));
-		ClosureNode closure = ((ClosureNode) call.getArguments().get(0));
+		AnonymousFunctionNode closure = ((AnonymousFunctionNode) call.getArguments().get(0));
 
 		assertThat( closure.getStatements().size(), is(3));
 	}
@@ -226,7 +240,7 @@ public class TransformStringToASTTest {
 			")"
 		);
 		
-		MessageNode node = (MessageNode) root.getStatements().get(0);
+		AnonymousFunctionNode node = (AnonymousFunctionNode) root.getStatements().get(0);
 
 		List<SymbolGetterNode> slots = node.getSlots();
 		
@@ -243,8 +257,8 @@ public class TransformStringToASTTest {
 			")"
 		);
 		
-		MessageNode node = (MessageNode) root.getStatements().get(0);
-		MessageNode nested = ((MessageNode) node.getStatements().get(0));
+		AnonymousFunctionNode node = (AnonymousFunctionNode) root.getStatements().get(0);
+		NamedFunctionNode nested = ((NamedFunctionNode) node.getStatements().get(0));
 
 		assertThat(nested.getName(), is("nestedFunction:"));
 		assertThat(nested.isPrivate(), is(false));
@@ -264,8 +278,8 @@ public class TransformStringToASTTest {
 			")"
 		);
 		
-		MessageNode node = (MessageNode) root.getStatements().get(0);
-		MessageNode nested = ((MessageNode) node.getStatements().get(0));
+		AnonymousFunctionNode node = (AnonymousFunctionNode) root.getStatements().get(0);
+		NamedFunctionNode nested = ((NamedFunctionNode) node.getStatements().get(0));
 
 		assertThat(nested.isPrivate(), is(true));
 	}
@@ -282,12 +296,12 @@ public class TransformStringToASTTest {
 				")"
 			);
 		
-		MessageNode node = (MessageNode) root.getStatements().get(0);
+		AnonymousFunctionNode node = (AnonymousFunctionNode) root.getStatements().get(0);
 
-		MessageNode open = (MessageNode) node.getStatements().get(0);
+		AnonymousFunctionNode open = (AnonymousFunctionNode) node.getStatements().get(0);
 		assertThat(open.getName(), is("aLocal"));
 		
-		MessageNode fnode = (MessageNode) open.getStatements().get(0);
+		AnonymousFunctionNode fnode = (AnonymousFunctionNode) open.getStatements().get(0);
 		assertThat(fnode.getName(), is("afunc:"));
 		assertThat(fnode.getArguments().get(0), is("theParam"));
 		

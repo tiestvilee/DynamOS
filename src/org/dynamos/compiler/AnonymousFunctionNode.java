@@ -7,10 +7,9 @@ import java.util.List;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.Symbol;
 
-public abstract class MessageNode extends StatementContainingNode {
+public class AnonymousFunctionNode extends StatementContainingNode {
 
 	private List<String> arguments = new ArrayList<String>();
-	private boolean isPrivate = false;
 	
 	public List<String> getArguments() {
 		return Collections.unmodifiableList(arguments);
@@ -18,28 +17,6 @@ public abstract class MessageNode extends StatementContainingNode {
 
 	public void addParameter(String string) {
 		arguments.add(string);
-	}
-	
-	public Boolean isPrivate() {
-		return isPrivate;
-	}
-	
-	public void isPrivate(boolean isPrivateValue) {
-		this.isPrivate = isPrivateValue ;
-	}
-	
-	public abstract String type();
-	
-	public String toString() {		
-		return toString("");
-	}
-
-	public String toString(String indent) {		
-		String statementsAsString = "";
-		for(ASTNode statement: statements) {
-			statementsAsString += statement.toString(indent + "  ") + " ";
-		}
-		return indent + "(" + type() + " " + getName() + "{\n" + indent + "  " + statementsAsString + "\n" + indent + "})\n";
 	}
 
 	@Override
@@ -52,8 +29,21 @@ public abstract class MessageNode extends StatementContainingNode {
 		
 		createFunction(opCodes);
 	    
-		assignToSlotsOrFunctions(opCodes);
+		assignToSlotsOrFunctions(opCodes, tempNumber);
 	
+	}
+
+	protected void createFunction(List<OpCode> opCodes) {
+		opCodes.add(new OpCode.Push(Symbol.get("__argument_list"))); // create function
+		opCodes.add(new OpCode.Push(Symbol.RESULT));
+		opCodes.add(new OpCode.FunctionCall(Symbol.CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$));
+		
+		opCodes.add(new OpCode.Push(Symbol.RESULT));
+		opCodes.add(new OpCode.Push(Symbol.CURRENT_CONTEXT));
+		opCodes.add(new OpCode.FunctionCall(Symbol.CONTEXTUALIZE_FUNCTION_$_IN_$));
+	}
+	
+	protected void assignToSlotsOrFunctions(List<OpCode> opCodes, int tempNumber) {
 	}
 
 	private void setupArgumentList(List<OpCode> opCodes) {
@@ -67,24 +57,10 @@ public abstract class MessageNode extends StatementContainingNode {
 			opCodes.add(new OpCode.SetObject(Symbol.RESULT));
 			opCodes.add(new OpCode.FunctionCall(Symbol.get("prepend:")));
 		}
-
+	
 		opCodes.add(new OpCode.PushSymbol(Symbol.get("__argument_list")));
 		opCodes.add(new OpCode.Push(Symbol.RESULT));
 		opCodes.add(new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$));
-	}
-	
-	abstract void createFunction(List<OpCode> opCodes);
-	
-	void assignToSlotsOrFunctions(List<OpCode> opCodes) {
-		if(isPrivate) {
-			opCodes.add(new OpCode.PushSymbol(Symbol.get(getName()))); // save into functions with correct name
-			opCodes.add(new OpCode.Push(Symbol.RESULT));
-			opCodes.add(new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$));
-		} else {
-			opCodes.add(new OpCode.PushSymbol(Symbol.get(getName()))); // save into functions with correct name
-			opCodes.add(new OpCode.Push(Symbol.RESULT));
-			opCodes.add(new OpCode.FunctionCall(Symbol.SET_LOCAL_FUNCTION_$_TO_$));
-		}
 	}
 
 	public void compile(List<OpCode> opCodes, List<Symbol> messageArguments) {
@@ -95,6 +71,4 @@ public abstract class MessageNode extends StatementContainingNode {
 			node.compile(opCodes, 0);
 		}
 	}
-
-
 }
