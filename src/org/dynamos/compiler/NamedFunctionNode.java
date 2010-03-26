@@ -1,47 +1,26 @@
 package org.dynamos.compiler;
 
-import java.util.List;
-
+import org.dynamos.structures.MetaVM;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.Symbol;
 
-public abstract class NamedFunctionNode extends AnonymousFunctionNode {
+import java.util.List;
 
-	private boolean isPrivate = false;
-	
-	public Boolean isPrivate() {
-		return isPrivate;
-	}
-	
-	public void isPrivate(boolean isPrivateValue) {
-		this.isPrivate = isPrivateValue ;
-	}
-	
-	public abstract String type();
-	
-	public String toString() {		
-		return toString("");
-	}
+public class NamedFunctionNode extends AnonymousFunctionNode {
 
-	public String toString(String indent) {		
-		String statementsAsString = "";
-		for(ASTNode statement: statements) {
-			statementsAsString += statement.toString(indent + "  ") + " ";
-		}
-		return indent + "(" + type() + " " + getName() + "{\n" + indent + "  " + statementsAsString + "\n" + indent + "})\n";
+    protected String type() {
+        return "function";
+    }
+
+	protected void createFunction(List<OpCode> opCodes) {
+		opCodes.add(new OpCode.Push(Symbol.get("__argument_list"))); // create function
+		opCodes.add(new OpCode.Push(Symbol.RESULT));
+        opCodes.add(new OpCode.FunctionCall(MetaVM.CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$));
 	}
 
 	protected void assignToSlotsOrFunctions(List<OpCode> opCodes, int tempNumber) {
-		if(isPrivate) {
-			opCodes.add(new OpCode.PushSymbol(Symbol.get(getName()))); // save into functions with correct name
-			opCodes.add(new OpCode.Push(Symbol.RESULT));
-			opCodes.add(new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$));
-		} else {
-			opCodes.add(new OpCode.PushSymbol(Symbol.get(getName()))); // save into functions with correct name
-			opCodes.add(new OpCode.Push(Symbol.RESULT));
-			opCodes.add(new OpCode.FunctionCall(Symbol.SET_LOCAL_FUNCTION_$_TO_$));
-		}
+        opCodes.add(new OpCode.PushSymbol(Symbol.get(getName()))); // save into functions with correct name
+        opCodes.add(new OpCode.Push(Symbol.RESULT));
+		opCodes.add(new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$));
 	}
-
-
 }

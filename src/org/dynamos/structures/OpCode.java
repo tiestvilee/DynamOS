@@ -37,13 +37,17 @@ public class OpCode {
 		
 		@Override
 		public String toString() {
-			return getClass().getSimpleName() + ">" + symbol.toString();
+			String name = getClass().getSimpleName();
+			return name + ">" + symbol.toString();
 		}
 
     }
 
     public static class FunctionCall extends OpCodeWithSymbol {
         public FunctionCall(Symbol symbol) {
+        	if(symbol == null) {
+        		throw new IllegalArgumentException("No symbol supplied");
+        	}
             this.symbol = symbol;
         }
 

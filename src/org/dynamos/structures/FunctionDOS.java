@@ -8,7 +8,6 @@ package org.dynamos.structures;
 import java.util.List;
 
 import org.dynamos.OpCodeInterpreter;
-import org.dynamos.types.StandardObjects;
 
 /**
  *
@@ -24,24 +23,13 @@ public class FunctionDOS extends ExecutableDOS {
         this.opCodes = opCodes;
     }
 
-    public void execute(OpCodeInterpreter interpreter, List<ObjectDOS> suppliedArguments, Activation activation) {
+    public ObjectDOS execute(OpCodeInterpreter interpreter, List<ObjectDOS> suppliedArguments, Activation activation) {
 		updateArgumentsInContext(activation, suppliedArguments, interpreter.getEnvironment().getUndefined());
     	activation.setSlot(Symbol.RESULT, activation);
     	
         interpreter.interpret(activation, opCodes);
-    }
-    
-    public ObjectDOS construct(OpCodeInterpreter interpreter, List<ObjectDOS> contextArguments) {
-    	ObjectDOS newObject = interpreter.getEnvironment().createNewObject();
-    	newObject.setTrait("activationFunctions", interpreter.newActivation());
-    	
-    	updateArgumentsInContext(newObject, contextArguments, interpreter.getEnvironment().getUndefined());
-    	
-        interpreter.interpret(newObject, opCodes);
         
-        newObject.removeTrait("activationFunctions");
-        
-        return newObject;
+        return activation.getSlot(Symbol.RESULT);
     }
 
 	private void updateArgumentsInContext(ObjectDOS context, List<ObjectDOS> contextArguments, ObjectDOS undefined) {

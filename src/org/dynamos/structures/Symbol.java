@@ -21,7 +21,7 @@ public class Symbol {
         }
         return symbols.get(name);
     }
-    
+
     String symbol;
 
     private Symbol(String symbol) {
@@ -41,17 +41,12 @@ public class Symbol {
 	public static final Symbol PARENT = Symbol.get("parent");
 	public static final Symbol PARENT_$ = Symbol.get("parent:");
 	public static final Symbol EXECUTE = Symbol.get("execute");
-	public static final Symbol SET_LOCAL_FUNCTION_$_TO_$ = Symbol.get("setFunction:to:");
 	public static final Symbol SET_SLOT_$_TO_$ = Symbol.get("setSlot:to:");
 	public static final Symbol GET_SLOT_$ = Symbol.get("getSlot:");
 	public static final Symbol SET_LOCAL_SLOT_$_TO_$ = Symbol.get("setLocalSlot:to:");
 	public static final Symbol SET_TRAIT_$_TO_$ = Symbol.get("setTrait:to:");
 	public static final Symbol GET_TRAIT_$ = Symbol.get("getTrait:");
 	public static final Symbol EMPTY_LIST = Symbol.get("emptyList");
-	
-	public static final Symbol MIRROR = Symbol.get("mirror");
-	public static final Symbol NEW_OBJECT = Mirror.NEW_OBJECT;
-	public static final Symbol CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$ = Mirror.CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$;
-	public static final Symbol CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$ = Mirror.CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$;
-	public static final Symbol CONTEXTUALIZE_FUNCTION_$_IN_$ = Mirror.CONTEXTUALIZE_FUNCTION_$_IN_$;
+
+	public static final Symbol META_VM = Symbol.get("metaVM");
 }

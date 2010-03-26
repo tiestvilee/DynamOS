@@ -1,11 +1,11 @@
 package org.dynamos.structures;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.dynamos.Environment;
 import org.dynamos.OpCodeInterpreter;
 import org.dynamos.types.StandardObjects;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MetaVM {
 
@@ -16,7 +16,7 @@ public class MetaVM {
 	public static final Symbol GET_PARENT_ON_$ = Symbol.get("getParentOn:");
 	public static final Symbol SET_TRAIT_$_TO_$_ON_$ = Symbol.get("setTrait:To:On:");
 	public static final Symbol GET_TRAIT_$_ON_$ = Symbol.get("getTrait:On:");
-	
+
 	public static final Symbol SET_FUNCTION_$_TO_$_ON_$ = Symbol.get("setFunction:to:on:");
 	public static final Symbol SET_SLOT_$_TO_$_ON_$ = Symbol.get("setSlot:to:on:");
 	public static final Symbol GET_SLOT_$_ON_$ = Symbol.get("getSlot:on:");
@@ -28,7 +28,6 @@ public class MetaVM {
 
 	public static final Symbol CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$ = Symbol.get("createFunctionWithArguments:locals:opCodes:");
 
-	public static final Symbol CREATE_CONSTRUCTOR_WITH_ARGUMENTS_$_OPCODES_$ = Symbol.get("createConstructorWithArguments:OpCodes:");
 	public static final Symbol MIRROR_FOR_$ = Symbol.get("mirrorFor:");
 	private static final Symbol MIRROR_PROTOTYPE = Symbol.get("mirrorPrototype");
 
@@ -58,47 +57,48 @@ public class MetaVM {
         	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> arguments) {
         		List<ObjectDOS> argumentList = StandardObjects.toJavaList(arguments.get(0));
         		List<ObjectDOS> opCodes = StandardObjects.toJavaList(arguments.get(1));
-        		
+
         		System.out.println("... creating funciton with \n\t" + argumentList + " \n\t" + opCodes);
 
 				Symbol[] nativeArguments = copyListOfSymbolWrappersToArrayOfSymbols(argumentList);
 				OpCode[] nativeOpCodes = copyListOfOpcodeWrappersToArrayOfOpcodes(opCodes);
-				
+
 				return environment.createFunction(nativeArguments, nativeOpCodes);
         	}
         };
-        
+
 		metaVM.setFunction(NEW_OBJECT, NEW_OBJECT_EXEC);
 		metaVM.setFunction(CONTEXTUALIZE_FUNCTION_$_IN_$, CONTEXTUALIZE_FUNCTION_EXEC);
 		metaVM.setFunction(CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$, CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$_EXEC);
-        
+        metaVM.setFunction(SET_FUNCTION_$_TO_$_ON_$, SET_FUNCTION_$_TO_$_ON_$_EXEC);
+
 		metaVM.setFunction(SET_PARENT_TO_$_ON_$, SET_PARENT_TO_$_ON_$_EXEC);
 		metaVM.setFunction(GET_PARENT_ON_$, GET_PARENT_ON_$_EXEC);
 		metaVM.setFunction(SET_TRAIT_$_TO_$_ON_$, SET_TRAIT_$_TO_$_ON_$_EXEC);
 		metaVM.setFunction(GET_TRAIT_$_ON_$, GET_TRAIT_$_ON_$_EXEC);
-		
+
 		metaVM.setSlot(MIRROR_PROTOTYPE, Mirror.createMirrorPrototype(environment, metaVM));
 		metaVM.setFunction(GET_MIRROR_FOR_$, GET_MIRROR_FOR_$_EXEC);
-		
+
 		return metaVM;
 	}
-	
 
 
-	private static ExecutableDOS SET_FUNCTION_$_TO_$_EXEC = new ExecutableDOS() {
+
+	private static ExecutableDOS SET_FUNCTION_$_TO_$_ON_$_EXEC = new ExecutableDOS() {
 		@Override
 		public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> arguments) {
-			theObject.setFunction(((SymbolWrapper) arguments.get(0)).getSymbol(), (ExecutableDOS) arguments.get(1));
-			return theObject;
+			arguments.get(2).setFunction(((SymbolWrapper) arguments.get(0)).getSymbol(), (ExecutableDOS) arguments.get(1));
+			return arguments.get(2);
 		}
     };
-    
+
     private static ExecutableDOS SET_SLOT_$_TO_$_EXEC = new ExecutableDOS() {
     	@Override
     	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> arguments) {
     		Symbol symbol = ((SymbolWrapper) arguments.get(0)).getSymbol();
     		ObjectDOS value = arguments.get(1);
-    		
+
         	ObjectDOS objectWithSlot;
     		if(theObject instanceof Activation) {
     			/* implicit call */
@@ -120,23 +120,23 @@ public class MetaVM {
 			{
 				cursor = cursor.getContext();
 			}
-			
+
 			if(cursor == null) {
 				System.out.println("using a victim " + ((Activation) theObject).getVictim());
 				return ((Activation) theObject).getVictim();
 			}
     		System.out.println("using an activation " + cursor);
-			
+
 			return cursor;
 		}
     };
-    
+
     private static ExecutableDOS SET_LOCAL_SLOT_$_TO_$_EXEC = new ExecutableDOS() {
     	@Override
     	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> arguments) {
     		Symbol symbol = ((SymbolWrapper) arguments.get(0)).getSymbol();
     		ObjectDOS value = arguments.get(1);
-    		
+
     		if(theObject instanceof Activation) {
     			/* implicit call */
     			theObject.setSlot(symbol, value);
@@ -147,7 +147,7 @@ public class MetaVM {
     		throw new RuntimeException("Can't set a slot directly on an object, only within that object's functions");
     	}
     };
-    
+
     private static ExecutableDOS GET_SLOT_$_EXEC = new ExecutableDOS() {
 		@Override
 		public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> arguments) {
@@ -157,7 +157,7 @@ public class MetaVM {
     };
 
 
-	
+
     private static ExecutableDOS SET_PARENT_TO_$_ON_$_EXEC = new ExecutableDOS() {
 		@Override
 		public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> arguments) {
@@ -166,14 +166,14 @@ public class MetaVM {
 			return arguments.get(1); // never return the mirror - just in case
 		}
     };
-    
+
     private static ExecutableDOS GET_PARENT_ON_$_EXEC = new ExecutableDOS() {
 		@Override
 		public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> arguments) {
 			return arguments.get(0).getParent();
 		}
     };
-    
+
     private static ExecutableDOS SET_TRAIT_$_TO_$_ON_$_EXEC = new ExecutableDOS() {
 		@Override
 		public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS  theObject, List<ObjectDOS> arguments) {
@@ -181,14 +181,14 @@ public class MetaVM {
 			return arguments.get(2); // never return the mirror - just in case
 		}
     };
-    
+
     private static ExecutableDOS GET_TRAIT_$_ON_$_EXEC = new ExecutableDOS() {
 		@Override
 		public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> arguments) {
 			return arguments.get(1).getTrait(arguments.get(0).toString());
 		}
     };
-    
+
 	static OpCode[] copyListOfOpcodeWrappersToArrayOfOpcodes(
 			List<ObjectDOS> opCodes) {
 		OpCode[] nativeOpCodes = new OpCode[opCodes.size()];
@@ -209,7 +209,7 @@ public class MetaVM {
 		}
 		return nativeArguments;
 	}
-    
+
     private static ExecutableDOS GET_MIRROR_FOR_$_EXEC = new ExecutableDOS() {
 		@Override
 		public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> arguments) {

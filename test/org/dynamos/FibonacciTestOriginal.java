@@ -10,6 +10,7 @@ import static org.junit.Assert.assertThat;
 
 import org.dynamos.structures.Activation;
 import org.dynamos.structures.FunctionDOS;
+import org.dynamos.structures.MetaVM;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.Symbol;
@@ -147,7 +148,7 @@ public class FibonacciTestOriginal {
 	            
 	            new OpCode.Push(Symbol.RESULT),  // contextualize anon function
 	            new OpCode.Push(Symbol.CURRENT_CONTEXT),
-	            new OpCode.FunctionCall(Symbol.CONTEXTUALIZE_FUNCTION_$_IN_$),
+	            new OpCode.FunctionCall(MetaVM.CONTEXTUALIZE_FUNCTION_$_IN_$),
 	            new OpCode.Debug("contextualized", Symbol.RESULT),
 	            
 	            new OpCode.SetObject(Symbol.RESULT), // call anon function

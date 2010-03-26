@@ -1,21 +1,17 @@
 package org.dynamos;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import org.dynamos.structures.*;
+import org.dynamos.types.NumberDOS.ValueObject;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.dynamos.structures.Activation;
-import org.dynamos.structures.ExecutableDOS;
-import org.dynamos.structures.ObjectDOS;
-import org.dynamos.structures.OpCode;
-import org.dynamos.structures.Symbol;
-import org.dynamos.types.NumberDOS.ValueObject;
-import org.junit.Before;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 
 public class MessageLookupTest {
@@ -31,22 +27,22 @@ public class MessageLookupTest {
 	Symbol obj1 = Symbol.get("obj1");
 	Symbol obj1slot = Symbol.get("obj1slot");
 	Symbol obj1message = Symbol.get("obj1message");
-	
+
 	Symbol obj1custom = Symbol.get("obj1custom");
-	
+
 	Symbol listFactory = Symbol.get("listFactory");
 	Symbol emptyList = Symbol.get("emptyList");
 	Symbol argumentList = Symbol.get("argumentList");
 
 	Symbol obj1ConstructorSymbol = Symbol.get("obj1WithParent:listFactory:");
-	
-	
-	
+
+
+
 	private OpCodeInterpreter interpreter;
 	private List<OpCode> opCodeList;
 	private List<OpCode> opCodeShellList;
 	private ObjectDOS object0;
-	
+
 
 
 	@Before
@@ -55,7 +51,7 @@ public class MessageLookupTest {
 		opCodeList = setupBasicObj1ConstructorOpCodes();
 		opCodeShellList = setupBasicShellOpCodes();
 	}
-	
+
 	@Test
 	public void executes() {
 		ObjectDOS result = executeOpCodes();
@@ -70,7 +66,7 @@ public class MessageLookupTest {
 				new OpCode.FunctionCall(obj1message)
 			);
 		updateOpcodeList(opCodeShellList, END_OF_SHELL, customOpCodes);
-		
+
 		ObjectDOS result = executeOpCodes();
 		assertThat(((ValueObject)result.getSlot(Symbol.RESULT).getSlot(obj1slot)).getValue(), is(2345));
 	}
@@ -83,7 +79,7 @@ public class MessageLookupTest {
 				new OpCode.FunctionCall(obj0message)
 			);
 		updateOpcodeList(opCodeShellList, END_OF_SHELL, customOpCodes);
-		
+
 		ObjectDOS result = executeOpCodes();
 		assertThat(((ValueObject)result.getSlot(Symbol.RESULT)).getValue(), is(6789));
 	}
@@ -91,15 +87,15 @@ public class MessageLookupTest {
 	@Test
 	public void obj1CanAccessSlot0() {
 		updateShellToCallCustomMethod();
-		
+
 		List<OpCode> customMessageOpCodes = new ArrayList<OpCode>();
-		Collections.addAll(customMessageOpCodes, 
+		Collections.addAll(customMessageOpCodes,
 			new OpCode.PushSymbol(obj0slot),
 			new OpCode.FunctionCall(Symbol.GET_SLOT_$)
 		);
-		
-		setupCustomMessage(customMessageOpCodes);
-		
+
+		setupCustomMessageOnObject1(customMessageOpCodes);
+
 		ObjectDOS result = executeOpCodes();
 		assertThat(((ValueObject)result.getSlot(Symbol.RESULT)).getValue(), is(6789));
 	}
@@ -107,7 +103,7 @@ public class MessageLookupTest {
 	@Test
 	public void obj1CanSetSlot0OnObj1() {
 		updateShellToCallCustomMethod();
-		
+
 		List<OpCode> customMessageOpCodes = new ArrayList<OpCode>();
 		Collections.addAll(customMessageOpCodes,
 			new OpCode.CreateValueObject(8901),
@@ -117,11 +113,11 @@ public class MessageLookupTest {
 			new OpCode.PushSymbol(Symbol.THIS),
 			new OpCode.FunctionCall(Symbol.GET_SLOT_$)
 		);
-		
-		setupCustomMessage(customMessageOpCodes);
-		
+
+		setupCustomMessageOnObject1(customMessageOpCodes);
+
 		ObjectDOS result = executeOpCodes();
-		
+
 		assertThat(((ValueObject)object0.getSlot(obj0slot)).getValue(), is(6789));
 		assertThat(((ValueObject)result.getSlot(Symbol.RESULT).getSlot(obj0slot)).getValue(), is(8901));
 	}
@@ -129,16 +125,16 @@ public class MessageLookupTest {
 	@Test
 	public void obj0CanSetSlot0OnObj1() {
 		updateShellToCallCustomMethod();
-		
+
 		List<OpCode> customMessageOpCodes = new ArrayList<OpCode>();
 		Collections.addAll(customMessageOpCodes,
 			new OpCode.FunctionCall(obj0setter)
 		);
-		
-		setupCustomMessage(customMessageOpCodes);
-		
+
+		setupCustomMessageOnObject1(customMessageOpCodes);
+
 		ObjectDOS result = executeOpCodes();
-		
+
 		assertThat(((ValueObject)object0.getSlot(obj0slot)).getValue(), is(6789));
 		assertThat(((ValueObject)result.getSlot(Symbol.RESULT).getSlot(obj0slot)).getValue(), is(9012));
 	}
@@ -146,7 +142,7 @@ public class MessageLookupTest {
 	@Test
 	public void functionCanShadowExistingSlot() {
 		updateShellToCallCustomMethod();
-		
+
 		List<OpCode> customMessageOpCodes = new ArrayList<OpCode>();
 		Collections.addAll(customMessageOpCodes,
 			new OpCode.CreateValueObject(3456),
@@ -157,11 +153,11 @@ public class MessageLookupTest {
 			new OpCode.Push(obj0slot),
 			new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$)
 		);
-		
-		setupCustomMessage(customMessageOpCodes);
-		
+
+		setupCustomMessageOnObject1(customMessageOpCodes);
+
 		ObjectDOS result = executeOpCodes();
-		
+
 		assertThat(((ValueObject)object0.getSlot(obj0slot)).getValue(), is(6789));
 		assertThat(((ValueObject)result.getSlot(Symbol.RESULT).getSlot(obj0slot)).getValue(), is(6789));
 		assertThat(((ValueObject)result.getSlot(Symbol.RESULT).getSlot(obj1slot)).getValue(), is(3456));
@@ -170,7 +166,7 @@ public class MessageLookupTest {
 	@Test
 	public void functionCannotSetObjectSlotDirectly() {
 		updateShellToCallCustomMethod();
-		
+
 		List<OpCode> customMessageOpCodes = new ArrayList<OpCode>();
 		Collections.addAll(customMessageOpCodes,
 			new OpCode.CreateValueObject(4567),
@@ -179,26 +175,26 @@ public class MessageLookupTest {
 			new OpCode.SetObject(Symbol.CURRENT_CONTEXT),
 			new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$)
 		);
-		
-		setupCustomMessage(customMessageOpCodes);
-		
+
+		setupCustomMessageOnObject1(customMessageOpCodes);
+
 		try {
 			ObjectDOS result = executeOpCodes();
-			
+
 			assertThat(((ValueObject)result.getSlot(Symbol.RESULT).getSlot(obj1slot)).getValue(), is(1234));
 
-			fail("Shouldn't be allowed to assign slots on other objects");
+			fail("Shouldn't be allowed to assign slots on other objects, should instead just set on itself");
 		} catch (Exception e) {
 			System.out.println(e);
 			// pass
 		}
-		
+
 	}
 
 	@Test
 	public void functionCannotSetObjectLocalSlotDirectly() {
 		updateShellToCallCustomMethod();
-		
+
 		List<OpCode> customMessageOpCodes = new ArrayList<OpCode>();
 		Collections.addAll(customMessageOpCodes,
 			new OpCode.CreateValueObject(3456),
@@ -207,19 +203,19 @@ public class MessageLookupTest {
 			new OpCode.SetObject(Symbol.THIS),
 			new OpCode.FunctionCall(Symbol.SET_LOCAL_SLOT_$_TO_$)
 		);
-		
-		setupCustomMessage(customMessageOpCodes);
-		
+
+		setupCustomMessageOnObject1(customMessageOpCodes);
+
 		try {
 			executeOpCodes();
 			fail("Shouldn't be allowed to assign slots on other objects");
 		} catch (Exception e) {
 			// pass
 		}
-		
+
 	}
 
-	private void setupCustomMessage(List<OpCode> customMessageOpCodes) {
+	private void setupCustomMessageOnObject1(List<OpCode> customMessageOpCodes) {
 		List<OpCode> customOpCodes = new ArrayList<OpCode>();
 		Collections.addAll(customOpCodes,
 				// set up obj1slot accessor
@@ -228,19 +224,19 @@ public class MessageLookupTest {
 	        	new OpCode.PushSymbol(argumentList),
 	        	new OpCode.Push(Symbol.RESULT),
 	        	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
-	        	
+
 	        	new OpCode.StartOpCodeList());
 		customOpCodes.addAll(customMessageOpCodes);
        	Collections.addAll(customOpCodes,
        			new OpCode.EndOpCodeList(),
-	        	
+
 	        	new OpCode.Push(argumentList),
 	        	new OpCode.Push(Symbol.RESULT),
-	        	new OpCode.FunctionCall(Symbol.CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$),
-	            
+	        	new OpCode.FunctionCall(MetaVM.CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$),
+
 	            new OpCode.PushSymbol(obj1custom),
-	            new OpCode.Push(Symbol.RESULT),
-	            new OpCode.FunctionCall(Symbol.SET_LOCAL_FUNCTION_$_TO_$)
+	            new OpCode.Push(Symbol.RESULT)
+//	            new OpCode.FunctionCall(Symbol.SET_LOCAL_FUNCTION_$_TO_$)
 			);
 		System.out.println("before append " + opCodeList.size());
 		updateOpcodeList(opCodeList, END_OF_OBJ1_CONSTRUCTOR, customOpCodes);
@@ -264,10 +260,10 @@ public class MessageLookupTest {
 				debugsFound++;
 			}
 		}
-		
+
 		opcodes.addAll(i-1, customOpCodes);
 	}
-	
+
 	private ObjectDOS executeOpCodes() {
 		ExecutableDOS obj1Constructor = createObj1Constructor(opCodeList);
 		object0 = createSuperObject0();
@@ -279,7 +275,7 @@ public class MessageLookupTest {
 
 		OpCode[] shellOpCodes = opCodeShellList.toArray(new OpCode[0]);
 		interpreter.interpret(shell, shellOpCodes);
-		
+
 		return shell;
 	}
 
@@ -289,7 +285,7 @@ public class MessageLookupTest {
 	        	new OpCode.Push(obj0),
 	        	new OpCode.Push(listFactory),
 	        	new OpCode.FunctionCall(obj1ConstructorSymbol),
-	        	
+
 				new OpCode.Debug("returning from shell", Symbol.RESULT)
 	        );
 		return opCodes;
@@ -299,13 +295,13 @@ public class MessageLookupTest {
 		ObjectDOS newObject0 = interpreter.newObject();
 		newObject0.setSlot(obj0slot, new ValueObject(6789));
 		newObject0.setFunction(obj0message, interpreter.getEnvironment().createFunction(
-				new Symbol[] {}, 
+				new Symbol[] {},
 				new OpCode[] {
 					new OpCode.PushSymbol(obj0slot),
 					new OpCode.FunctionCall(Symbol.GET_SLOT_$)
 				}));
 		newObject0.setFunction(obj0setter, interpreter.getEnvironment().createFunction(
-				new Symbol[] {}, 
+				new Symbol[] {},
 				new OpCode[] {
 					new OpCode.CreateValueObject(9012),
 					new OpCode.PushSymbol(obj0slot),
@@ -318,7 +314,7 @@ public class MessageLookupTest {
 
 	private ExecutableDOS createObj1Constructor(List<OpCode> opCodesList) {
 		OpCode[] opCodes = opCodesList.toArray(new OpCode[0]);
-		return interpreter.getEnvironment().createConstructor(new Symbol[] {obj0, listFactory}, opCodes);
+		return interpreter.getEnvironment().createFunction(new Symbol[] {obj0, listFactory}, opCodes);
 	}
 
 	private List<OpCode> setupBasicObj1ConstructorOpCodes() {
@@ -327,55 +323,55 @@ public class MessageLookupTest {
 			// set parent
 			new OpCode.Push(obj0),
 			new OpCode.FunctionCall(Symbol.PARENT_$),
-				
+
 			// set up obj1slot
 			new OpCode.CreateValueObject(1234),
 			new OpCode.PushSymbol(obj1slot),
 			new OpCode.Push(Symbol.RESULT),
 			new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
-			
+
 			// set up obj1message
         	new OpCode.PushSymbol(emptyList), // empty symbol list
         	new OpCode.FunctionCall(Symbol.GET_SLOT_$),
         	new OpCode.PushSymbol(argumentList),
         	new OpCode.Push(Symbol.RESULT),
         	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
-        	
+
         	new OpCode.StartOpCodeList(),
         		new OpCode.CreateValueObject(2345),
 				new OpCode.PushSymbol(obj1slot),
 				new OpCode.Push(Symbol.RESULT),
 				new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
         	new OpCode.EndOpCodeList(),
-        	
+
         	new OpCode.Push(argumentList),
         	new OpCode.Push(Symbol.RESULT),
-        	new OpCode.FunctionCall(Symbol.CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$),
-            
+        	new OpCode.FunctionCall(MetaVM.CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$),
+
             new OpCode.PushSymbol(obj1message),
             new OpCode.Push(Symbol.RESULT),
-            new OpCode.FunctionCall(Symbol.SET_LOCAL_FUNCTION_$_TO_$),
-            
+//            new OpCode.FunctionCall(Symbol.SET_LOCAL_FUNCTION_$_TO_$),
+
 			// set up obj1slot accessor
         	new OpCode.PushSymbol(emptyList), // empty symbol list
         	new OpCode.FunctionCall(Symbol.GET_SLOT_$),
         	new OpCode.PushSymbol(argumentList),
         	new OpCode.Push(Symbol.RESULT),
         	new OpCode.FunctionCall(Symbol.SET_SLOT_$_TO_$),
-        	
+
         	new OpCode.StartOpCodeList(),
 				new OpCode.PushSymbol(obj1slot),
 				new OpCode.FunctionCall(Symbol.GET_SLOT_$),
         	new OpCode.EndOpCodeList(),
-        	
+
         	new OpCode.Push(argumentList),
         	new OpCode.Push(Symbol.RESULT),
-        	new OpCode.FunctionCall(Symbol.CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$),
-            
+        	new OpCode.FunctionCall(MetaVM.CREATE_FUNCTION_WITH_ARGUMENTS_$_OPCODES_$),
+
             new OpCode.PushSymbol(obj1slot),
             new OpCode.Push(Symbol.RESULT),
-            new OpCode.FunctionCall(Symbol.SET_LOCAL_FUNCTION_$_TO_$),
-            
+//            new OpCode.FunctionCall(Symbol.SET_LOCAL_FUNCTION_$_TO_$),
+
 			new OpCode.Debug("returning from obj1 constructor", Symbol.RESULT)
         	);
 		return opCodes;

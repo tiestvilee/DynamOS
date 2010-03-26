@@ -1,10 +1,9 @@
 package org.dynamos;
 
 import org.dynamos.structures.Activation;
-import org.dynamos.structures.ConstructorDOS;
 import org.dynamos.structures.FunctionDOS;
 import org.dynamos.structures.FunctionWithContext;
-import org.dynamos.structures.Mirror;
+import org.dynamos.structures.MetaVM;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.Symbol;
@@ -22,10 +21,10 @@ public class Environment {
 	private ObjectDOS virtualMachine;
 	private ObjectDOS rootObject;
 	private ObjectDOS zero;
-    
+
 	private ObjectDOS nullDOS;
     private ObjectDOS undefined;
-	private ObjectDOS mirror;
+	private ObjectDOS metaVM;
 	private ObjectDOS booleanContainer;
 	private ObjectDOS emptyList;
 	private ObjectDOS functionPrototype;
@@ -46,22 +45,29 @@ public class Environment {
 		nullDOS.setParent(rootObject);
 		undefined = new UndefinedDOS();
 		undefined.setParent(rootObject);
-		
+
 		ObjectDOS.initialiseRootObject(this);
-		
-		mirror = Mirror.initialiseMirror(this);
-		
+
+        System.out.println("Initialise MetaVM");
+		metaVM = MetaVM.initialiseMetaVM(this);
+
+        System.out.println("Initialise VM");
 		virtualMachine = VMObjectDOS.getVMObject(this);
+        System.out.println("Initialise empty list");
 		emptyList = StandardObjects.createEmptyList(this);
+        System.out.println("Initialise Activation");
 		activationBuilder = Activation.initializeActivation(this);
 	}
-	
+
 	public void init(OpCodeInterpreter interpreter) {
+        System.out.println("Initialise Boolean");
 		booleanContainer = BooleanDOS.initialiseBooleans(this);
+        System.out.println("Initialise number");
         zero = NumberDOS.createZero(interpreter, this);
+        System.out.println("Initialise function prototype");
         functionPrototype = FunctionWithContext.createFunctionPrototype(this);
     }
-	
+
 	public ObjectDOS getVirtualMachine() {
 		return virtualMachine;
 	}
@@ -69,34 +75,34 @@ public class Environment {
 	public ActivationBuilder getContextBuilder() {
 		return activationBuilder;
 	}
-	
-	public ObjectDOS getMirror() {
-		return mirror;
+
+	public ObjectDOS getMetaVM() {
+		return metaVM;
 	}
-	
+
 	public ObjectDOS getZero() {
 		return zero;
 	}
-	
+
 	public ObjectDOS getEmptyList() {
 		return emptyList;
 	}
-	
+
 	public ObjectDOS getUndefined() {
 		return undefined;
 	}
-	
+
 	public ObjectDOS getNull() {
 		return nullDOS;
 	}
-	
+
 	public ObjectDOS createNewObject() {
 		ObjectDOS object = new ObjectDOS();
 		object.setParent(rootObject);
 		object.setSlot(Symbol.THIS, object);
 		return object;
 	}
-	
+
 	public ObjectDOS createNewValueObject(int value) {
 		NumberDOS.ValueObject object = new NumberDOS.ValueObject(value);
 		object.setParent(rootObject);
@@ -133,16 +139,6 @@ public class Environment {
 				opCodes);
 		functionDefinition.setParent(rootObject);
 		return functionDefinition;
-	}
-
-	public ConstructorDOS createConstructor(Symbol[] arguments, OpCode[] opCodes) {
-		FunctionDOS functionDefinition = new FunctionDOS(
-				arguments,
-				opCodes);
-		functionDefinition.setParent(rootObject);
-		ConstructorDOS function = new ConstructorDOS(functionDefinition);
-		function.setParent(rootObject);
-		return function;
 	}
 
 }

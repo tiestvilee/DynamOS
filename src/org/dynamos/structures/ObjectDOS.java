@@ -100,10 +100,6 @@ public class ObjectDOS {
     	return slots.get(symbol);
     }
 
-    public void setArguments(List<ObjectDOS> arguments) {
-	    setSlot(Symbol.ARGUMENTS, StandardObjects.toDOSList(arguments));
-	}
-
     /* Runtime Definition of Object */
     
 	public static void initialiseRootObject(Environment environment) {

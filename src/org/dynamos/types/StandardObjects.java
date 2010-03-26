@@ -5,6 +5,14 @@
 
 package org.dynamos.types;
 
+import org.dynamos.Environment;
+import org.dynamos.compiler.AnonymousFunctionNode;
+import org.dynamos.compiler.BootstrapCompiler;
+import org.dynamos.compiler.StatementContainingNode;
+import org.dynamos.structures.FunctionDOS;
+import org.dynamos.structures.ObjectDOS;
+import org.dynamos.structures.Symbol;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -13,17 +21,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.dynamos.Environment;
-import org.dynamos.compiler.BootstrapCompiler;
-import org.dynamos.compiler.AnonymousFunctionNode;
-import org.dynamos.compiler.StatementContainingNode;
-import org.dynamos.structures.ConstructorDOS;
-import org.dynamos.structures.FunctionDOS;
-import org.dynamos.structures.ObjectDOS;
-import org.dynamos.structures.Symbol;
-
 /**
- * 
+ *
  * @author tiestvilee
  */
 public class StandardObjects {
@@ -56,14 +55,15 @@ public class StandardObjects {
 	}
 	public static ObjectDOS createEmptyList(Environment environment) {
 		env = environment;
-		
+
 		String program = loadFile("ListDOS.oc", StandardObjects.class);
-		
+        System.out.println(program);
+
 		Matcher matcher = Pattern.compile("\\/\\/ function start([\\s\\S]+?)\\/\\/ function end", Pattern.MULTILINE).matcher(program);
-		
+
 		BootstrapCompiler compiler = new BootstrapCompiler();
 		ObjectDOS emptyList = environment.createNewObject();
-		
+
 		while(matcher.find()) {
 			String functionString = matcher.group(1);
 			FunctionDOS function = compiler.compileFunction(functionString);
@@ -76,13 +76,13 @@ public class StandardObjects {
 		matcher.find();
 		String constructorString = matcher.group(1);
 		System.out.println(constructorString);
-		ConstructorDOS constructor = compiler.compile(constructorString);
-		Symbol constructorName = determineFunctionName(compiler, constructorString);
-		emptyList.setFunction(constructorName, constructor);
-		
+		FunctionDOS function = compiler.compileFunction(constructorString);
+		Symbol functionName = determineFunctionName(compiler, constructorString);
+		emptyList.setFunction(functionName, function);
+
 		emptyList.setSlot(Symbol.get("head"), environment.getUndefined());
 		emptyList.setSlot(Symbol.get("tail"), environment.getUndefined());
-		
+
 		return emptyList;
 	}
 
@@ -98,7 +98,7 @@ public class StandardObjects {
 		try {
 			byte[] buf = new byte[12*1000];
 			InputStream in = clazz.getResourceAsStream(filename);
-			
+
             if (in != null) {
                 try {
                     int total = 0;
@@ -130,7 +130,7 @@ public class StandardObjects {
 		Collections.reverse(list);
 		return list;
 	}
-	
+
 	private static List<ObjectDOS> toJavaListRecurse(ObjectDOS listDOS) {
 		List<ObjectDOS> result;
 		ObjectDOS head = listDOS.getSlot(Symbol.get("head"));
@@ -142,11 +142,11 @@ public class StandardObjects {
 		} else {
 			result = new ArrayList<ObjectDOS>();
 		}
-		
+
 		if(head != env.getUndefined() && head != null) {
 			result.add(head);
 		}
-		
+
 		return result;
 	}
 

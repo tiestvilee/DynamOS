@@ -5,30 +5,50 @@ import java.util.regex.Pattern;
 
 public class TransformStringToAST {
 
-	
-	/*
-	 * ObjectDefinition => '(object' MessageDefinition FunctionBody ')'
-	 */
-	public ASTNode objectDefinition( Stream stream) {
-		NamedFunctionNode objectConstructor = new ConstructorNode();
 
-		objectConstructor.isPrivate(stream.matchesPrivate());
+	/*
+	 * ConstructorDefinition => '(constructor' ConstructorBody ')'
+	 */
+	public ASTNode constructorDefinition( Stream stream) {
+		NamedFunctionNode objectConstructor = new ConstructorNode();
 		stream.consumeObjectConstructorStart();
-		
-		messageDefinition(objectConstructor, stream);
-		functionBody(objectConstructor, stream);
-		stream.consumeRightBracket();
-		
+
+        messageAndBody(stream, objectConstructor);
+
+        stream.consumeRightBracket();
+
 		return objectConstructor;
 	}
-	
+
 	/*
-	 * MessageDefinition => Identifier [ ':' Identifier (Identifier ':' Identifier)* ] '\n'
+	 * PrivateConstructorDefinition => '(private-constructor' ConstructorBody ')'
 	 */
+	public ASTNode privateConstructorDefinition( Stream stream) {
+		PrivateConstructorNode objectConstructor = new PrivateConstructorNode();
+		stream.consumePrivateObjectConstructorStart();
+
+        messageAndBody(stream, objectConstructor);
+
+        stream.consumeRightBracket();
+
+		return objectConstructor;
+	}
+
+    /*
+     * ConstructorBody => MessageDefinition FunctionBody
+     */
+    private void messageAndBody(Stream stream, AnonymousFunctionNode objectConstructor) {
+        messageDefinition(objectConstructor, stream);
+        functionBody(objectConstructor, stream);
+    }
+
+    /*
+      * MessageDefinition => Identifier [ ':' Identifier (Identifier ':' Identifier)* ] '\n'
+      */
 	public void messageDefinition(AnonymousFunctionNode fnode, Stream stream) {
-		
+
 		fnode.appendToName(stream.consumeIdentifier());
-		
+
 		if(stream.matchesColon()) {
 			do {
 				fnode.appendToName(stream.consumeColon());
@@ -39,10 +59,10 @@ public class TransformStringToAST {
 				fnode.appendToName(stream.consumeIdentifier());
 			} while (true);
 		}
-		
+
 		stream.consumeNewLine();
 	}
-	
+
 	/*
 	 * FunctionBody => (FunctionCall
 	 *              |  GetterCall
@@ -51,7 +71,7 @@ public class TransformStringToAST {
 	 *              |  ObjectDefinition
 	 *              |  Debug
 	 *              |  '\n')+
-	 *              
+	 *
 	 */
 	public void functionBody(StatementContainingNode node, Stream stream) {
 		while(true) {
@@ -63,8 +83,12 @@ public class TransformStringToAST {
 				slotDefinition(node, stream);
 			} else if(stream.matchesFunctionStart()) {
 				node.addStatement(functionDefinition(stream));
+			} else if(stream.matchesMethodStart()) {
+				node.addStatement(methodDefinition(stream));
 			} else if(stream.matchesObjectConstructorStart()) {
-				node.addStatement(objectDefinition(stream));
+				node.addStatement(constructorDefinition(stream));
+			} else if(stream.matchesPrivateObjectConstructorStart()) {
+				node.addStatement(privateConstructorDefinition(stream));
 			} else if(stream.matchesBackTick()) {
 				node.addStatement(debug(stream));
 			} else if(stream.matchesNewLine()) {
@@ -82,9 +106,9 @@ public class TransformStringToAST {
 	 */
 	private ASTNode getterCall(Stream stream) {
 		stream.consumeSlotDiscriminator();
-		
+
 		String identifier = stream.consumeIdentifier();
-		
+
 		if(stream.matchesColon()) {
 			stream.consumeColon();
 			SymbolSetterNode node = new SymbolSetterNode(identifier);
@@ -98,21 +122,21 @@ public class TransformStringToAST {
 		}
 		return node;
 	}
-	
+
 	/*
-	 * 
-	 *  FunctionCall => Identifier [':' FunctionCallParameter (Identifier ':' FunctionCallParameter)* ] ['\n'] 
-	 * 
+	 *
+	 *  FunctionCall => Identifier [':' FunctionCallParameter (Identifier ':' FunctionCallParameter)* ] ['\n']
+	 *
 	 */
 	public FunctionCallNode functionCall(Stream stream) {
 		FunctionCallNode call = microCall(stream);
-		
+
 		if(stream.matchesColon()) {
 			do {
 				call.appendToName(stream.consumeColon());
-				
+
 				functionCallParameter(stream, call);
-				
+
 				if(stream.matchesIdentifier()) {
 					call.appendToName(stream.consumeIdentifier());
 				} else if (stream.matchesRightBracket() || stream.matchesRightBrace()) {
@@ -169,7 +193,7 @@ public class TransformStringToAST {
 		newCall.appendToName(stream.consumeIdentifier());
 		return newCall;
 	}
-	
+
 	/*
 	 * SlotDefinition => '(slot' Identifier ')' '\n'
 	 */
@@ -181,30 +205,44 @@ public class TransformStringToAST {
 		stream.consumeRightBracket();
 		stream.consumeNewLine();
 	}
-	
+
 	/*
 	 * FunctionDefinition => '(function' MessageDefinition FunctionBody ')\n'
 	 */
 	public ASTNode functionDefinition(Stream stream) {
-		NamedFunctionNode fnode = new FunctionNode();
-		
-		fnode.isPrivate(stream.matchesPrivate());
+		NamedFunctionNode functionNode = new NamedFunctionNode();
 		stream.consumeFunctionStart();
-		messageDefinition(fnode, stream);
-		functionBody(fnode, stream);
+
+        messageAndBody(stream, functionNode);
+
 		stream.consumeRightBracket();
 		stream.consumeNewLine();
-		
-		return fnode;
+
+		return functionNode;
 	}
-	
+
+	/*
+	 * MethodDefinition => '(method' MessageDefinition FunctionBody ')\n'
+	 */
+	public ASTNode methodDefinition(Stream stream) {
+		NamedMethodNode methodNode = new NamedMethodNode();
+		stream.consumeMethodStart();
+
+        messageAndBody(stream, methodNode);
+
+		stream.consumeRightBracket();
+		stream.consumeNewLine();
+
+		return methodNode;
+	}
+
 	/*
 	 * Closure => '[' ClosureParameters '|' FunctionBody ']'
 	 */
 	public void closure(FunctionCallNode node, Stream stream) {
 		AnonymousFunctionNode closure = new AnonymousFunctionNode();
 		node.addParameter(closure);
-		
+
 		stream.consumeLeftBrace();
 		closureParameters(stream, closure);
 		stream.consumePipe();
@@ -231,8 +269,8 @@ public class TransformStringToAST {
 		stream.consumeNewLine();
 		return debugNode;
 	}
-	
-	static class Stream {
+
+    static class Stream {
 		private final String program;
 		private int index;
 		private static final String WHITESPACE = "[^\\S\n]";
@@ -241,7 +279,7 @@ public class TransformStringToAST {
 			this.program = program;
 			this.index = index;
 		}
-		
+
 		public boolean eos() {
 			consumeMatch("EOS", "(" + WHITESPACE + "*)");
 			return index == program.length();
@@ -250,29 +288,41 @@ public class TransformStringToAST {
 		public void consumeLocalStart() {
 			consumeMatchWithPreceedingWhitespace("slot start", "\\(slot ");
 		}
-		
+
 		public boolean matchesSlotStart() {
 			return testMatch("\\(slot ");
 		}
-		
-		public boolean matchesPrivate() {
-			return testMatch("\\(private-");
-		}
 
 		public boolean matchesFunctionStart() {
-			return testMatch("\\((private-)?function ");
+			return testMatch("\\(function ");
 		}
 
 		public void consumeFunctionStart() {
-			consumeMatchWithPreceedingWhitespace("Function start", "\\((private-)?function ");
+			consumeMatchWithPreceedingWhitespace("Function start", "\\(function ");
+		}
+
+		public boolean matchesMethodStart() {
+			return testMatch("\\(method ");
+		}
+
+		public void consumeMethodStart() {
+			consumeMatchWithPreceedingWhitespace("Method start", "\\(method ");
 		}
 
 		public boolean matchesObjectConstructorStart() {
-			return testMatch("\\((private-)?constructor ");
+			return testMatch("\\(constructor ");
 		}
 
 		public void consumeObjectConstructorStart() {
-			consumeMatchWithPreceedingWhitespace("Constructor start", "\\((private-)?constructor ");
+			consumeMatchWithPreceedingWhitespace("Constructor start", "\\(constructor ");
+		}
+
+		public boolean matchesPrivateObjectConstructorStart() {
+			return testMatch("\\(private-constructor");
+		}
+
+		public void consumePrivateObjectConstructorStart() {
+			consumeMatchWithPreceedingWhitespace("Private Constructor start", "\\(private-constructor ");
 		}
 
 		public boolean matchesFullStop() {
@@ -282,7 +332,7 @@ public class TransformStringToAST {
 		public void consumeFullStop() {
 			consumeMatchWithPreceedingWhitespace("FullStop", "\\.");
 		}
-		
+
 		public boolean matchesBackTick() {
 			return testMatch("`");
 		}
@@ -298,7 +348,7 @@ public class TransformStringToAST {
 		public void consumeHash() {
 			consumeMatchWithPreceedingWhitespace("Hash", "#");
 		}
-		
+
 		public boolean matchesPipe() {
 			return testMatch("\\|");
 		}
@@ -306,7 +356,7 @@ public class TransformStringToAST {
 		public void consumePipe() {
 			consumeMatchWithPreceedingWhitespace("Pipe", "\\|");
 		}
-		
+
 		public boolean matchesComma() {
 			return testMatch(",");
 		}
@@ -314,7 +364,7 @@ public class TransformStringToAST {
 		public void consumeComma() {
 			consumeMatchWithPreceedingWhitespace("Comma", ",");
 		}
-		
+
 		public boolean matchesLeftBrace() {
 			return testMatch("\\[");
 		}
@@ -322,7 +372,7 @@ public class TransformStringToAST {
 		public void consumeLeftBrace() {
 			consumeMatchWithPreceedingWhitespace("Brace", "\\[");
 		}
-		
+
 		public boolean matchesRightBrace() {
 			return testMatch("\\]");
 		}
@@ -330,7 +380,7 @@ public class TransformStringToAST {
 		public void consumeRightBrace() {
 			consumeMatchWithPreceedingWhitespace("Brace", "\\]");
 		}
-		
+
 		public boolean matchesLeftBracket() {
 			return testMatch("\\(");
 		}
@@ -338,7 +388,7 @@ public class TransformStringToAST {
 		public void consumeLeftBracket() {
 			consumeMatchWithPreceedingWhitespace("Bracket", "\\(");
 		}
-		
+
 		public boolean matchesRightBracket() {
 			return testMatch("\\)");
 		}
@@ -346,7 +396,7 @@ public class TransformStringToAST {
 		public void consumeRightBracket() {
 			consumeMatchWithPreceedingWhitespace("Bracket", "\\)");
 		}
-		
+
 		public boolean matchesNewLine() {
 			return testMatch("(//.*)?\n");
 		}
@@ -378,7 +428,7 @@ public class TransformStringToAST {
 		public String consumeSlotDiscriminator() {
 			return consumeMatchWithPreceedingWhitespace("Slot discriminator", "\\$");
 		}
-		
+
 		public boolean matchesIdentifier() {
 			return testMatch("[a-zA-Z_\\-0-9?]+");
 		}
@@ -386,7 +436,7 @@ public class TransformStringToAST {
 		public String consumeIdentifier() {
 			return consumeMatchWithPreceedingWhitespace("Identifier", "[a-zA-Z_\\-0-9?]+");
 		}
-		
+
 		public boolean matchesString() {
 			return testMatch("'(.*)'");
 		}
@@ -407,7 +457,7 @@ public class TransformStringToAST {
 			}
 			return false;
 		}
-		
+
 		private String consumeMatchWithPreceedingWhitespace(String nameOfMatch, String match) {
 			return consumeMatch(nameOfMatch, WHITESPACE + "*(" + match + ")");
 		}
@@ -421,7 +471,7 @@ public class TransformStringToAST {
 			}
 			throw new RuntimeException(nameOfMatch + " not found at [" + getRemainder());
 		}
-		
+
 		public String getRemainder() {
 			return program.substring(index);
 		}
@@ -430,12 +480,12 @@ public class TransformStringToAST {
 
 	public StatementContainingNode transform(String program) {
 		Stream stream = new Stream(program, 0);
-		
+
 		StatementContainingNode node = new StatementContainingNode();
-		
+
 		functionBody(node, stream);
-		
-		return node; 
+
+		return node;
 	}
 
 }

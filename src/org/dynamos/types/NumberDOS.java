@@ -5,18 +5,18 @@
 
 package org.dynamos.types;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.dynamos.Environment;
 import org.dynamos.OpCodeInterpreter;
 import org.dynamos.compiler.BootstrapCompiler;
-import org.dynamos.structures.ConstructorDOS;
+import org.dynamos.structures.FunctionDOS;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.Symbol;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * 
+ *
  * @author tiestvilee
  */
 public class NumberDOS {
@@ -24,14 +24,16 @@ public class NumberDOS {
 	public static ObjectDOS createZero(OpCodeInterpreter interpreter, Environment environment) {
 
 		String libraryProgram = StandardObjects.loadFile("NumberDOS.oc", NumberDOS.class);
-		
-		ConstructorDOS libraryConstructor = new BootstrapCompiler().compile(libraryProgram);
-		
+
+        System.out.println(libraryProgram);
+
+		FunctionDOS libraryConstructor = new BootstrapCompiler().compileFunction(libraryProgram);
+
 		List<ObjectDOS> arguments = new ArrayList<ObjectDOS>();
 		arguments.add(environment.getVirtualMachine());
 		arguments.add(environment.getEmptyList());
-		
-		return libraryConstructor.execute(interpreter, arguments);
+
+		return libraryConstructor.execute(interpreter, arguments, interpreter.newActivation());
 	}
 
 	public static class ValueObject extends ObjectDOS {

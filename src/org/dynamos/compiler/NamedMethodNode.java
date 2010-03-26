@@ -6,10 +6,7 @@ import org.dynamos.structures.Symbol;
 
 import java.util.List;
 
-public class ConstructorNode extends PrivateConstructorNode {
-	public String type() {
-		return "constructor";
-	}
+public class NamedMethodNode extends NamedFunctionNode {
 
 	protected void assignToSlotsOrFunctions(List<OpCode> opCodes, int tempNumber) {
         opCodes.add(new OpCode.PushSymbol(Symbol.get(getName()))); // save into functions with correct name
@@ -17,12 +14,6 @@ public class ConstructorNode extends PrivateConstructorNode {
         opCodes.add(new OpCode.SetObject(Symbol.get("__mirror")));
 		opCodes.add(new OpCode.FunctionCall(Mirror.SET_FUNCTION_$_TO_$));
 	}
-
-    public void compile(List<OpCode> opCodes, List<Symbol> messageArguments) {
-        addFunctionPrefix(opCodes);
-        super.compile(opCodes, messageArguments);
-        addFunctionPostfix(opCodes);
-    }
 
 
 }

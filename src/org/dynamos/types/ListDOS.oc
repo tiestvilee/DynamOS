@@ -8,7 +8,7 @@
 		newListWithHead: $object tail: $this
 	)
 	// function end
-	
+
 	// function start
 	(function newListWithHead: head tail: tail
 		listConstructor: $head tail: $tail prototype: $this
@@ -17,22 +17,22 @@
 
 	// constructor start
 	(constructor listConstructor: head tail: tail prototype: listPrototype
-	  parent: $listPrototype 
+	  $__mirror setParentTo: $listPrototype
 	)
 	// constructor end
-	
+
 	// function start
 	(function head
 		$head
 	)
 	// function end
-	
+
 	// function start
 	(function tail
 		$tail
 	)
 	// function end
-	
+
 	// function start
 	(function at: index
 		$head // obviously wrong!

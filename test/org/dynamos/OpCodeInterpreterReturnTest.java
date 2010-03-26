@@ -65,8 +65,9 @@ public class OpCodeInterpreterReturnTest {
         
         FunctionDOS functionThatSetsupReturnSlot = new FunctionDOS(null, null) {
         	@Override
-            public void execute(OpCodeInterpreter interpreter, List<ObjectDOS> suppliedArguments, Activation activation) {
+            public ObjectDOS execute(OpCodeInterpreter interpreter, List<ObjectDOS> suppliedArguments, Activation activation) {
         		activation.setSlot(Symbol.RESULT, result);
+        		return result;
             }
         };
         context.setFunction(functionName, new FunctionWithContext(functionThatSetsupReturnSlot, context));
