@@ -1,0 +1,19 @@
+Package org.dynamos.image;
+
+Helpers
+  alpha_numeric = [[['a'..'z'] + ['A'..'Z']] + ['0'..'9']];
+
+Tokens
+  colon = ':';
+  id = alpha_numeric (alpha_numeric | ':')*;
+  open_brace = '{';
+  close_brace = '}';
+  
+Productions
+  image = object_definition *;
+  object_definition = id slots functions;
+  slots = open_brace image close_brace;
+  functions = open_brace function_definition * close_brace;
+  function_definition = id required_parameters opcodes;
+  required_parameters = open_brace close_brace;
+  opcodes = open_brace close_brace;
