@@ -2,7 +2,7 @@
 
 package org.dynamos.image.node;
 
-public abstract class PSlotDefinition extends Node
+public abstract class POpcode extends Node
 {
     // Empty body
 }

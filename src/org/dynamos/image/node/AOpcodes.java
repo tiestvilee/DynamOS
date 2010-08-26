@@ -2,12 +2,14 @@
 
 package org.dynamos.image.node;
 
+import java.util.*;
 import org.dynamos.image.analysis.*;
 
 @SuppressWarnings("nls")
 public final class AOpcodes extends POpcodes
 {
     private TOpenBrace _openBrace_;
+    private final LinkedList<POpcode> _opcode_ = new LinkedList<POpcode>();
     private TCloseBrace _closeBrace_;
 
     public AOpcodes()
@@ -17,10 +19,13 @@ public final class AOpcodes extends POpcodes
 
     public AOpcodes(
         @SuppressWarnings("hiding") TOpenBrace _openBrace_,
+        @SuppressWarnings("hiding") List<POpcode> _opcode_,
         @SuppressWarnings("hiding") TCloseBrace _closeBrace_)
     {
         // Constructor
         setOpenBrace(_openBrace_);
+
+        setOpcode(_opcode_);
 
         setCloseBrace(_closeBrace_);
 
@@ -31,6 +36,7 @@ public final class AOpcodes extends POpcodes
     {
         return new AOpcodes(
             cloneNode(this._openBrace_),
+            cloneList(this._opcode_),
             cloneNode(this._closeBrace_));
     }
 
@@ -64,6 +70,26 @@ public final class AOpcodes extends POpcodes
         this._openBrace_ = node;
     }
 
+    public LinkedList<POpcode> getOpcode()
+    {
+        return this._opcode_;
+    }
+
+    public void setOpcode(List<POpcode> list)
+    {
+        this._opcode_.clear();
+        this._opcode_.addAll(list);
+        for(POpcode e : list)
+        {
+            if(e.parent() != null)
+            {
+                e.parent().removeChild(e);
+            }
+
+            e.parent(this);
+        }
+    }
+
     public TCloseBrace getCloseBrace()
     {
         return this._closeBrace_;
@@ -94,6 +120,7 @@ public final class AOpcodes extends POpcodes
     {
         return ""
             + toString(this._openBrace_)
+            + toString(this._opcode_)
             + toString(this._closeBrace_);
     }
 
@@ -104,6 +131,11 @@ public final class AOpcodes extends POpcodes
         if(this._openBrace_ == child)
         {
             this._openBrace_ = null;
+            return;
+        }
+
+        if(this._opcode_.remove(child))
+        {
             return;
         }
 
@@ -124,6 +156,24 @@ public final class AOpcodes extends POpcodes
         {
             setOpenBrace((TOpenBrace) newChild);
             return;
+        }
+
+        for(ListIterator<POpcode> i = this._opcode_.listIterator(); i.hasNext();)
+        {
+            if(i.next() == oldChild)
+            {
+                if(newChild != null)
+                {
+                    i.set((POpcode) newChild);
+                    newChild.parent(this);
+                    oldChild.parent(null);
+                    return;
+                }
+
+                i.remove();
+                oldChild.parent(null);
+                return;
+            }
         }
 
         if(this._closeBrace_ == oldChild)

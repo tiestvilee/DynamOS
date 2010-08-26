@@ -99,12 +99,42 @@ public class AnalysisAdapter implements Analysis
         defaultCase(node);
     }
 
+    public void caseARequiredParameter(ARequiredParameter node)
+    {
+        defaultCase(node);
+    }
+
     public void caseAOpcodes(AOpcodes node)
     {
         defaultCase(node);
     }
 
+    public void caseAOpcode(AOpcode node)
+    {
+        defaultCase(node);
+    }
+
+    public void caseASymbolOpcodeParameter(ASymbolOpcodeParameter node)
+    {
+        defaultCase(node);
+    }
+
+    public void caseAValueOpcodeParameter(AValueOpcodeParameter node)
+    {
+        defaultCase(node);
+    }
+
+    public void caseAEmptyOpcodeParameter(AEmptyOpcodeParameter node)
+    {
+        defaultCase(node);
+    }
+
     public void caseTColon(TColon node)
+    {
+        defaultCase(node);
+    }
+
+    public void caseTNumber(TNumber node)
     {
         defaultCase(node);
     }
@@ -120,6 +150,26 @@ public class AnalysisAdapter implements Analysis
     }
 
     public void caseTCloseBrace(TCloseBrace node)
+    {
+        defaultCase(node);
+    }
+
+    public void caseTFullstop(TFullstop node)
+    {
+        defaultCase(node);
+    }
+
+    public void caseTHash(THash node)
+    {
+        defaultCase(node);
+    }
+
+    public void caseTEquals(TEquals node)
+    {
+        defaultCase(node);
+    }
+
+    public void caseTBlank(TBlank node)
     {
         defaultCase(node);
     }

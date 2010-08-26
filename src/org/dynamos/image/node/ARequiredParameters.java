@@ -2,12 +2,14 @@
 
 package org.dynamos.image.node;
 
+import java.util.*;
 import org.dynamos.image.analysis.*;
 
 @SuppressWarnings("nls")
 public final class ARequiredParameters extends PRequiredParameters
 {
     private TOpenBrace _openBrace_;
+    private final LinkedList<PRequiredParameter> _requiredParameter_ = new LinkedList<PRequiredParameter>();
     private TCloseBrace _closeBrace_;
 
     public ARequiredParameters()
@@ -17,10 +19,13 @@ public final class ARequiredParameters extends PRequiredParameters
 
     public ARequiredParameters(
         @SuppressWarnings("hiding") TOpenBrace _openBrace_,
+        @SuppressWarnings("hiding") List<PRequiredParameter> _requiredParameter_,
         @SuppressWarnings("hiding") TCloseBrace _closeBrace_)
     {
         // Constructor
         setOpenBrace(_openBrace_);
+
+        setRequiredParameter(_requiredParameter_);
 
         setCloseBrace(_closeBrace_);
 
@@ -31,6 +36,7 @@ public final class ARequiredParameters extends PRequiredParameters
     {
         return new ARequiredParameters(
             cloneNode(this._openBrace_),
+            cloneList(this._requiredParameter_),
             cloneNode(this._closeBrace_));
     }
 
@@ -64,6 +70,26 @@ public final class ARequiredParameters extends PRequiredParameters
         this._openBrace_ = node;
     }
 
+    public LinkedList<PRequiredParameter> getRequiredParameter()
+    {
+        return this._requiredParameter_;
+    }
+
+    public void setRequiredParameter(List<PRequiredParameter> list)
+    {
+        this._requiredParameter_.clear();
+        this._requiredParameter_.addAll(list);
+        for(PRequiredParameter e : list)
+        {
+            if(e.parent() != null)
+            {
+                e.parent().removeChild(e);
+            }
+
+            e.parent(this);
+        }
+    }
+
     public TCloseBrace getCloseBrace()
     {
         return this._closeBrace_;
@@ -94,6 +120,7 @@ public final class ARequiredParameters extends PRequiredParameters
     {
         return ""
             + toString(this._openBrace_)
+            + toString(this._requiredParameter_)
             + toString(this._closeBrace_);
     }
 
@@ -104,6 +131,11 @@ public final class ARequiredParameters extends PRequiredParameters
         if(this._openBrace_ == child)
         {
             this._openBrace_ = null;
+            return;
+        }
+
+        if(this._requiredParameter_.remove(child))
+        {
             return;
         }
 
@@ -124,6 +156,24 @@ public final class ARequiredParameters extends PRequiredParameters
         {
             setOpenBrace((TOpenBrace) newChild);
             return;
+        }
+
+        for(ListIterator<PRequiredParameter> i = this._requiredParameter_.listIterator(); i.hasNext();)
+        {
+            if(i.next() == oldChild)
+            {
+                if(newChild != null)
+                {
+                    i.set((PRequiredParameter) newChild);
+                    newChild.parent(this);
+                    oldChild.parent(null);
+                    return;
+                }
+
+                i.remove();
+                oldChild.parent(null);
+                return;
+            }
         }
 
         if(this._closeBrace_ == oldChild)

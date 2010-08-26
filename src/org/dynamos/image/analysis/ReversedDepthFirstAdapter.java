@@ -199,11 +199,44 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
         {
             node.getCloseBrace().apply(this);
         }
+        {
+            List<PRequiredParameter> copy = new ArrayList<PRequiredParameter>(node.getRequiredParameter());
+            Collections.reverse(copy);
+            for(PRequiredParameter e : copy)
+            {
+                e.apply(this);
+            }
+        }
         if(node.getOpenBrace() != null)
         {
             node.getOpenBrace().apply(this);
         }
         outARequiredParameters(node);
+    }
+
+    public void inARequiredParameter(ARequiredParameter node)
+    {
+        defaultIn(node);
+    }
+
+    public void outARequiredParameter(ARequiredParameter node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseARequiredParameter(ARequiredParameter node)
+    {
+        inARequiredParameter(node);
+        if(node.getFullstop() != null)
+        {
+            node.getFullstop().apply(this);
+        }
+        if(node.getId() != null)
+        {
+            node.getId().apply(this);
+        }
+        outARequiredParameter(node);
     }
 
     public void inAOpcodes(AOpcodes node)
@@ -224,10 +257,114 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
         {
             node.getCloseBrace().apply(this);
         }
+        {
+            List<POpcode> copy = new ArrayList<POpcode>(node.getOpcode());
+            Collections.reverse(copy);
+            for(POpcode e : copy)
+            {
+                e.apply(this);
+            }
+        }
         if(node.getOpenBrace() != null)
         {
             node.getOpenBrace().apply(this);
         }
         outAOpcodes(node);
+    }
+
+    public void inAOpcode(AOpcode node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAOpcode(AOpcode node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAOpcode(AOpcode node)
+    {
+        inAOpcode(node);
+        if(node.getFullstop() != null)
+        {
+            node.getFullstop().apply(this);
+        }
+        if(node.getOpcodeParameter() != null)
+        {
+            node.getOpcodeParameter().apply(this);
+        }
+        if(node.getNumber() != null)
+        {
+            node.getNumber().apply(this);
+        }
+        outAOpcode(node);
+    }
+
+    public void inASymbolOpcodeParameter(ASymbolOpcodeParameter node)
+    {
+        defaultIn(node);
+    }
+
+    public void outASymbolOpcodeParameter(ASymbolOpcodeParameter node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseASymbolOpcodeParameter(ASymbolOpcodeParameter node)
+    {
+        inASymbolOpcodeParameter(node);
+        if(node.getId() != null)
+        {
+            node.getId().apply(this);
+        }
+        if(node.getEquals() != null)
+        {
+            node.getEquals().apply(this);
+        }
+        outASymbolOpcodeParameter(node);
+    }
+
+    public void inAValueOpcodeParameter(AValueOpcodeParameter node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAValueOpcodeParameter(AValueOpcodeParameter node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAValueOpcodeParameter(AValueOpcodeParameter node)
+    {
+        inAValueOpcodeParameter(node);
+        if(node.getNumber() != null)
+        {
+            node.getNumber().apply(this);
+        }
+        if(node.getHash() != null)
+        {
+            node.getHash().apply(this);
+        }
+        outAValueOpcodeParameter(node);
+    }
+
+    public void inAEmptyOpcodeParameter(AEmptyOpcodeParameter node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAEmptyOpcodeParameter(AEmptyOpcodeParameter node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAEmptyOpcodeParameter(AEmptyOpcodeParameter node)
+    {
+        inAEmptyOpcodeParameter(node);
+        outAEmptyOpcodeParameter(node);
     }
 }

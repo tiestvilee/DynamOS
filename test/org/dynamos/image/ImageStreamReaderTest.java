@@ -10,6 +10,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 import org.dynamos.structures.FunctionDOS;
 import org.dynamos.structures.ObjectDOS;
+import org.dynamos.structures.OpCode;
 import org.dynamos.structures.Symbol;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,9 +39,9 @@ public class ImageStreamReaderTest {
 	@Test
 	public void shouldLoadSimpleObject() {
 		
-		ObjectDOS wrapper = reader.read("anObject{}{}");
+		ObjectDOS wrapper = reader.read("anObject1{}{}");
 		
-		ObjectDOS actual = wrapper.getSlot(Symbol.get("anObject"));
+		ObjectDOS actual = wrapper.getSlot(Symbol.get("anObject1"));
 		
 		assertThat(actual.getFunctions().size(), is(0));
 		assertThat(actual.getSlots().size(), is(0));
@@ -57,15 +58,42 @@ public class ImageStreamReaderTest {
 		assertThat(actual.getSlot(Symbol.get("anotherNestedObject")), notNullValue());
 	}
 
-
 	@Test
 	public void shouldLoadEmptyFunction() {
-		ObjectDOS wrapper = reader.read("anObject{}{aFunction:Does:This:{}{}}");
+		ObjectDOS wrapper = reader.read(
+"anObject{}{aFunction:Does:This:{}{}}");
 		
 		ObjectDOS actual = wrapper.getSlot(Symbol.get("anObject"));
 		
 		FunctionDOS function = (FunctionDOS) actual.getFunction(Symbol.get("aFunction:Does:This:"));
 		assertThat(function.getOpCodes().length, is(0));
 		assertThat(function.getRequiredArguments().length, is(0));
+	}
+
+	@Test
+	public void shouldLoadFunction() {
+		ObjectDOS wrapper = reader.read(
+"anObject\n" +
+"  {}\n" +
+"  {\n" +
+"    aFunction:Does:This:\n" +
+"      {variable.variable2.}\n" +
+"      {1=FunctionCall.2=SetObject.3=Push.4=PushSymbol.5#34.6.7.}\n" +
+"  }");
+		
+		ObjectDOS actual = wrapper.getSlot(Symbol.get("anObject"));
+		
+		FunctionDOS function = (FunctionDOS) actual.getFunction(Symbol.get("aFunction:Does:This:"));
+		
+		assertThat(function.getRequiredArguments()[0].value(), is("variable"));
+		assertThat(function.getRequiredArguments()[1].value(), is("variable2"));
+		
+		assertThat(function.getOpCodes()[0], is(OpCode.FunctionCall.class));
+		assertThat(function.getOpCodes()[1], is(OpCode.SetObject.class));
+		assertThat(function.getOpCodes()[2], is(OpCode.Push.class));
+		assertThat(function.getOpCodes()[3], is(OpCode.PushSymbol.class));
+		assertThat(function.getOpCodes()[4], is(OpCode.CreateValueObject.class));
+		assertThat(function.getOpCodes()[5], is(OpCode.StartOpCodeList.class));
+		assertThat(function.getOpCodes()[6], is(OpCode.EndOpCodeList.class));
 	}
 }

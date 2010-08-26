@@ -217,40 +217,106 @@ public class Parser
 			push(goTo(4), list, false);
 		    }
 		    break;
-                    case 7: /* reduce ARequiredParameters */
+                    case 7: /* reduce AArequiredparameters1RequiredParameters */
 		    {
 			ArrayList list = new7();
 			push(goTo(5), list, false);
 		    }
 		    break;
-                    case 8: /* reduce AOpcodes */
+                    case 8: /* reduce AArequiredparameters2RequiredParameters */
 		    {
 			ArrayList list = new8();
+			push(goTo(5), list, false);
+		    }
+		    break;
+                    case 9: /* reduce ARequiredParameter */
+		    {
+			ArrayList list = new9();
 			push(goTo(6), list, false);
 		    }
 		    break;
-                    case 9: /* reduce ATerminal$ObjectDefinition */
-		    {
-			ArrayList list = new9();
-			push(goTo(7), list, true);
-		    }
-		    break;
-                    case 10: /* reduce ANonTerminal$ObjectDefinition */
+                    case 10: /* reduce AAopcodes1Opcodes */
 		    {
 			ArrayList list = new10();
-			push(goTo(7), list, true);
+			push(goTo(7), list, false);
 		    }
 		    break;
-                    case 11: /* reduce ATerminal$FunctionDefinition */
+                    case 11: /* reduce AAopcodes2Opcodes */
 		    {
 			ArrayList list = new11();
-			push(goTo(8), list, true);
+			push(goTo(7), list, false);
 		    }
 		    break;
-                    case 12: /* reduce ANonTerminal$FunctionDefinition */
+                    case 12: /* reduce AOpcode */
 		    {
 			ArrayList list = new12();
-			push(goTo(8), list, true);
+			push(goTo(8), list, false);
+		    }
+		    break;
+                    case 13: /* reduce ASymbolOpcodeParameter */
+		    {
+			ArrayList list = new13();
+			push(goTo(9), list, false);
+		    }
+		    break;
+                    case 14: /* reduce AValueOpcodeParameter */
+		    {
+			ArrayList list = new14();
+			push(goTo(9), list, false);
+		    }
+		    break;
+                    case 15: /* reduce AEmptyOpcodeParameter */
+		    {
+			ArrayList list = new15();
+			push(goTo(9), list, false);
+		    }
+		    break;
+                    case 16: /* reduce ATerminal$ObjectDefinition */
+		    {
+			ArrayList list = new16();
+			push(goTo(10), list, true);
+		    }
+		    break;
+                    case 17: /* reduce ANonTerminal$ObjectDefinition */
+		    {
+			ArrayList list = new17();
+			push(goTo(10), list, true);
+		    }
+		    break;
+                    case 18: /* reduce ATerminal$FunctionDefinition */
+		    {
+			ArrayList list = new18();
+			push(goTo(11), list, true);
+		    }
+		    break;
+                    case 19: /* reduce ANonTerminal$FunctionDefinition */
+		    {
+			ArrayList list = new19();
+			push(goTo(11), list, true);
+		    }
+		    break;
+                    case 20: /* reduce ATerminal$RequiredParameter */
+		    {
+			ArrayList list = new20();
+			push(goTo(12), list, true);
+		    }
+		    break;
+                    case 21: /* reduce ANonTerminal$RequiredParameter */
+		    {
+			ArrayList list = new21();
+			push(goTo(12), list, true);
+		    }
+		    break;
+                    case 22: /* reduce ATerminal$Opcode */
+		    {
+			ArrayList list = new22();
+			push(goTo(13), list, true);
+		    }
+		    break;
+                    case 23: /* reduce ANonTerminal$Opcode */
+		    {
+			ArrayList list = new23();
+			push(goTo(13), list, true);
 		    }
 		    break;
                     }
@@ -461,7 +527,7 @@ public class Parser
 
 
     @SuppressWarnings("unchecked")
-    ArrayList new7() /* reduce ARequiredParameters */
+    ArrayList new7() /* reduce AArequiredparameters1RequiredParameters */
     {
         @SuppressWarnings("hiding") ArrayList nodeList = new ArrayList();
 
@@ -471,11 +537,15 @@ public class Parser
         {
             // Block
         TOpenBrace topenbraceNode2;
-        TCloseBrace tclosebraceNode3;
+        LinkedList listNode3 = new LinkedList();
+        TCloseBrace tclosebraceNode4;
         topenbraceNode2 = (TOpenBrace)nodeArrayList1.get(0);
-        tclosebraceNode3 = (TCloseBrace)nodeArrayList2.get(0);
+        {
+            // Block
+        }
+        tclosebraceNode4 = (TCloseBrace)nodeArrayList2.get(0);
 
-        prequiredparametersNode1 = new ARequiredParameters(topenbraceNode2, tclosebraceNode3);
+        prequiredparametersNode1 = new ARequiredParameters(topenbraceNode2, listNode3, tclosebraceNode4);
         }
 	nodeList.add(prequiredparametersNode1);
         return nodeList;
@@ -484,7 +554,64 @@ public class Parser
 
 
     @SuppressWarnings("unchecked")
-    ArrayList new8() /* reduce AOpcodes */
+    ArrayList new8() /* reduce AArequiredparameters2RequiredParameters */
+    {
+        @SuppressWarnings("hiding") ArrayList nodeList = new ArrayList();
+
+        @SuppressWarnings("unused") ArrayList nodeArrayList3 = pop();
+        @SuppressWarnings("unused") ArrayList nodeArrayList2 = pop();
+        @SuppressWarnings("unused") ArrayList nodeArrayList1 = pop();
+        PRequiredParameters prequiredparametersNode1;
+        {
+            // Block
+        TOpenBrace topenbraceNode2;
+        LinkedList listNode4 = new LinkedList();
+        TCloseBrace tclosebraceNode5;
+        topenbraceNode2 = (TOpenBrace)nodeArrayList1.get(0);
+        {
+            // Block
+        LinkedList listNode3 = new LinkedList();
+        listNode3 = (LinkedList)nodeArrayList2.get(0);
+	if(listNode3 != null)
+	{
+	  listNode4.addAll(listNode3);
+	}
+        }
+        tclosebraceNode5 = (TCloseBrace)nodeArrayList3.get(0);
+
+        prequiredparametersNode1 = new ARequiredParameters(topenbraceNode2, listNode4, tclosebraceNode5);
+        }
+	nodeList.add(prequiredparametersNode1);
+        return nodeList;
+    }
+
+
+
+    @SuppressWarnings("unchecked")
+    ArrayList new9() /* reduce ARequiredParameter */
+    {
+        @SuppressWarnings("hiding") ArrayList nodeList = new ArrayList();
+
+        @SuppressWarnings("unused") ArrayList nodeArrayList2 = pop();
+        @SuppressWarnings("unused") ArrayList nodeArrayList1 = pop();
+        PRequiredParameter prequiredparameterNode1;
+        {
+            // Block
+        TId tidNode2;
+        TFullstop tfullstopNode3;
+        tidNode2 = (TId)nodeArrayList1.get(0);
+        tfullstopNode3 = (TFullstop)nodeArrayList2.get(0);
+
+        prequiredparameterNode1 = new ARequiredParameter(tidNode2, tfullstopNode3);
+        }
+	nodeList.add(prequiredparameterNode1);
+        return nodeList;
+    }
+
+
+
+    @SuppressWarnings("unchecked")
+    ArrayList new10() /* reduce AAopcodes1Opcodes */
     {
         @SuppressWarnings("hiding") ArrayList nodeList = new ArrayList();
 
@@ -494,11 +621,15 @@ public class Parser
         {
             // Block
         TOpenBrace topenbraceNode2;
-        TCloseBrace tclosebraceNode3;
+        LinkedList listNode3 = new LinkedList();
+        TCloseBrace tclosebraceNode4;
         topenbraceNode2 = (TOpenBrace)nodeArrayList1.get(0);
-        tclosebraceNode3 = (TCloseBrace)nodeArrayList2.get(0);
+        {
+            // Block
+        }
+        tclosebraceNode4 = (TCloseBrace)nodeArrayList2.get(0);
 
-        popcodesNode1 = new AOpcodes(topenbraceNode2, tclosebraceNode3);
+        popcodesNode1 = new AOpcodes(topenbraceNode2, listNode3, tclosebraceNode4);
         }
 	nodeList.add(popcodesNode1);
         return nodeList;
@@ -507,7 +638,130 @@ public class Parser
 
 
     @SuppressWarnings("unchecked")
-    ArrayList new9() /* reduce ATerminal$ObjectDefinition */
+    ArrayList new11() /* reduce AAopcodes2Opcodes */
+    {
+        @SuppressWarnings("hiding") ArrayList nodeList = new ArrayList();
+
+        @SuppressWarnings("unused") ArrayList nodeArrayList3 = pop();
+        @SuppressWarnings("unused") ArrayList nodeArrayList2 = pop();
+        @SuppressWarnings("unused") ArrayList nodeArrayList1 = pop();
+        POpcodes popcodesNode1;
+        {
+            // Block
+        TOpenBrace topenbraceNode2;
+        LinkedList listNode4 = new LinkedList();
+        TCloseBrace tclosebraceNode5;
+        topenbraceNode2 = (TOpenBrace)nodeArrayList1.get(0);
+        {
+            // Block
+        LinkedList listNode3 = new LinkedList();
+        listNode3 = (LinkedList)nodeArrayList2.get(0);
+	if(listNode3 != null)
+	{
+	  listNode4.addAll(listNode3);
+	}
+        }
+        tclosebraceNode5 = (TCloseBrace)nodeArrayList3.get(0);
+
+        popcodesNode1 = new AOpcodes(topenbraceNode2, listNode4, tclosebraceNode5);
+        }
+	nodeList.add(popcodesNode1);
+        return nodeList;
+    }
+
+
+
+    @SuppressWarnings("unchecked")
+    ArrayList new12() /* reduce AOpcode */
+    {
+        @SuppressWarnings("hiding") ArrayList nodeList = new ArrayList();
+
+        @SuppressWarnings("unused") ArrayList nodeArrayList3 = pop();
+        @SuppressWarnings("unused") ArrayList nodeArrayList2 = pop();
+        @SuppressWarnings("unused") ArrayList nodeArrayList1 = pop();
+        POpcode popcodeNode1;
+        {
+            // Block
+        TNumber tnumberNode2;
+        POpcodeParameter popcodeparameterNode3;
+        TFullstop tfullstopNode4;
+        tnumberNode2 = (TNumber)nodeArrayList1.get(0);
+        popcodeparameterNode3 = (POpcodeParameter)nodeArrayList2.get(0);
+        tfullstopNode4 = (TFullstop)nodeArrayList3.get(0);
+
+        popcodeNode1 = new AOpcode(tnumberNode2, popcodeparameterNode3, tfullstopNode4);
+        }
+	nodeList.add(popcodeNode1);
+        return nodeList;
+    }
+
+
+
+    @SuppressWarnings("unchecked")
+    ArrayList new13() /* reduce ASymbolOpcodeParameter */
+    {
+        @SuppressWarnings("hiding") ArrayList nodeList = new ArrayList();
+
+        @SuppressWarnings("unused") ArrayList nodeArrayList2 = pop();
+        @SuppressWarnings("unused") ArrayList nodeArrayList1 = pop();
+        POpcodeParameter popcodeparameterNode1;
+        {
+            // Block
+        TEquals tequalsNode2;
+        TId tidNode3;
+        tequalsNode2 = (TEquals)nodeArrayList1.get(0);
+        tidNode3 = (TId)nodeArrayList2.get(0);
+
+        popcodeparameterNode1 = new ASymbolOpcodeParameter(tequalsNode2, tidNode3);
+        }
+	nodeList.add(popcodeparameterNode1);
+        return nodeList;
+    }
+
+
+
+    @SuppressWarnings("unchecked")
+    ArrayList new14() /* reduce AValueOpcodeParameter */
+    {
+        @SuppressWarnings("hiding") ArrayList nodeList = new ArrayList();
+
+        @SuppressWarnings("unused") ArrayList nodeArrayList2 = pop();
+        @SuppressWarnings("unused") ArrayList nodeArrayList1 = pop();
+        POpcodeParameter popcodeparameterNode1;
+        {
+            // Block
+        THash thashNode2;
+        TNumber tnumberNode3;
+        thashNode2 = (THash)nodeArrayList1.get(0);
+        tnumberNode3 = (TNumber)nodeArrayList2.get(0);
+
+        popcodeparameterNode1 = new AValueOpcodeParameter(thashNode2, tnumberNode3);
+        }
+	nodeList.add(popcodeparameterNode1);
+        return nodeList;
+    }
+
+
+
+    @SuppressWarnings("unchecked")
+    ArrayList new15() /* reduce AEmptyOpcodeParameter */
+    {
+        @SuppressWarnings("hiding") ArrayList nodeList = new ArrayList();
+
+        POpcodeParameter popcodeparameterNode1;
+        {
+            // Block
+
+        popcodeparameterNode1 = new AEmptyOpcodeParameter();
+        }
+	nodeList.add(popcodeparameterNode1);
+        return nodeList;
+    }
+
+
+
+    @SuppressWarnings("unchecked")
+    ArrayList new16() /* reduce ATerminal$ObjectDefinition */
     {
         @SuppressWarnings("hiding") ArrayList nodeList = new ArrayList();
 
@@ -529,7 +783,7 @@ public class Parser
 
 
     @SuppressWarnings("unchecked")
-    ArrayList new10() /* reduce ANonTerminal$ObjectDefinition */
+    ArrayList new17() /* reduce ANonTerminal$ObjectDefinition */
     {
         @SuppressWarnings("hiding") ArrayList nodeList = new ArrayList();
 
@@ -558,7 +812,7 @@ public class Parser
 
 
     @SuppressWarnings("unchecked")
-    ArrayList new11() /* reduce ATerminal$FunctionDefinition */
+    ArrayList new18() /* reduce ATerminal$FunctionDefinition */
     {
         @SuppressWarnings("hiding") ArrayList nodeList = new ArrayList();
 
@@ -580,7 +834,7 @@ public class Parser
 
 
     @SuppressWarnings("unchecked")
-    ArrayList new12() /* reduce ANonTerminal$FunctionDefinition */
+    ArrayList new19() /* reduce ANonTerminal$FunctionDefinition */
     {
         @SuppressWarnings("hiding") ArrayList nodeList = new ArrayList();
 
@@ -608,32 +862,151 @@ public class Parser
 
 
 
+    @SuppressWarnings("unchecked")
+    ArrayList new20() /* reduce ATerminal$RequiredParameter */
+    {
+        @SuppressWarnings("hiding") ArrayList nodeList = new ArrayList();
+
+        @SuppressWarnings("unused") ArrayList nodeArrayList1 = pop();
+        LinkedList listNode2 = new LinkedList();
+        {
+            // Block
+        PRequiredParameter prequiredparameterNode1;
+        prequiredparameterNode1 = (PRequiredParameter)nodeArrayList1.get(0);
+	if(prequiredparameterNode1 != null)
+	{
+	  listNode2.add(prequiredparameterNode1);
+	}
+        }
+	nodeList.add(listNode2);
+        return nodeList;
+    }
+
+
+
+    @SuppressWarnings("unchecked")
+    ArrayList new21() /* reduce ANonTerminal$RequiredParameter */
+    {
+        @SuppressWarnings("hiding") ArrayList nodeList = new ArrayList();
+
+        @SuppressWarnings("unused") ArrayList nodeArrayList2 = pop();
+        @SuppressWarnings("unused") ArrayList nodeArrayList1 = pop();
+        LinkedList listNode3 = new LinkedList();
+        {
+            // Block
+        LinkedList listNode1 = new LinkedList();
+        PRequiredParameter prequiredparameterNode2;
+        listNode1 = (LinkedList)nodeArrayList1.get(0);
+        prequiredparameterNode2 = (PRequiredParameter)nodeArrayList2.get(0);
+	if(listNode1 != null)
+	{
+	  listNode3.addAll(listNode1);
+	}
+	if(prequiredparameterNode2 != null)
+	{
+	  listNode3.add(prequiredparameterNode2);
+	}
+        }
+	nodeList.add(listNode3);
+        return nodeList;
+    }
+
+
+
+    @SuppressWarnings("unchecked")
+    ArrayList new22() /* reduce ATerminal$Opcode */
+    {
+        @SuppressWarnings("hiding") ArrayList nodeList = new ArrayList();
+
+        @SuppressWarnings("unused") ArrayList nodeArrayList1 = pop();
+        LinkedList listNode2 = new LinkedList();
+        {
+            // Block
+        POpcode popcodeNode1;
+        popcodeNode1 = (POpcode)nodeArrayList1.get(0);
+	if(popcodeNode1 != null)
+	{
+	  listNode2.add(popcodeNode1);
+	}
+        }
+	nodeList.add(listNode2);
+        return nodeList;
+    }
+
+
+
+    @SuppressWarnings("unchecked")
+    ArrayList new23() /* reduce ANonTerminal$Opcode */
+    {
+        @SuppressWarnings("hiding") ArrayList nodeList = new ArrayList();
+
+        @SuppressWarnings("unused") ArrayList nodeArrayList2 = pop();
+        @SuppressWarnings("unused") ArrayList nodeArrayList1 = pop();
+        LinkedList listNode3 = new LinkedList();
+        {
+            // Block
+        LinkedList listNode1 = new LinkedList();
+        POpcode popcodeNode2;
+        listNode1 = (LinkedList)nodeArrayList1.get(0);
+        popcodeNode2 = (POpcode)nodeArrayList2.get(0);
+	if(listNode1 != null)
+	{
+	  listNode3.addAll(listNode1);
+	}
+	if(popcodeNode2 != null)
+	{
+	  listNode3.add(popcodeNode2);
+	}
+        }
+	nodeList.add(listNode3);
+        return nodeList;
+    }
+
+
+
     private static int[][][] actionTable;
 /*      {
-			{{-1, REDUCE, 0}, {1, SHIFT, 1}, },
-			{{-1, ERROR, 1}, {2, SHIFT, 5}, },
-			{{-1, ERROR, 2}, {4, ACCEPT, -1}, },
-			{{-1, REDUCE, 9}, },
-			{{-1, REDUCE, 1}, {1, SHIFT, 1}, },
-			{{-1, REDUCE, 0}, {1, SHIFT, 1}, },
-			{{-1, ERROR, 6}, {2, SHIFT, 9}, },
-			{{-1, REDUCE, 10}, },
-			{{-1, ERROR, 8}, {3, SHIFT, 11}, },
-			{{-1, ERROR, 9}, {1, SHIFT, 12}, {3, SHIFT, 13}, },
+			{{-1, REDUCE, 0}, {2, SHIFT, 1}, },
+			{{-1, ERROR, 1}, {3, SHIFT, 5}, },
+			{{-1, ERROR, 2}, {8, ACCEPT, -1}, },
+			{{-1, REDUCE, 16}, },
+			{{-1, REDUCE, 1}, {2, SHIFT, 1}, },
+			{{-1, REDUCE, 0}, {2, SHIFT, 1}, },
+			{{-1, ERROR, 6}, {3, SHIFT, 9}, },
+			{{-1, REDUCE, 17}, },
+			{{-1, ERROR, 8}, {4, SHIFT, 11}, },
+			{{-1, ERROR, 9}, {2, SHIFT, 12}, {4, SHIFT, 13}, },
 			{{-1, REDUCE, 2}, },
 			{{-1, REDUCE, 3}, },
-			{{-1, ERROR, 12}, {2, SHIFT, 16}, },
+			{{-1, ERROR, 12}, {3, SHIFT, 16}, },
 			{{-1, REDUCE, 4}, },
-			{{-1, REDUCE, 11}, },
-			{{-1, ERROR, 15}, {1, SHIFT, 12}, {3, SHIFT, 18}, },
-			{{-1, ERROR, 16}, {3, SHIFT, 20}, },
-			{{-1, ERROR, 17}, {2, SHIFT, 21}, },
+			{{-1, REDUCE, 18}, },
+			{{-1, ERROR, 15}, {2, SHIFT, 12}, {4, SHIFT, 18}, },
+			{{-1, ERROR, 16}, {2, SHIFT, 20}, {4, SHIFT, 21}, },
+			{{-1, ERROR, 17}, {3, SHIFT, 24}, },
 			{{-1, REDUCE, 5}, },
-			{{-1, REDUCE, 12}, },
+			{{-1, REDUCE, 19}, },
+			{{-1, ERROR, 20}, {5, SHIFT, 26}, },
 			{{-1, REDUCE, 7}, },
-			{{-1, ERROR, 21}, {3, SHIFT, 23}, },
+			{{-1, REDUCE, 20}, },
+			{{-1, ERROR, 23}, {2, SHIFT, 20}, {4, SHIFT, 27}, },
+			{{-1, ERROR, 24}, {1, SHIFT, 29}, {4, SHIFT, 30}, },
 			{{-1, REDUCE, 6}, },
+			{{-1, REDUCE, 9}, },
 			{{-1, REDUCE, 8}, },
+			{{-1, REDUCE, 21}, },
+			{{-1, REDUCE, 15}, {6, SHIFT, 33}, {7, SHIFT, 34}, },
+			{{-1, REDUCE, 10}, },
+			{{-1, REDUCE, 22}, },
+			{{-1, ERROR, 32}, {1, SHIFT, 29}, {4, SHIFT, 36}, },
+			{{-1, ERROR, 33}, {1, SHIFT, 38}, },
+			{{-1, ERROR, 34}, {2, SHIFT, 39}, },
+			{{-1, ERROR, 35}, {5, SHIFT, 40}, },
+			{{-1, REDUCE, 11}, },
+			{{-1, REDUCE, 23}, },
+			{{-1, REDUCE, 14}, },
+			{{-1, REDUCE, 13}, },
+			{{-1, REDUCE, 12}, },
         };*/
     private static int[][][] gotoTable;
 /*      {
@@ -643,9 +1016,14 @@ public class Parser
 			{{-1, 10}, },
 			{{-1, 14}, {15, 19}, },
 			{{-1, 17}, },
-			{{-1, 22}, },
+			{{-1, 22}, {23, 28}, },
+			{{-1, 25}, },
+			{{-1, 31}, {32, 37}, },
+			{{-1, 35}, },
 			{{-1, 4}, },
 			{{-1, 15}, },
+			{{-1, 23}, },
+			{{-1, 32}, },
         };*/
     private static String[] errorMessages;
 /*      {
@@ -655,10 +1033,15 @@ public class Parser
 			"expecting: id, '}', EOF",
 			"expecting: id, '}'",
 			"expecting: '}'",
+			"expecting: '.'",
+			"expecting: number, '}'",
+			"expecting: '.', '#', '='",
+			"expecting: number",
+			"expecting: id",
         };*/
     private static int[] errors;
 /*      {
-			0, 1, 2, 3, 3, 4, 1, 3, 5, 4, 3, 1, 1, 3, 4, 4, 5, 1, 3, 4, 1, 5, 4, 4, 
+			0, 1, 2, 3, 3, 4, 1, 3, 5, 4, 3, 1, 1, 3, 4, 4, 4, 1, 3, 4, 6, 1, 4, 4, 7, 4, 4, 1, 4, 8, 4, 7, 7, 9, 10, 6, 4, 7, 6, 6, 7, 
         };*/
 
     static 
