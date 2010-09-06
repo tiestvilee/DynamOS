@@ -6,11 +6,13 @@ Helpers
 
 Tokens
   colon = ':';
+  mnemonic = ('CALL' | 'OBJ' | 'PUSH' | 'SYM' | 'VAL' | 'START' | 'END' );
   number = digit+;
   id = alpha_numeric (alpha_numeric | ':')*;
   open_brace = '{';
   close_brace = '}';
   fullstop = '.';
+  dollar = '$';
   hash = '#';
   equals = '=';
   blank = (' ' | 13 | 10)+;
@@ -20,14 +22,19 @@ Ignored Tokens
   
 Productions
   image = object_definition*;
-  object_definition = id slots functions;
+  object_definition = {slot}      id slots functions |
+                      {reference} id dollar references;
+  references = {continue} id fullstop references |
+               {end} id dollar;
   slots = open_brace image close_brace;
   functions = open_brace function_definition* close_brace;
   function_definition = id required_parameters opcodes;
   required_parameters = open_brace required_parameter* close_brace;
   required_parameter = id fullstop;
   opcodes = open_brace opcode* close_brace;
-  opcode = number opcode_parameter fullstop;
+  opcode = opcode_id fullstop;
+  opcode_id = {number} number opcode_parameter |
+              {opcode} mnemonic opcode_parameter;
   opcode_parameter = 
     {symbol} equals id |
     {value} hash number |

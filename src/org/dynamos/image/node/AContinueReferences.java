@@ -5,43 +5,43 @@ package org.dynamos.image.node;
 import org.dynamos.image.analysis.*;
 
 @SuppressWarnings("nls")
-public final class AObjectDefinition extends PObjectDefinition
+public final class AContinueReferences extends PReferences
 {
     private TId _id_;
-    private PSlots _slots_;
-    private PFunctions _functions_;
+    private TFullstop _fullstop_;
+    private PReferences _references_;
 
-    public AObjectDefinition()
+    public AContinueReferences()
     {
         // Constructor
     }
 
-    public AObjectDefinition(
+    public AContinueReferences(
         @SuppressWarnings("hiding") TId _id_,
-        @SuppressWarnings("hiding") PSlots _slots_,
-        @SuppressWarnings("hiding") PFunctions _functions_)
+        @SuppressWarnings("hiding") TFullstop _fullstop_,
+        @SuppressWarnings("hiding") PReferences _references_)
     {
         // Constructor
         setId(_id_);
 
-        setSlots(_slots_);
+        setFullstop(_fullstop_);
 
-        setFunctions(_functions_);
+        setReferences(_references_);
 
     }
 
     @Override
     public Object clone()
     {
-        return new AObjectDefinition(
+        return new AContinueReferences(
             cloneNode(this._id_),
-            cloneNode(this._slots_),
-            cloneNode(this._functions_));
+            cloneNode(this._fullstop_),
+            cloneNode(this._references_));
     }
 
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseAObjectDefinition(this);
+        ((Analysis) sw).caseAContinueReferences(this);
     }
 
     public TId getId()
@@ -69,16 +69,16 @@ public final class AObjectDefinition extends PObjectDefinition
         this._id_ = node;
     }
 
-    public PSlots getSlots()
+    public TFullstop getFullstop()
     {
-        return this._slots_;
+        return this._fullstop_;
     }
 
-    public void setSlots(PSlots node)
+    public void setFullstop(TFullstop node)
     {
-        if(this._slots_ != null)
+        if(this._fullstop_ != null)
         {
-            this._slots_.parent(null);
+            this._fullstop_.parent(null);
         }
 
         if(node != null)
@@ -91,19 +91,19 @@ public final class AObjectDefinition extends PObjectDefinition
             node.parent(this);
         }
 
-        this._slots_ = node;
+        this._fullstop_ = node;
     }
 
-    public PFunctions getFunctions()
+    public PReferences getReferences()
     {
-        return this._functions_;
+        return this._references_;
     }
 
-    public void setFunctions(PFunctions node)
+    public void setReferences(PReferences node)
     {
-        if(this._functions_ != null)
+        if(this._references_ != null)
         {
-            this._functions_.parent(null);
+            this._references_.parent(null);
         }
 
         if(node != null)
@@ -116,7 +116,7 @@ public final class AObjectDefinition extends PObjectDefinition
             node.parent(this);
         }
 
-        this._functions_ = node;
+        this._references_ = node;
     }
 
     @Override
@@ -124,8 +124,8 @@ public final class AObjectDefinition extends PObjectDefinition
     {
         return ""
             + toString(this._id_)
-            + toString(this._slots_)
-            + toString(this._functions_);
+            + toString(this._fullstop_)
+            + toString(this._references_);
     }
 
     @Override
@@ -138,15 +138,15 @@ public final class AObjectDefinition extends PObjectDefinition
             return;
         }
 
-        if(this._slots_ == child)
+        if(this._fullstop_ == child)
         {
-            this._slots_ = null;
+            this._fullstop_ = null;
             return;
         }
 
-        if(this._functions_ == child)
+        if(this._references_ == child)
         {
-            this._functions_ = null;
+            this._references_ = null;
             return;
         }
 
@@ -163,15 +163,15 @@ public final class AObjectDefinition extends PObjectDefinition
             return;
         }
 
-        if(this._slots_ == oldChild)
+        if(this._fullstop_ == oldChild)
         {
-            setSlots((PSlots) newChild);
+            setFullstop((TFullstop) newChild);
             return;
         }
 
-        if(this._functions_ == oldChild)
+        if(this._references_ == oldChild)
         {
-            setFunctions((PFunctions) newChild);
+            setReferences((PReferences) newChild);
             return;
         }
 

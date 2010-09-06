@@ -13,7 +13,10 @@ public interface Analysis extends Switch
 
     void caseStart(Start node);
     void caseAImage(AImage node);
-    void caseAObjectDefinition(AObjectDefinition node);
+    void caseASlotObjectDefinition(ASlotObjectDefinition node);
+    void caseAReferenceObjectDefinition(AReferenceObjectDefinition node);
+    void caseAContinueReferences(AContinueReferences node);
+    void caseAEndReferences(AEndReferences node);
     void caseASlots(ASlots node);
     void caseAFunctions(AFunctions node);
     void caseAFunctionDefinition(AFunctionDefinition node);
@@ -21,16 +24,20 @@ public interface Analysis extends Switch
     void caseARequiredParameter(ARequiredParameter node);
     void caseAOpcodes(AOpcodes node);
     void caseAOpcode(AOpcode node);
+    void caseANumberOpcodeId(ANumberOpcodeId node);
+    void caseAOpcodeOpcodeId(AOpcodeOpcodeId node);
     void caseASymbolOpcodeParameter(ASymbolOpcodeParameter node);
     void caseAValueOpcodeParameter(AValueOpcodeParameter node);
     void caseAEmptyOpcodeParameter(AEmptyOpcodeParameter node);
 
     void caseTColon(TColon node);
+    void caseTMnemonic(TMnemonic node);
     void caseTNumber(TNumber node);
     void caseTId(TId node);
     void caseTOpenBrace(TOpenBrace node);
     void caseTCloseBrace(TCloseBrace node);
     void caseTFullstop(TFullstop node);
+    void caseTDollar(TDollar node);
     void caseTHash(THash node);
     void caseTEquals(TEquals node);
     void caseTBlank(TBlank node);

@@ -5,50 +5,50 @@ package org.dynamos.image.node;
 import org.dynamos.image.analysis.*;
 
 @SuppressWarnings("nls")
-public final class AOpcode extends POpcode
+public final class AEndReferences extends PReferences
 {
-    private POpcodeId _opcodeId_;
-    private TFullstop _fullstop_;
+    private TId _id_;
+    private TDollar _dollar_;
 
-    public AOpcode()
+    public AEndReferences()
     {
         // Constructor
     }
 
-    public AOpcode(
-        @SuppressWarnings("hiding") POpcodeId _opcodeId_,
-        @SuppressWarnings("hiding") TFullstop _fullstop_)
+    public AEndReferences(
+        @SuppressWarnings("hiding") TId _id_,
+        @SuppressWarnings("hiding") TDollar _dollar_)
     {
         // Constructor
-        setOpcodeId(_opcodeId_);
+        setId(_id_);
 
-        setFullstop(_fullstop_);
+        setDollar(_dollar_);
 
     }
 
     @Override
     public Object clone()
     {
-        return new AOpcode(
-            cloneNode(this._opcodeId_),
-            cloneNode(this._fullstop_));
+        return new AEndReferences(
+            cloneNode(this._id_),
+            cloneNode(this._dollar_));
     }
 
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseAOpcode(this);
+        ((Analysis) sw).caseAEndReferences(this);
     }
 
-    public POpcodeId getOpcodeId()
+    public TId getId()
     {
-        return this._opcodeId_;
+        return this._id_;
     }
 
-    public void setOpcodeId(POpcodeId node)
+    public void setId(TId node)
     {
-        if(this._opcodeId_ != null)
+        if(this._id_ != null)
         {
-            this._opcodeId_.parent(null);
+            this._id_.parent(null);
         }
 
         if(node != null)
@@ -61,19 +61,19 @@ public final class AOpcode extends POpcode
             node.parent(this);
         }
 
-        this._opcodeId_ = node;
+        this._id_ = node;
     }
 
-    public TFullstop getFullstop()
+    public TDollar getDollar()
     {
-        return this._fullstop_;
+        return this._dollar_;
     }
 
-    public void setFullstop(TFullstop node)
+    public void setDollar(TDollar node)
     {
-        if(this._fullstop_ != null)
+        if(this._dollar_ != null)
         {
-            this._fullstop_.parent(null);
+            this._dollar_.parent(null);
         }
 
         if(node != null)
@@ -86,30 +86,30 @@ public final class AOpcode extends POpcode
             node.parent(this);
         }
 
-        this._fullstop_ = node;
+        this._dollar_ = node;
     }
 
     @Override
     public String toString()
     {
         return ""
-            + toString(this._opcodeId_)
-            + toString(this._fullstop_);
+            + toString(this._id_)
+            + toString(this._dollar_);
     }
 
     @Override
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._opcodeId_ == child)
+        if(this._id_ == child)
         {
-            this._opcodeId_ = null;
+            this._id_ = null;
             return;
         }
 
-        if(this._fullstop_ == child)
+        if(this._dollar_ == child)
         {
-            this._fullstop_ = null;
+            this._dollar_ = null;
             return;
         }
 
@@ -120,15 +120,15 @@ public final class AOpcode extends POpcode
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        if(this._opcodeId_ == oldChild)
+        if(this._id_ == oldChild)
         {
-            setOpcodeId((POpcodeId) newChild);
+            setId((TId) newChild);
             return;
         }
 
-        if(this._fullstop_ == oldChild)
+        if(this._dollar_ == oldChild)
         {
-            setFullstop((TFullstop) newChild);
+            setDollar((TDollar) newChild);
             return;
         }
 

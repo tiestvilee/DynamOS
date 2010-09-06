@@ -6,7 +6,6 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 import org.dynamos.structures.FunctionDOS;
 import org.dynamos.structures.ObjectDOS;
@@ -14,7 +13,6 @@ import org.dynamos.structures.OpCode;
 import org.dynamos.structures.Symbol;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 
 public class ImageStreamReaderTest {
 
@@ -95,5 +93,44 @@ public class ImageStreamReaderTest {
 		assertThat(function.getOpCodes()[4], is(OpCode.CreateValueObject.class));
 		assertThat(function.getOpCodes()[5], is(OpCode.StartOpCodeList.class));
 		assertThat(function.getOpCodes()[6], is(OpCode.EndOpCodeList.class));
+	}
+
+	@Test
+	public void shouldLoadFunctionWithMnemonics() {
+		ObjectDOS wrapper = reader.read(
+"anObject\n" +
+"  {}\n" +
+"  {\n" +
+"    aFunction:Does:This:\n" +
+"      {variable.variable2.}\n" +
+"      {CALL=FunctionCall.OBJ=SetObject.PUSH=Push.SYM=PushSymbol.VAL#34.START.END.}\n" +
+"  }");
+		
+		ObjectDOS actual = wrapper.getSlot(Symbol.get("anObject"));
+		
+		FunctionDOS function = (FunctionDOS) actual.getFunction(Symbol.get("aFunction:Does:This:"));
+		
+		assertThat(function.getOpCodes()[0], is(OpCode.FunctionCall.class));
+		assertThat(function.getOpCodes()[1], is(OpCode.SetObject.class));
+		assertThat(function.getOpCodes()[2], is(OpCode.Push.class));
+		assertThat(function.getOpCodes()[3], is(OpCode.PushSymbol.class));
+		assertThat(function.getOpCodes()[4], is(OpCode.CreateValueObject.class));
+		assertThat(function.getOpCodes()[5], is(OpCode.StartOpCodeList.class));
+		assertThat(function.getOpCodes()[6], is(OpCode.EndOpCodeList.class));
+	}
+	
+	@Test
+	public void shouldDereferenceReferences() {
+		ObjectDOS wrapper = reader.read(
+"anObject\n" +
+"  {anotherObject{referencedObject{}{}}{}}\n" +
+"  {}\n" +
+"anotherObject{referencingObject$anObject.anotherObject.referencedObject$\n" +
+"someOtherObject{}{} andAnotherReference$anObject$}{}");
+						
+		ObjectDOS referencedObject = wrapper.getSlot(Symbol.get("anObject")).getSlot(Symbol.get("anotherObject")).getSlot(Symbol.get("referencedObject"));
+		ObjectDOS referencingObject = wrapper.getSlot(Symbol.get("anotherObject")).getSlot(Symbol.get("referencingObject"));
+		
+		assertThat(referencingObject, is(referencedObject));
 	}
 }

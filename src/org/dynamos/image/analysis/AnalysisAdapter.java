@@ -74,7 +74,22 @@ public class AnalysisAdapter implements Analysis
         defaultCase(node);
     }
 
-    public void caseAObjectDefinition(AObjectDefinition node)
+    public void caseASlotObjectDefinition(ASlotObjectDefinition node)
+    {
+        defaultCase(node);
+    }
+
+    public void caseAReferenceObjectDefinition(AReferenceObjectDefinition node)
+    {
+        defaultCase(node);
+    }
+
+    public void caseAContinueReferences(AContinueReferences node)
+    {
+        defaultCase(node);
+    }
+
+    public void caseAEndReferences(AEndReferences node)
     {
         defaultCase(node);
     }
@@ -114,6 +129,16 @@ public class AnalysisAdapter implements Analysis
         defaultCase(node);
     }
 
+    public void caseANumberOpcodeId(ANumberOpcodeId node)
+    {
+        defaultCase(node);
+    }
+
+    public void caseAOpcodeOpcodeId(AOpcodeOpcodeId node)
+    {
+        defaultCase(node);
+    }
+
     public void caseASymbolOpcodeParameter(ASymbolOpcodeParameter node)
     {
         defaultCase(node);
@@ -130,6 +155,11 @@ public class AnalysisAdapter implements Analysis
     }
 
     public void caseTColon(TColon node)
+    {
+        defaultCase(node);
+    }
+
+    public void caseTMnemonic(TMnemonic node)
     {
         defaultCase(node);
     }
@@ -155,6 +185,11 @@ public class AnalysisAdapter implements Analysis
     }
 
     public void caseTFullstop(TFullstop node)
+    {
+        defaultCase(node);
+    }
+
+    public void caseTDollar(TDollar node)
     {
         defaultCase(node);
     }

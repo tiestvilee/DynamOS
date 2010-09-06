@@ -1,26 +1,23 @@
 package org.dynamos.image;
 
-import java.io.IOException;
-import java.io.PushbackReader;
-import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
 import org.dynamos.image.analysis.DepthFirstAdapter;
-import org.dynamos.image.lexer.Lexer;
-import org.dynamos.image.lexer.LexerException;
+import org.dynamos.image.node.AContinueReferences;
+import org.dynamos.image.node.AEndReferences;
 import org.dynamos.image.node.AFunctionDefinition;
-import org.dynamos.image.node.AObjectDefinition;
-import org.dynamos.image.node.AOpcode;
+import org.dynamos.image.node.ANumberOpcodeId;
+import org.dynamos.image.node.AOpcodeOpcodeId;
+import org.dynamos.image.node.AReferenceObjectDefinition;
 import org.dynamos.image.node.ARequiredParameter;
+import org.dynamos.image.node.ASlotObjectDefinition;
 import org.dynamos.image.node.ASymbolOpcodeParameter;
 import org.dynamos.image.node.AValueOpcodeParameter;
 import org.dynamos.image.node.Start;
-import org.dynamos.image.node.TId;
 import org.dynamos.image.parser.Parser;
-import org.dynamos.image.parser.ParserException;
-import org.dynamos.structures.ExecutableDOS;
 import org.dynamos.structures.FunctionDOS;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
@@ -59,16 +56,16 @@ public class ImageStreamReader {
 		Interpreter(ObjectDOS item) {
 			currentContext.push(item);
 		}
-		
+
 		@Override
-		public void inAObjectDefinition(AObjectDefinition node) {
+		public void inASlotObjectDefinition(ASlotObjectDefinition node) {
 			ObjectDOS newNode = new ObjectDOS();
 			currentContext.peek().setSlot(Symbol.get(node.getId().getText()), newNode);
 			currentContext.push(newNode);
-		}
-		
+	    }
+
 		@Override
-		public void outAObjectDefinition(AObjectDefinition node) {
+		public void outASlotObjectDefinition(ASlotObjectDefinition node) {
 			currentContext.pop();
 		}
 		
@@ -86,14 +83,13 @@ public class ImageStreamReader {
 		public void inASymbolOpcodeParameter(ASymbolOpcodeParameter node) {
 			latestSymbol = Symbol.get(node.getId().getText());
 		}
-		
 		@Override
 		public void inAValueOpcodeParameter(AValueOpcodeParameter node) {
 			latestValue = Integer.parseInt(node.getNumber().getText());
 		}
 
 		@Override
-		public void outAOpcode(AOpcode node) {
+		public void outANumberOpcodeId(ANumberOpcodeId node) {
 			OpCode result = null;
 			
 			switch(Integer.parseInt(node.getNumber().getText().toString())) {
@@ -125,11 +121,59 @@ public class ImageStreamReader {
 		}
 		
 		@Override
+		public void outAOpcodeOpcodeId(AOpcodeOpcodeId node) {
+			OpCode result = null;
+			
+			String opcode = node.getMnemonic().getText().toString();
+			if("CALL".equals(opcode)) {
+				result = new OpCode.FunctionCall(latestSymbol);
+			} else if("OBJ".equals(opcode)) {
+				result = new OpCode.SetObject(latestSymbol);
+			} else if("PUSH".equals(opcode)) {
+				result = new OpCode.Push(latestSymbol);
+			} else if("SYM".equals(opcode)) {
+				result = new OpCode.PushSymbol(latestSymbol);
+			} else if("VAL".equals(opcode)) {
+				result = new OpCode.CreateValueObject(latestValue);
+			} else if("START".equals(opcode)) {
+				result = new OpCode.StartOpCodeList();
+			} else if("END".equals(opcode)) {
+				result = new OpCode.EndOpCodeList();
+			}
+			latestSymbol = null;
+			
+			opCodes.add(result);
+		}
+
+		@Override
 		public void outAFunctionDefinition(AFunctionDefinition node) {
 			FunctionDOS function = new FunctionDOS(requiredArgs.toArray(new Symbol[0]), opCodes.toArray(new OpCode[0]));
 			currentContext.peek().setFunction(Symbol.get(node.getId().getText()), function );
 			opCodes = new ArrayList<OpCode>();
 			requiredArgs = new ArrayList<Symbol>();
+		}
+		
+		List<String> reference = new ArrayList<String>();
+		
+		@Override
+		public void outAEndReferences(AEndReferences node) {
+			reference.add(node.getId().getText());
+		}
+		
+		@Override
+		public void outAContinueReferences(AContinueReferences node) {
+			reference.add(node.getId().getText());
+		}
+		
+		@Override
+		public void outAReferenceObjectDefinition(AReferenceObjectDefinition node) {
+			Collections.reverse(reference);
+			ObjectDOS cursor = currentContext.firstElement();
+			for(String s : reference) {
+				cursor = cursor.getSlot(Symbol.get(s));
+			}
+			currentContext.peek().setSlot(Symbol.get(node.getId().getText()), cursor);
+			reference.clear();
 		}
 	}
 

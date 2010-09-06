@@ -61,20 +61,20 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
         outAImage(node);
     }
 
-    public void inAObjectDefinition(AObjectDefinition node)
+    public void inASlotObjectDefinition(ASlotObjectDefinition node)
     {
         defaultIn(node);
     }
 
-    public void outAObjectDefinition(AObjectDefinition node)
+    public void outASlotObjectDefinition(ASlotObjectDefinition node)
     {
         defaultOut(node);
     }
 
     @Override
-    public void caseAObjectDefinition(AObjectDefinition node)
+    public void caseASlotObjectDefinition(ASlotObjectDefinition node)
     {
-        inAObjectDefinition(node);
+        inASlotObjectDefinition(node);
         if(node.getFunctions() != null)
         {
             node.getFunctions().apply(this);
@@ -87,7 +87,90 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
         {
             node.getId().apply(this);
         }
-        outAObjectDefinition(node);
+        outASlotObjectDefinition(node);
+    }
+
+    public void inAReferenceObjectDefinition(AReferenceObjectDefinition node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAReferenceObjectDefinition(AReferenceObjectDefinition node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAReferenceObjectDefinition(AReferenceObjectDefinition node)
+    {
+        inAReferenceObjectDefinition(node);
+        if(node.getReferences() != null)
+        {
+            node.getReferences().apply(this);
+        }
+        if(node.getDollar() != null)
+        {
+            node.getDollar().apply(this);
+        }
+        if(node.getId() != null)
+        {
+            node.getId().apply(this);
+        }
+        outAReferenceObjectDefinition(node);
+    }
+
+    public void inAContinueReferences(AContinueReferences node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAContinueReferences(AContinueReferences node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAContinueReferences(AContinueReferences node)
+    {
+        inAContinueReferences(node);
+        if(node.getReferences() != null)
+        {
+            node.getReferences().apply(this);
+        }
+        if(node.getFullstop() != null)
+        {
+            node.getFullstop().apply(this);
+        }
+        if(node.getId() != null)
+        {
+            node.getId().apply(this);
+        }
+        outAContinueReferences(node);
+    }
+
+    public void inAEndReferences(AEndReferences node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAEndReferences(AEndReferences node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAEndReferences(AEndReferences node)
+    {
+        inAEndReferences(node);
+        if(node.getDollar() != null)
+        {
+            node.getDollar().apply(this);
+        }
+        if(node.getId() != null)
+        {
+            node.getId().apply(this);
+        }
+        outAEndReferences(node);
     }
 
     public void inASlots(ASlots node)
@@ -290,6 +373,27 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
         {
             node.getFullstop().apply(this);
         }
+        if(node.getOpcodeId() != null)
+        {
+            node.getOpcodeId().apply(this);
+        }
+        outAOpcode(node);
+    }
+
+    public void inANumberOpcodeId(ANumberOpcodeId node)
+    {
+        defaultIn(node);
+    }
+
+    public void outANumberOpcodeId(ANumberOpcodeId node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseANumberOpcodeId(ANumberOpcodeId node)
+    {
+        inANumberOpcodeId(node);
         if(node.getOpcodeParameter() != null)
         {
             node.getOpcodeParameter().apply(this);
@@ -298,7 +402,32 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
         {
             node.getNumber().apply(this);
         }
-        outAOpcode(node);
+        outANumberOpcodeId(node);
+    }
+
+    public void inAOpcodeOpcodeId(AOpcodeOpcodeId node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAOpcodeOpcodeId(AOpcodeOpcodeId node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAOpcodeOpcodeId(AOpcodeOpcodeId node)
+    {
+        inAOpcodeOpcodeId(node);
+        if(node.getOpcodeParameter() != null)
+        {
+            node.getOpcodeParameter().apply(this);
+        }
+        if(node.getMnemonic() != null)
+        {
+            node.getMnemonic().apply(this);
+        }
+        outAOpcodeOpcodeId(node);
     }
 
     public void inASymbolOpcodeParameter(ASymbolOpcodeParameter node)
