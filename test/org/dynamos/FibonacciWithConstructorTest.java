@@ -5,12 +5,17 @@
 
 package org.dynamos;
 
-import org.dynamos.structures.*;
-import org.dynamos.types.NumberDOS;
-import org.junit.Test;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
+import org.dynamos.structures.Activation;
+import org.dynamos.structures.FunctionDOS;
+import org.dynamos.structures.MetaVM;
+import org.dynamos.structures.ObjectDOS;
+import org.dynamos.structures.OpCode;
+import org.dynamos.structures.Symbol;
+import org.dynamos.types.NumberDOS;
+import org.junit.Test;
 
 /**
  *

@@ -5,15 +5,15 @@
 
 package org.dynamos.types;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.dynamos.Environment;
 import org.dynamos.OpCodeInterpreter;
 import org.dynamos.compiler.BootstrapCompiler;
 import org.dynamos.structures.FunctionDOS;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.Symbol;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *

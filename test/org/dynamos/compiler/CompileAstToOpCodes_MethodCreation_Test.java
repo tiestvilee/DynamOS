@@ -1,11 +1,15 @@
 package org.dynamos.compiler;
 
-import org.dynamos.structures.*;
-import org.junit.Before;
-import org.junit.Test;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
+import org.dynamos.structures.FunctionDOS;
+import org.dynamos.structures.MetaVM;
+import org.dynamos.structures.Mirror;
+import org.dynamos.structures.OpCode;
+import org.dynamos.structures.Symbol;
+import org.junit.Before;
+import org.junit.Test;
 
 public class CompileAstToOpCodes_MethodCreation_Test {
 

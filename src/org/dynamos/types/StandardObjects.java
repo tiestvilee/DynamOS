@@ -5,14 +5,6 @@
 
 package org.dynamos.types;
 
-import org.dynamos.Environment;
-import org.dynamos.compiler.AnonymousFunctionNode;
-import org.dynamos.compiler.BootstrapCompiler;
-import org.dynamos.compiler.StatementContainingNode;
-import org.dynamos.structures.FunctionDOS;
-import org.dynamos.structures.ObjectDOS;
-import org.dynamos.structures.Symbol;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -20,6 +12,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.dynamos.Environment;
+import org.dynamos.compiler.AnonymousFunctionNode;
+import org.dynamos.compiler.BootstrapCompiler;
+import org.dynamos.compiler.StatementContainingNode;
+import org.dynamos.structures.FunctionDOS;
+import org.dynamos.structures.ObjectDOS;
+import org.dynamos.structures.Symbol;
 
 /**
  *

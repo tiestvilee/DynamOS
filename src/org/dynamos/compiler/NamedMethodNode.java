@@ -1,10 +1,10 @@
 package org.dynamos.compiler;
 
+import java.util.List;
+
 import org.dynamos.structures.Mirror;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.Symbol;
-
-import java.util.List;
 
 public class NamedMethodNode extends NamedFunctionNode {
 

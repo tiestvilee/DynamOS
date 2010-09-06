@@ -13,7 +13,6 @@ import org.dynamos.structures.FunctionDOS;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.Symbol;
-import org.dynamos.types.NumberDOS;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -54,8 +53,8 @@ public class OpCodeInterpreterParameterTest {
 		argument3 = interpreter.getEnvironment().createNewObject();
         
 		emptyObject = interpreter.getEnvironment().createNewObject();
-		emptyObject.setSlot(zeroSymbol, NumberDOS.numberDOS(interpreter, 0));
-		emptyObject.setSlot(oneSymbol, NumberDOS.numberDOS(interpreter, 1));
+//		emptyObject.setSlot(zeroSymbol, NumberDOS.numberDOS(interpreter, 0));
+//		emptyObject.setSlot(oneSymbol, NumberDOS.numberDOS(interpreter, 1));
 		
         context = interpreter.newActivation();
 		context.setSlot(local1Symbol, argument1);

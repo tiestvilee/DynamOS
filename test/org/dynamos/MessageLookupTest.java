@@ -1,17 +1,22 @@
 package org.dynamos;
 
-import org.dynamos.structures.*;
-import org.dynamos.types.NumberDOS.ValueObject;
-import org.junit.Before;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import org.dynamos.structures.Activation;
+import org.dynamos.structures.ExecutableDOS;
+import org.dynamos.structures.MetaVM;
+import org.dynamos.structures.ObjectDOS;
+import org.dynamos.structures.OpCode;
+import org.dynamos.structures.Symbol;
+import org.dynamos.types.NumberDOS.ValueObject;
+import org.junit.Before;
+import org.junit.Test;
 
 
 public class MessageLookupTest {

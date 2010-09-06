@@ -1,11 +1,11 @@
 package org.dynamos.structures;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.dynamos.Environment;
 import org.dynamos.OpCodeInterpreter;
 import org.dynamos.types.StandardObjects;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MetaVM {
 
