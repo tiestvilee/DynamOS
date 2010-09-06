@@ -73,5 +73,9 @@ public class FunctionDOS extends ExecutableDOS {
 	public OpCode[] getOpCodes() {
 		return opCodes;
 	}
+	
+	public Symbol[] getRequiredArguments() {
+		return requiredArguments;
+	}
 
 }

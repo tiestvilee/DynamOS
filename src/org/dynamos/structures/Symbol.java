@@ -31,6 +31,10 @@ public class Symbol {
     public String toString() {
         return "Symbol:" + symbol;
     }
+    
+    public String value() {
+    	return symbol;
+    }
 
     public static final Symbol ARGUMENTS = Symbol.get("arguments");
     public static final Symbol RESULT = Symbol.get("result");

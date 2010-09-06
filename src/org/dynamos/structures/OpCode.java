@@ -146,37 +146,6 @@ public class OpCode {
 		}
 	}
 
-    public static class Debug extends OpCode {
-        private Symbol symbol;
-		private final String message;
-        public Debug(String message, Symbol symbol) {
-            this.message = message;
-			this.symbol = symbol;
-        }
-
-        @Override
-        public boolean execute(OpCodeInterpreter interpreter, ObjectDOS self, StackFrame stackFrame) {
-        	System.out.println(this);
-
-        	if(symbol == Symbol.PARENT) {
-        		System.out.println(message + " parent of " + self + " is " + self.getTrait("parent"));
-        	} else {
-	            ObjectDOS argument = self.getSlot(symbol);
-	            if(argument instanceof ValueObject) {
-	            	System.out.println(message + " " + ((ValueObject) argument).getValue() + "@" + argument + " parent " + argument.getTrait("parent"));
-	            } else  {
-	            	System.out.println(message + " " + argument + " parent " + argument.getParent());
-	            }
-        	}
-            return false;
-        }
-		
-		@Override
-		public String toString() {
-			return getClass().getSimpleName() + ":" + symbol.toString();
-		}
-    }
-    
 	public static class StartOpCodeList extends OpCode {
 		/* do nothing */
         
@@ -205,6 +174,38 @@ public class OpCode {
 		}
 	}
 	
+	public static class Debug extends OpCode {
+		private Symbol symbol;
+		private final String message;
+		public Debug(String message, Symbol symbol) {
+			this.message = message;
+			this.symbol = symbol;
+		}
+		
+		@Override
+		public boolean execute(OpCodeInterpreter interpreter, ObjectDOS self, StackFrame stackFrame) {
+			System.out.println(this);
+			
+			if(symbol == Symbol.PARENT) {
+				System.out.println(message + " parent of " + self + " is " + self.getTrait("parent"));
+			} else {
+				ObjectDOS argument = self.getSlot(symbol);
+				if(argument instanceof ValueObject) {
+					System.out.println(message + " " + ((ValueObject) argument).getValue() + "@" + argument + " parent " + argument.getTrait("parent"));
+				} else  {
+					System.out.println(message + " " + argument + " parent " + argument.getParent());
+				}
+			}
+			return false;
+		}
+		
+		@Override
+		public String toString() {
+			return getClass().getSimpleName() + ":" + symbol.toString();
+		}
+	}
+	
+
 	public static void printOpCodes(OpCode[] opCodes) {
 		String indent = "";
 		for(OpCode opCode : opCodes) {

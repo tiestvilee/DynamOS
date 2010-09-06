@@ -7,10 +7,8 @@ package org.dynamos.structures;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 import org.dynamos.Environment;
-import org.dynamos.types.StandardObjects;
 
 /**
  *
@@ -104,6 +102,10 @@ public class ObjectDOS {
     
 	public static void initialiseRootObject(Environment environment) {
 		UNDEFINED = environment.getUndefined();
+	}
+
+	public HashMap<Symbol,ObjectDOS> getSlots() {
+		return slots;
 	}
 
 }
