@@ -132,5 +132,10 @@ public class ImageStreamReaderTest {
 		ObjectDOS referencingObject = wrapper.getSlot(Symbol.get("anotherObject")).getSlot(Symbol.get("referencingObject"));
 		
 		assertThat(referencingObject, is(referencedObject));
+		
+		referencedObject = wrapper.getSlot(Symbol.get("anObject"));
+		referencingObject = wrapper.getSlot(Symbol.get("anotherObject")).getSlot(Symbol.get("andAnotherReference"));
+		
+		assertThat(referencingObject, is(referencedObject));
 	}
 }

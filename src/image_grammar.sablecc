@@ -2,7 +2,7 @@ Package org.dynamos.image;
 
 Helpers
   digit = ['0'..'9'];
-  alpha_numeric = [[['a'..'z'] + ['A'..'Z']] + digit];
+  alpha_numeric = [[[['a'..'z'] + ['A'..'Z']] + digit] + '_'];
 
 Tokens
   colon = ':';

@@ -31,13 +31,17 @@ public class ImageStreamReader {
 		this.imageParserBuilder = imageParserBuilder;
 	}
 	
-	
 	public ObjectDOS read(String string) {
+		ObjectDOS wrapper = new ObjectDOS();
+		read(string, wrapper);
+		return wrapper;
+	}
+	
+	public ObjectDOS read(String string, ObjectDOS wrapper) {
 		
 		Parser imageParser = imageParserBuilder.build(string);
 		
 		try {
-			ObjectDOS wrapper = new ObjectDOS();
 			Start topNode = imageParser.parse();
 			Interpreter interpreter = new Interpreter(wrapper);
 			topNode.apply(interpreter);
@@ -90,9 +94,15 @@ public class ImageStreamReader {
 
 		@Override
 		public void outANumberOpcodeId(ANumberOpcodeId node) {
+			int opCodeId = Integer.parseInt(node.getNumber().getText().toString());
+
+			addOpcode(opCodeId);
+		}
+
+		private void addOpcode(int opCodeId) {
 			OpCode result = null;
 			
-			switch(Integer.parseInt(node.getNumber().getText().toString())) {
+			switch(opCodeId ) {
 				case 1:
 					result = new OpCode.FunctionCall(latestSymbol);
 					break;
@@ -122,27 +132,23 @@ public class ImageStreamReader {
 		
 		@Override
 		public void outAOpcodeOpcodeId(AOpcodeOpcodeId node) {
-			OpCode result = null;
 			
 			String opcode = node.getMnemonic().getText().toString();
 			if("CALL".equals(opcode)) {
-				result = new OpCode.FunctionCall(latestSymbol);
+				addOpcode(1);
 			} else if("OBJ".equals(opcode)) {
-				result = new OpCode.SetObject(latestSymbol);
+				addOpcode(2);
 			} else if("PUSH".equals(opcode)) {
-				result = new OpCode.Push(latestSymbol);
+				addOpcode(3);
 			} else if("SYM".equals(opcode)) {
-				result = new OpCode.PushSymbol(latestSymbol);
+				addOpcode(4);
 			} else if("VAL".equals(opcode)) {
-				result = new OpCode.CreateValueObject(latestValue);
+				addOpcode(5);
 			} else if("START".equals(opcode)) {
-				result = new OpCode.StartOpCodeList();
+				addOpcode(6);
 			} else if("END".equals(opcode)) {
-				result = new OpCode.EndOpCodeList();
+				addOpcode(7);
 			}
-			latestSymbol = null;
-			
-			opCodes.add(result);
 		}
 
 		@Override
