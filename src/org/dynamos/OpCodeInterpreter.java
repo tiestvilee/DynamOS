@@ -21,12 +21,6 @@ import org.dynamos.types.StandardObjects;
  * @author tiestvilee
  */
 public class OpCodeInterpreter {
-	Environment environment;
-	
-	public OpCodeInterpreter() {
-		environment = new Environment();
-		environment.init(this);
-	}
 
     public void interpret(ObjectDOS context, OpCode[] opCodes) {
         StackFrame stackFrame = new StackFrame();
@@ -57,18 +51,6 @@ public class OpCodeInterpreter {
 		ObjectDOS opcodeDOSList = StandardObjects.toDOSList(opcodeList);
 		context.setSlot(Symbol.RESULT, opcodeDOSList);
 		return i - 1;
-	}
-
-	public Activation newActivation() {
-		return environment.getContextBuilder().createActivation();
-	}
-
-	public Environment getEnvironment() {
-		return environment;
-	}
-
-	public ObjectDOS newObject() {
-		return environment.createNewObject();
 	}
 
 }

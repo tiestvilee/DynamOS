@@ -27,9 +27,8 @@ import org.junit.Test;
 public class FunctionCallOpCodeTest {
 
     ExecutableDOS aFunction;
-    ExecutableDOS anotherFunction;
 	
-    Activation context;
+    ObjectDOS context;
     ObjectDOS object;
     OpCodeInterpreter interpreter;
 	Symbol symbol;
@@ -39,25 +38,23 @@ public class FunctionCallOpCodeTest {
     @Before
     public void setup() {
     	interpreter = new OpCodeInterpreter();
-    	environment = interpreter.getEnvironment();
-    	context = interpreter.newActivation();
     	symbol = Symbol.get("symbol");
     	stackFrame = new StackFrame();
     	aFunction = mock(ExecutableDOS.class);
-    	anotherFunction = mock(ExecutableDOS.class);
-    	object = environment.createNewObject();
+    	object = new ObjectDOS();
+    	context = new ObjectDOS();
     }
     
     @Test
-    public void shouldGetFunctionFromThis() {
-    	object = mock(ObjectDOS.class);
-    	when(object.getFunction(symbol)).thenReturn(aFunction);
+    public void shouldGetFunctionFromContext() {
+    	context = mock(ObjectDOS.class);
+    	when(context.getFunction(symbol)).thenReturn(aFunction);
     	
-    	new OpCode.FunctionCall(symbol).execute(interpreter, object, stackFrame);
+    	new OpCode.FunctionCall(symbol).execute(interpreter, context, stackFrame);
     }
     
     @Test
-    public void shouldGetFunctionFromObject() {
+    public void shouldGetFunctionFromSetObject() {
     	object = mock(ObjectDOS.class);
     	when(object.getFunction(symbol)).thenReturn(aFunction);
     	stackFrame.setObject(object);
@@ -66,18 +63,30 @@ public class FunctionCallOpCodeTest {
     }
     
     @Test
-    public void shouldExecuteFunction() {
+    public void shouldExecuteFunctionOnThis() {
     	context = mock(Activation.class);
     	when(context.getFunction(symbol)).thenReturn(aFunction);
+    	when(context.getSlot(Symbol.THIS)).thenReturn(object);
 
     	new OpCode.FunctionCall(symbol).execute(interpreter, context, stackFrame);
     	
-    	verify(aFunction).execute(interpreter, context, stackFrame.arguments);
+    	verify(aFunction).execute(interpreter, object, stackFrame.arguments);
     }
     
     @Test
+    public void shouldExecuteFunctionOnSetObject() {
+    	object = mock(ObjectDOS.class);
+    	when(object.getFunction(symbol)).thenReturn(aFunction);
+    	stackFrame.setObject(object);
+    	
+    	new OpCode.FunctionCall(symbol).execute(interpreter, context, stackFrame);
+    	
+    	verify(aFunction).execute(interpreter, object, stackFrame.arguments);
+    }
+    
+    @SuppressWarnings("unchecked")
+	@Test
     public void shouldReturnResult() {
-    	context = interpreter.newActivation();
     	context.setFunction(symbol, aFunction);
 
     	when(aFunction.execute((OpCodeInterpreter)anyObject(), (ObjectDOS)anyObject(), (List<ObjectDOS>)anyObject())).thenReturn(object);

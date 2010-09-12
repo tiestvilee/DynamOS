@@ -53,4 +53,6 @@ public class Symbol {
 	public static final Symbol EMPTY_LIST = Symbol.get("emptyList");
 
 	public static final Symbol META_VM = Symbol.get("metaVM");
+	
+	public static final Symbol UNDEFINED = Symbol.get("undefined");
 }

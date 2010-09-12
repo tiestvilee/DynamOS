@@ -36,19 +36,6 @@ public class NumberDOS {
 		return libraryConstructor.execute(interpreter, arguments, interpreter.newActivation());
 	}
 
-	public static class ValueObject extends ObjectDOS {
-		private int value;
-
-		public ValueObject(int value) {
-			this.value = value;
-		}
-
-		public int getValue() {
-			return value;
-		}
-
-	}
-
 	public static ObjectDOS numberDOS(OpCodeInterpreter interpreter, int number) {
 		ObjectDOS valueObject = interpreter.getEnvironment().createNewValueObject(number);
 		ObjectDOS zero = interpreter.getEnvironment().getZero();

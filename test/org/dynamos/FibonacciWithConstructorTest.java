@@ -14,7 +14,7 @@ import org.dynamos.structures.MetaVM;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.Symbol;
-import org.dynamos.types.NumberDOS;
+import org.dynamos.types.ValueObject;
 import org.junit.Test;
 
 /**
@@ -277,7 +277,7 @@ public class FibonacciWithConstructorTest {
         	new OpCode.FunctionCall(fibonacci$)
         });
 
-        assertThat(((NumberDOS.ValueObject) applicationContext.getSlot(Symbol.RESULT).getSlot(Symbol.get("value"))).getValue(), is(expectedResult));
+        assertThat(((ValueObject) applicationContext.getSlot(Symbol.RESULT).getSlot(Symbol.get("value"))).getValue(), is(expectedResult));
 	}
 
 }

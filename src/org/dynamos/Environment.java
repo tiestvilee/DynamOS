@@ -12,6 +12,7 @@ import org.dynamos.structures.Activation.ActivationBuilder;
 import org.dynamos.types.BooleanDOS;
 import org.dynamos.types.NumberDOS;
 import org.dynamos.types.StandardObjects;
+import org.dynamos.types.ValueObject;
 import org.dynamos.types.StandardObjects.NullDOS;
 import org.dynamos.types.StandardObjects.UndefinedDOS;
 
@@ -104,7 +105,7 @@ public class Environment {
 	}
 
 	public ObjectDOS createNewValueObject(int value) {
-		NumberDOS.ValueObject object = new NumberDOS.ValueObject(value);
+		ValueObject object = new ValueObject(value);
 		object.setParent(rootObject);
 		return object;
 	}

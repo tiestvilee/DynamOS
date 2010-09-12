@@ -6,7 +6,7 @@
 package org.dynamos.structures;
 
 import org.dynamos.OpCodeInterpreter;
-import org.dynamos.types.NumberDOS.ValueObject;
+import org.dynamos.types.ValueObject;
 
 /**
  *
@@ -53,18 +53,18 @@ public class OpCode {
 
         @Override
         public boolean execute(OpCodeInterpreter interpreter, ObjectDOS self, StackFrame stackFrame) {
-        	System.out.println(this);
+        	ObjectDOS source, victim;
         	
-        	ObjectDOS target = self;
         	if(stackFrame.getObject() != null) {
-        		System.out.println("object was set...");
-        		target = stackFrame.getObject();
+        		victim = source = stackFrame.getObject();
+        	} else {
+            	source = self;
+            	victim = self.getSlot(Symbol.THIS);
         	}
-			System.out.println("find and execute " + symbol + " on " + target + "\n....with " + stackFrame.getArguments());
-			ExecutableDOS function = target.getFunction(symbol);
-			// TODO AAAAA the following always executes with target, but what if the function was on the real parent object, 
-			// rather than the current activation
-        	ObjectDOS result = function.execute(interpreter, target, stackFrame.getArguments());
+			System.out.println("find " + symbol + " on " + source + "\n....with " + stackFrame.getArguments() + "\n....victim = " + victim);
+			ExecutableDOS function = source.getFunction(symbol);
+
+        	ObjectDOS result = function.execute(interpreter, victim, stackFrame.getArguments());
 
         	self.setSlot(Symbol.RESULT, result);
             return true;
@@ -131,7 +131,7 @@ public class OpCode {
         public boolean execute(OpCodeInterpreter interpreter, ObjectDOS self, StackFrame stackFrame) {
         	System.out.println(this);
 
-        	self.setSlot(Symbol.RESULT, interpreter.getEnvironment().createNewValueObject(value));
+        	self.setSlot(Symbol.RESULT, new ValueObject(value));
             return false;
         }
         

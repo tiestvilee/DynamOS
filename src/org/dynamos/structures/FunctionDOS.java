@@ -17,14 +17,14 @@ public class FunctionDOS extends ExecutableDOS {
     private OpCode[] opCodes;
 	private final Symbol[] requiredArguments;
 
-	// TODO should have parent set to rootObject
     public FunctionDOS(Symbol[] requiredArguments, OpCode[] opCodes) {
 		this.requiredArguments = requiredArguments;
         this.opCodes = opCodes;
     }
 
     public ObjectDOS execute(OpCodeInterpreter interpreter, List<ObjectDOS> suppliedArguments, Activation activation) {
-		updateArgumentsInContext(activation, suppliedArguments, interpreter.getEnvironment().getUndefined());
+		ObjectDOS undefined = this.getSlot(Symbol.UNDEFINED);
+		updateArgumentsInContext(activation, suppliedArguments, undefined);
     	activation.setSlot(Symbol.RESULT, activation);
     	
         interpreter.interpret(activation, opCodes);
@@ -51,16 +51,18 @@ public class FunctionDOS extends ExecutableDOS {
 	}
 
 	public Activation newActivation(OpCodeInterpreter interpreter, List<ObjectDOS> suppliedArguments, ObjectDOS theObject) {
-		// TODO where should this stuff be set?  in the interpreter?
-		Activation activation = interpreter.newActivation();
-        activation.setArguments(suppliedArguments);
-        activation.setVictim(theObject);
-		return activation;
+//		ObjectDOS undefined = this.getSlot(Symbol.UNDEFINED);
+//		Activation activation = this.getSlot(Symbol.ACTIVATION_PROTOTYPE);
+//		Activation activation = new Activation;
+//        activation.setArguments(suppliedArguments);
+//        activation.setVictim(theObject);
+//		return activation;
+		return null;
 	}
 
 	public ObjectDOS newObject(OpCodeInterpreter interpreter) {
-		ObjectDOS newObject = interpreter.newObject();
-		return newObject;
+//		ObjectDOS newObject = interpreter.newObject();
+		return null;
 	}
 
 	@Override

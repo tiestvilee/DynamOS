@@ -14,7 +14,7 @@ import org.dynamos.structures.MetaVM;
 import org.dynamos.structures.ObjectDOS;
 import org.dynamos.structures.OpCode;
 import org.dynamos.structures.Symbol;
-import org.dynamos.types.NumberDOS.ValueObject;
+import org.dynamos.types.ValueObject;
 import org.junit.Before;
 import org.junit.Test;
 

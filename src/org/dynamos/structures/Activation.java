@@ -172,15 +172,14 @@ public class Activation extends ObjectDOS {
 	    };
 
 		public Activation createActivation() {
-			Activation result = new Activation(environment.getEmptyList());
+			Activation result = new Activation();
 			result.setParent(activationPrototype);
 			return result;
 		}
 
 	}
 
-    public Activation(ObjectDOS list) {
-        setSlot(Symbol.ARGUMENTS, list);
+    public Activation() {
         setSlot(Symbol.CURRENT_CONTEXT, this);
     }
 

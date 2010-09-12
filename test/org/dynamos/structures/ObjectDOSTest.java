@@ -10,7 +10,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 
 import org.dynamos.Environment;
-import org.dynamos.OpCodeInterpreter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,18 +22,12 @@ public class ObjectDOSTest {
     ObjectDOS theObject;
     Symbol symbol = Symbol.get("MySymbol");
     ObjectDOS value;
-    ObjectDOS nullDOS;
     FunctionWithContext function = new FunctionWithContext(null, null);
-	private OpCodeInterpreter interpreter;
-	private Environment environment;
 
     @Before
     public void setUp() {
-    	interpreter = new OpCodeInterpreter();
-    	environment = interpreter.getEnvironment();
-    	nullDOS = environment.getNull();
-    	value = environment.createNewObject();
-    	theObject = environment.createNewObject();
+    	theObject = new ObjectDOS();
+    	value = new ObjectDOS();
     }
 
     @Test
@@ -45,8 +38,8 @@ public class ObjectDOSTest {
 
     @Test
     public void shouldUseSlotOnSecondTraitIfNotOnObject() {
-        ObjectDOS trait1 = environment.createNewObject();
-        ObjectDOS trait2 = environment.createNewObject();
+        ObjectDOS trait1 = new ObjectDOS();
+        ObjectDOS trait2 = new ObjectDOS();
         theObject.setTrait("trait1", trait1);
         theObject.setTrait("trait2", trait2);
 
@@ -57,12 +50,12 @@ public class ObjectDOSTest {
 
     @Test
     public void shouldOverideSlotOnSecondTraitWithFirstTraitSlot() {
-        ObjectDOS trait1 = environment.createNewObject();
-        ObjectDOS trait2 = environment.createNewObject();
+        ObjectDOS trait1 = new ObjectDOS();
+        ObjectDOS trait2 = new ObjectDOS();
         theObject.setTrait("trait1", trait1);
         theObject.setTrait("trait2", trait2);
 
-        ObjectDOS oldValue = environment.createNewObject();
+        ObjectDOS oldValue = new ObjectDOS();
         trait2.setSlot(symbol, oldValue);
         
         trait1.setSlot(symbol, value);
@@ -72,13 +65,13 @@ public class ObjectDOSTest {
 
     @Test
     public void shouldOverideSlotOnTraitsWithCurrentSlot() {
-        ObjectDOS trait1 = environment.createNewObject();
-        ObjectDOS trait2 = environment.createNewObject();
+        ObjectDOS trait1 = new ObjectDOS();
+        ObjectDOS trait2 = new ObjectDOS();
         theObject.setTrait("trait1", trait1);
         theObject.setTrait("trait2", trait2);
         
-        trait2.setSlot(symbol, environment.createNewObject());
-        trait1.setSlot(symbol, environment.createNewObject());
+        trait2.setSlot(symbol, new ObjectDOS());
+        trait1.setSlot(symbol, new ObjectDOS());
         
         theObject.setSlot(symbol, value);
 
@@ -88,7 +81,7 @@ public class ObjectDOSTest {
 
     @Test
     public void shouldReturnUndefinedIfNoSlot() {
-    	theObject = environment.createNewObject(); // TODO again, this sux the big time
+    	theObject = new ObjectDOS(); // TODO again, this sux the big time
     	Environment env = new Environment();
 		ObjectDOS.initialiseRootObject(env);
         assertSame(env.getUndefined(), theObject.getSlot(symbol));
@@ -102,8 +95,8 @@ public class ObjectDOSTest {
 
     @Test
     public void shouldUseFunctionOnSecondTraitIfNotOnObject() {
-        ObjectDOS trait1 = environment.createNewObject();
-        ObjectDOS trait2 = environment.createNewObject();
+        ObjectDOS trait1 = new ObjectDOS();
+        ObjectDOS trait2 = new ObjectDOS();
         theObject.setTrait("trait1", trait1);
         theObject.setTrait("trait2", trait2);
 
@@ -114,8 +107,8 @@ public class ObjectDOSTest {
 
     @Test
     public void shouldOverideFunctionOnSecondTraitWithFirstTraitFunction() {
-        ObjectDOS trait1 = environment.createNewObject();
-        ObjectDOS trait2 = environment.createNewObject();
+        ObjectDOS trait1 = new ObjectDOS();
+        ObjectDOS trait2 = new ObjectDOS();
         theObject.setTrait("trait1", trait1);
         theObject.setTrait("trait2", trait2);
 
@@ -128,8 +121,8 @@ public class ObjectDOSTest {
 
     @Test
     public void shouldOverideFunctionOnTraitsWithCurrentFunction() {
-        ObjectDOS trait1 = environment.createNewObject();
-        ObjectDOS trait2 = environment.createNewObject();
+        ObjectDOS trait1 = new ObjectDOS();
+        ObjectDOS trait2 = new ObjectDOS();
         theObject.setTrait("trait1", trait1);
         theObject.setTrait("trait2", trait2);
         

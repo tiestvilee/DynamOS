@@ -9,7 +9,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import org.dynamos.OpCodeInterpreter;
-import org.dynamos.types.NumberDOS.ValueObject;
+import org.dynamos.types.ValueObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,7 +21,7 @@ import org.junit.Test;
 public class BasicOpCodeTest {
 
     FunctionDOS function;
-    Activation context;
+    ObjectDOS context;
     ObjectDOS object;
     OpCodeInterpreter interpreter;
 	Symbol local;
@@ -30,10 +30,9 @@ public class BasicOpCodeTest {
     @Before
     public void setup() {
     	interpreter = new OpCodeInterpreter();
-    	context = interpreter.newActivation();
+    	context = new ObjectDOS();
     	local = Symbol.get("local");
     	stackFrame = new StackFrame();
-    	object = interpreter.getEnvironment().createNewObject();
     }
 
     @Test
@@ -46,7 +45,7 @@ public class BasicOpCodeTest {
 
     @Test
     public void shouldSetObjectOnStackFrame() {
-    	ObjectDOS expectedObject = interpreter.getEnvironment().createNewObject();
+    	ObjectDOS expectedObject = new ObjectDOS();
 
     	context.setSlot(local, expectedObject);
     	
@@ -58,7 +57,7 @@ public class BasicOpCodeTest {
 
     @Test
     public void shouldPushObjectOntoStackFrame() {
-    	ObjectDOS expectedObject = interpreter.getEnvironment().createNewObject();
+    	ObjectDOS expectedObject = new ObjectDOS();
 
     	context.setSlot(local, expectedObject);
     	

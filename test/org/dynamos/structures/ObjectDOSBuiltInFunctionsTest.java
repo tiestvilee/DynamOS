@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import org.dynamos.Environment;
 import org.dynamos.OpCodeInterpreter;
-import org.dynamos.types.NumberDOS.ValueObject;
+import org.dynamos.types.ValueObject;
 import org.junit.Before;
 import org.junit.Test;
 
