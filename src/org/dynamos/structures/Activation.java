@@ -11,6 +11,11 @@ import org.dynamos.Environment;
 import org.dynamos.OpCodeInterpreter;
 import org.dynamos.types.StandardObjects;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import sun.reflect.misc.MethodUtil;
+
+import com.sun.org.apache.xml.internal.utils.UnImplNode;
+
 
 /**
  *
@@ -22,7 +27,7 @@ public class Activation extends ObjectDOS {
 		return new ActivationBuilder(environment);
 	}
 
-	public static class ActivationBuilder {
+	public static class ActivationBuilder extends ExecutableDOS {
 
 		private final ObjectDOS activationPrototype;
 
@@ -106,7 +111,7 @@ public class Activation extends ObjectDOS {
 
 		}
 
-	    private static ExecutableDOS SET_LOCAL_FUNCTION_$_TO_$_EXEC = new ExecutableDOS() {
+		private static ExecutableDOS SET_LOCAL_FUNCTION_$_TO_$_EXEC = new ExecutableDOS() {
 			@Override
 			public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> arguments) {
 				theObject.setFunction(((SymbolWrapper) arguments.get(0)).getSymbol(), (ExecutableDOS) arguments.get(1));
@@ -177,6 +182,22 @@ public class Activation extends ObjectDOS {
 			return result;
 		}
 
+		public Activation createActivation(List<ObjectDOS> arguments, ObjectDOS victim) {
+			Activation result = new Activation();
+//			result.setParent(activationPrototype);
+			result.setArguments(arguments);
+			result.setVictim(victim);
+			return result;
+		}
+
+		@Override
+		public ObjectDOS execute(OpCodeInterpreter interpreter,
+				ObjectDOS theObject, List<ObjectDOS> arguments) {
+			// TODO Auto-generated method stub
+			// set this up so it works...
+			throw new UnsupportedOperationException();
+		}
+
 	}
 
     public Activation() {
@@ -184,7 +205,9 @@ public class Activation extends ObjectDOS {
     }
 
     public void setArguments(List<ObjectDOS> arguments) {
-	    setSlot(Symbol.ARGUMENTS, StandardObjects.toDOSList(arguments));
+	    ObjectDOS argumentsAsDOSList = StandardObjects.toDOSList(arguments);
+	    System.out.println("****" + argumentsAsDOSList);
+		setSlot(Symbol.ARGUMENTS, argumentsAsDOSList);
 	}
 
     public void setVictim(ObjectDOS object) {

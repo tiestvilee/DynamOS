@@ -18,6 +18,8 @@ public class ObjectDOS {
 	
 	/* Compile time definition of Object */
 	public static ObjectDOS UNDEFINED;
+
+	public static ObjectDOS environment;
 	
     private HashMap<Symbol, ObjectDOS> slots;
     private HashMap<Symbol, ExecutableDOS> functions;

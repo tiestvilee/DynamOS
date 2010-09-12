@@ -25,10 +25,17 @@ public class FunctionWithContext extends ExecutableDOS {
     }
 
     public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> suppliedArguments) {
-        Activation activation = function.newActivation(interpreter, context, suppliedArguments, theObject);
+        Activation activation = newActivation(suppliedArguments, theObject);
         function.execute(interpreter, suppliedArguments, activation);
         return activation.getSlot(Symbol.RESULT);
     }
+
+	public Activation newActivation(List<ObjectDOS> suppliedArguments, ObjectDOS theObject) {
+		// TODO where should this stuff be set?  in the interpreter?
+		Activation activation = function.newActivation(suppliedArguments, theObject);
+		activation.setContext(context);
+		return activation;
+	}
     
     class ExecuteFunction extends ExecutableDOS {
 

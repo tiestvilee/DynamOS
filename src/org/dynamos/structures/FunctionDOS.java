@@ -5,9 +5,11 @@
 
 package org.dynamos.structures;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.dynamos.OpCodeInterpreter;
+import org.dynamos.structures.Activation.ActivationBuilder;
 
 /**
  *
@@ -22,8 +24,20 @@ public class FunctionDOS extends ExecutableDOS {
         this.opCodes = opCodes;
     }
 
-    public ObjectDOS execute(OpCodeInterpreter interpreter, List<ObjectDOS> suppliedArguments, Activation activation) {
-		ObjectDOS undefined = this.getSlot(Symbol.UNDEFINED);
+	@Override
+	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> suppliedArguments) {
+        Activation activation = newActivation(suppliedArguments, theObject);
+        execute(interpreter, suppliedArguments, activation);
+        return activation.getSlot(Symbol.RESULT);
+	}
+
+	public Activation newActivation(List<ObjectDOS> suppliedArguments, ObjectDOS theObject) {
+		ActivationBuilder activationBuilder = (ActivationBuilder) this.getFunction(Symbol.get("newActivationWithArguments:andVictim:"));
+		return activationBuilder.createActivation(suppliedArguments, theObject);
+	}
+
+    protected ObjectDOS execute(OpCodeInterpreter interpreter, List<ObjectDOS> suppliedArguments, Activation activation) {
+		ObjectDOS undefined = this.getFunction(Symbol.UNDEFINED).execute(interpreter, activation, Collections.<ObjectDOS>emptyList());
 		updateArgumentsInContext(activation, suppliedArguments, undefined);
     	activation.setSlot(Symbol.RESULT, activation);
     	
@@ -32,44 +46,15 @@ public class FunctionDOS extends ExecutableDOS {
         return activation.getSlot(Symbol.RESULT);
     }
 
-	private void updateArgumentsInContext(ObjectDOS context, List<ObjectDOS> contextArguments, ObjectDOS undefined) {
+	private void updateArgumentsInContext(ObjectDOS activation, List<ObjectDOS> contextArguments, ObjectDOS undefined) {
 		int finalIndex = Math.min(contextArguments.size(), requiredArguments.length);
 		int index = 0;
     	for(;index < finalIndex; index++) {
-    		context.setSlot(requiredArguments[index], contextArguments.get(index));
+    		activation.setSlot(requiredArguments[index], contextArguments.get(index));
     	}
     	for(;index < requiredArguments.length; index++) {
-    		context.setSlot(requiredArguments[index], undefined);
+    		activation.setSlot(requiredArguments[index], undefined);
     	}
-	}
-
-	public Activation newActivation(OpCodeInterpreter interpreter, Activation context, List<ObjectDOS> suppliedArguments, ObjectDOS theObject) {
-		// TODO where should this stuff be set?  in the interpreter?
-		Activation activation = newActivation(interpreter, suppliedArguments, theObject);
-		activation.setContext(context);
-		return activation;
-	}
-
-	public Activation newActivation(OpCodeInterpreter interpreter, List<ObjectDOS> suppliedArguments, ObjectDOS theObject) {
-//		ObjectDOS undefined = this.getSlot(Symbol.UNDEFINED);
-//		Activation activation = this.getSlot(Symbol.ACTIVATION_PROTOTYPE);
-//		Activation activation = new Activation;
-//        activation.setArguments(suppliedArguments);
-//        activation.setVictim(theObject);
-//		return activation;
-		return null;
-	}
-
-	public ObjectDOS newObject(OpCodeInterpreter interpreter) {
-//		ObjectDOS newObject = interpreter.newObject();
-		return null;
-	}
-
-	@Override
-	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> suppliedArguments) {
-        Activation activation = newActivation(interpreter, suppliedArguments, theObject);
-        execute(interpreter, suppliedArguments, activation);
-        return activation.getSlot(Symbol.RESULT);
 	}
 
 	public OpCode[] getOpCodes() {

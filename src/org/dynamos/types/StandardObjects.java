@@ -155,7 +155,7 @@ public class StandardObjects {
 		if(arguments.size() > 0) {
 			return toDOSListRecurse(arguments);
 		}
-		return env.getEmptyList();
+		return new ObjectDOS(); //env.getEmptyList();
 	}
 
 	public static ObjectDOS toDOSListRecurse(List<ObjectDOS> arguments) {
