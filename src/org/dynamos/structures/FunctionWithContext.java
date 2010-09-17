@@ -26,7 +26,7 @@ public class FunctionWithContext extends ExecutableDOS {
 
     public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> suppliedArguments) {
         Activation activation = newActivation(suppliedArguments, theObject);
-        function.execute(interpreter, suppliedArguments, activation);
+        function.execute(interpreter, suppliedArguments, activation, theObject);
         return activation.getSlot(Symbol.RESULT);
     }
 

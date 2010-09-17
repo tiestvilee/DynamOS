@@ -9,7 +9,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 
-import org.dynamos.Environment;
+import org.dynamos.types.StandardObjects;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,6 +28,7 @@ public class ObjectDOSTest {
     public void setUp() {
     	theObject = new ObjectDOS();
     	value = new ObjectDOS();
+    	createMinimalEnvironment();
     }
 
     @Test
@@ -81,13 +82,21 @@ public class ObjectDOSTest {
 
     @Test
     public void shouldReturnUndefinedIfNoSlot() {
-    	theObject = new ObjectDOS(); // TODO again, this sux the big time
-    	Environment env = new Environment();
-		ObjectDOS.initialiseRootObject(env);
-        assertSame(env.getUndefined(), theObject.getSlot(symbol));
+    	theObject = new ObjectDOS();
+        assertSame(ObjectDOS.environment.getSlot(Symbol.PLATFORM).getSlot(Symbol.UNDEFINED), theObject.getSlot(symbol));
     }
     
-    @Test
+    private void createMinimalEnvironment() {
+    	ObjectDOS undefined = new StandardObjects.UndefinedDOS();
+    	
+    	ObjectDOS platform = new ObjectDOS();
+    	platform.setSlot(Symbol.UNDEFINED, undefined);
+    	
+    	ObjectDOS.environment = new ObjectDOS();
+    	ObjectDOS.environment.setSlot(Symbol.PLATFORM, platform);
+	}
+
+	@Test
     public void shouldAddAndReturnFunction() {
         theObject.setFunction(symbol, function);
         assertThat(theObject.getFunction(symbol), is((ExecutableDOS) function));

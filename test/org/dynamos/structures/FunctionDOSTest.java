@@ -8,10 +8,10 @@ package org.dynamos.structures;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doAnswer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +21,8 @@ import org.dynamos.structures.Activation.ActivationBuilder;
 import org.dynamos.types.StandardObjects;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  *
@@ -46,11 +48,14 @@ public class FunctionDOSTest {
     	object = new ObjectDOS();
     	
     	undefinedFunction = mock(ExecutableDOS.class);
-    	when(undefinedFunction.execute( (OpCodeInterpreter) anyObject(), (ObjectDOS) anyObject(), (List<ObjectDOS>) anyObject())).thenReturn(undefined);
+    	List<ObjectDOS> anyList = anyObject();
+    	when(undefinedFunction.execute( (OpCodeInterpreter) anyObject(), (ObjectDOS) anyObject(), anyList)).thenReturn(undefined);
     	
     	newActivationBuilder = mock(ActivationBuilder.class);
     	activation = new Activation();
-    	when(newActivationBuilder.createActivation((List<ObjectDOS>) anyObject(), (ObjectDOS) anyObject())).thenReturn(activation);
+
+    	anyList = anyObject();
+		when(newActivationBuilder.createActivation(anyList, (ObjectDOS) anyObject())).thenReturn(activation);
     	
     	functionPrototype = new ObjectDOS();
     	functionPrototype.setFunction(Symbol.UNDEFINED, undefinedFunction);
@@ -63,7 +68,7 @@ public class FunctionDOSTest {
     public void shouldCallContextualFunctionWithArgumentsAndObject() {
         Activation context = new Activation();
     	FunctionDOS function = new FunctionDOS(new Symbol[] {}, new OpCode[] {});
-        function.setParent(functionPrototype);
+    	function.setParent(functionPrototype);
         
         FunctionWithContext contextualFunction = new FunctionWithContext(function, context);
 
@@ -111,8 +116,15 @@ public class FunctionDOSTest {
         FunctionDOS actualFunction = new FunctionDOS(new Symbol[] {}, new OpCode[] {});
         actualFunction.setParent(functionPrototype);
         
-        ObjectDOS expectedObject = new ObjectDOS();
-		activation.setSlot(Symbol.RESULT, expectedObject);
+        final ObjectDOS expectedObject = new ObjectDOS();
+        doAnswer(new Answer<OpCodeInterpreter>() {
+            public OpCodeInterpreter answer(InvocationOnMock invocation) {
+                Object[] args = invocation.getArguments();
+                ((Activation) args[0]).setSlot(Symbol.RESULT, expectedObject);
+                System.out.println("what the?");
+                return null;
+            }})
+        .when(interpreter).interpret( (Activation) anyObject(), (OpCode[]) anyObject());
 
         ObjectDOS actualObject = actualFunction.execute(interpreter, object, arguments);
 

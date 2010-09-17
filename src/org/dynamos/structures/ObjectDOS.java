@@ -42,11 +42,11 @@ public class ObjectDOS {
         }
     	for(ObjectDOS parent : traits.values()) {
     		slot = parent.getSlot(symbol);
-    		if(slot != UNDEFINED) {
+    		if(slot != ObjectDOS.environment.getSlot(Symbol.PLATFORM).getSlot(Symbol.UNDEFINED)) {
     			return slot;
     		}
     	}
-        return UNDEFINED;
+        return environment.getSlot(Symbol.PLATFORM).getSlot(Symbol.UNDEFINED);
     }
 
     public void setFunction(Symbol symbol, ExecutableDOS function) {
@@ -99,12 +99,6 @@ public class ObjectDOS {
     public ObjectDOS getLocalSlot(Symbol symbol) {
     	return slots.get(symbol);
     }
-
-    /* Runtime Definition of Object */
-    
-	public static void initialiseRootObject(Environment environment) {
-		UNDEFINED = environment.getUndefined();
-	}
 
 	public HashMap<Symbol,ObjectDOS> getSlots() {
 		return slots;

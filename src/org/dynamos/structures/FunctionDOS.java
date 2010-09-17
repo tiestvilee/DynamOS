@@ -27,7 +27,7 @@ public class FunctionDOS extends ExecutableDOS {
 	@Override
 	public ObjectDOS execute(OpCodeInterpreter interpreter, ObjectDOS theObject, List<ObjectDOS> suppliedArguments) {
         Activation activation = newActivation(suppliedArguments, theObject);
-        execute(interpreter, suppliedArguments, activation);
+        execute(interpreter, suppliedArguments, activation, theObject);
         return activation.getSlot(Symbol.RESULT);
 	}
 
@@ -36,10 +36,10 @@ public class FunctionDOS extends ExecutableDOS {
 		return activationBuilder.createActivation(suppliedArguments, theObject);
 	}
 
-    protected ObjectDOS execute(OpCodeInterpreter interpreter, List<ObjectDOS> suppliedArguments, Activation activation) {
+    protected ObjectDOS execute(OpCodeInterpreter interpreter, List<ObjectDOS> suppliedArguments, Activation activation, ObjectDOS theObject) {
 		ObjectDOS undefined = this.getFunction(Symbol.UNDEFINED).execute(interpreter, activation, Collections.<ObjectDOS>emptyList());
 		updateArgumentsInContext(activation, suppliedArguments, undefined);
-    	activation.setSlot(Symbol.RESULT, activation);
+    	activation.setSlot(Symbol.RESULT, theObject);
     	
         interpreter.interpret(activation, opCodes);
         

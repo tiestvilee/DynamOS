@@ -55,4 +55,5 @@ public class Symbol {
 	public static final Symbol META_VM = Symbol.get("metaVM");
 	
 	public static final Symbol UNDEFINED = Symbol.get("undefined");
+	public static final Symbol PLATFORM = Symbol.get("platform");
 }

@@ -63,7 +63,7 @@ public class FunctionCallOpCodeTest {
     }
     
     @Test
-    public void shouldExecuteFunctionOnThis() {
+    public void shouldExecuteFunctionFoundInContextOnThis() {
     	context = mock(Activation.class);
     	when(context.getFunction(symbol)).thenReturn(aFunction);
     	when(context.getSlot(Symbol.THIS)).thenReturn(object);
@@ -86,8 +86,9 @@ public class FunctionCallOpCodeTest {
     
     @SuppressWarnings("unchecked")
 	@Test
-    public void shouldReturnResult() {
+    public void shouldReturnResultOnContext() {
     	context.setFunction(symbol, aFunction);
+    	context.setSlot(Symbol.THIS, new ObjectDOS());
 
     	when(aFunction.execute((OpCodeInterpreter)anyObject(), (ObjectDOS)anyObject(), (List<ObjectDOS>)anyObject())).thenReturn(object);
 
